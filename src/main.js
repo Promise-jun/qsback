@@ -27,12 +27,10 @@ Vue.prototype.$fetch=fetch;
 Vue.prototype.$patch=patch;
 Vue.prototype.$put=put;*/
 
-Vue.use(ElementUI);
-
 Vue.config.productionTip = false
 
 //处理是否登录
-router.beforeEach((to, from, next) => {
+/*router.beforeEach((to, from, next) => {
   let isLogin = getCookie('admin_token')
   if (!isLogin && to.name !== 'login') {  // 未登录且要跳转的页面不是登录页
     next('/login')
@@ -43,7 +41,9 @@ router.beforeEach((to, from, next) => {
   } else {
     next()
   }
-})
+})*/
+
+Vue.use(ElementUI);
 
 /* eslint-disable no-new */
 new Vue({

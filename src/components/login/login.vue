@@ -108,8 +108,7 @@
               url: '/authc/login',
               data: data
             }).then(res => {
-              this.hideLoading();
-              console.log(res);
+              this.hideLoading(res.data);
             }).catch(err => {
               this.$message.error(err.toString());
             })
@@ -145,7 +144,7 @@
             this.isVisible = true
           }, 500);
       },
-      hideLoading() {
+      hideLoading(data) {
         setTimeout(() => {
             this.$refs.authent.style.display = 'block';
             Velocity(this.$refs.authent, {
@@ -163,21 +162,24 @@
             })
             this.isVisible = true
             this.isTesttwo = false; //平移特效
-        }, 2000);
+        }, 1000);
         setTimeout(() => {
             this.$refs.authent.style.display = 'none';
             this.isTest = false; //倾斜特效
 
             //登录成功
-            // setCookie('admin_token', 'admin');
-            // this.$router.push({path: '/'});
-            // console.log(res)
-            this.$message({
-              message: '恭喜你，登录成功',
-              type: 'success'
-            });
-            // this.$message.error('错了哦，这是一条错误消息');
-        }, 2400);
+            if (data.codes === 200) {
+              // setCookie('admin_token', 'admin');
+              this.$router.push({path: '/'});
+              this.$message({
+                message: '恭喜你，登录成功',
+                type: 'success'
+              });
+            } else {
+              this.$message.error(data.msg);
+            }
+            
+        }, 1400);
         return false;
       }
     }

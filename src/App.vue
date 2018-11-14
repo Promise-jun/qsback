@@ -1,10 +1,17 @@
 <template>
   <div id="app">
     <el-container>
-      <el-header>Header</el-header>
+      <el-header>
+        <el-col :span="12"><h1>情说后台管理系统</h1></el-col>
+        <el-col :span="12">
+          <login-info></login-info>
+        </el-col>
+      </el-header>
       <el-container>
-        <el-aside width="200px">Aside</el-aside>
-        <el-main>
+        <el-aside width="200px">
+          <nav-menu></nav-menu>
+        </el-aside>
+        <el-main id="container">
           <router-view/>
         </el-main>
       </el-container>
@@ -13,28 +20,30 @@
 </template>
 
 <script>
+import LoginInfo from 'components/login/login-info'
+import NavMenu from 'components/nav-menu/nav-menu'
 
 export default {
   name: 'App',
   created() {
     
+  },
+  components: {
+    LoginInfo,
+    NavMenu
   }
 } 
 </script>
 
 <style lang="scss">
+  $main-color: #409EFF;
   .el-header, .el-footer {
-    background-color: #B3C0D1;
-    color: #333;
-    text-align: center;
+    background-color: $main-color;
     line-height: 60px;
-  }
-  
-  .el-aside {
-    background-color: #D3DCE6;
-    color: #333;
-    text-align: center;
-    line-height: 200px;
+    & h1 {
+      font-size: 22px;
+      color: #fff;
+    }
   }
   
   body > .el-container {

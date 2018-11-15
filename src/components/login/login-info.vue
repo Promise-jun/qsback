@@ -9,7 +9,7 @@
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item command="changePass"><i class="el-icon-setting list-icon"></i>修改密码</el-dropdown-item>
         <el-dropdown-item><i class="el-icon-message list-icon"></i>进入聊天室</el-dropdown-item>
-        <el-dropdown-item divided><i class="el-icon-circle-close-outline list-icon"></i>退出</el-dropdown-item>
+        <el-dropdown-item command="logout" divided><i class="el-icon-circle-close-outline list-icon"></i>退出</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -28,6 +28,10 @@ export default {
       if (command === 'changePass') {
         this.$router.push({
           path: '/changePass'
+        })
+      } else if (command === 'logout') {
+        this.$router.push({
+          path: '/login'
         })
       }
     }

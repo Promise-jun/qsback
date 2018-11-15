@@ -15,22 +15,26 @@ let data = [
         name: '首页'
     },
     {
-        name: '系统组件',
+    	name: '角色管理',
+        path: '/role'
+    },
+    {
+        name: '用户管理',
         child: [
             {
-                name: '介绍',
-                path: '/components'
+                name: '客户管理',
+                path: '/userlist'
             },
             {
-                name: '功能类',
+                name: '导师管理',
                 child: [
                     {
-                        path: '/components/permission',
-                        name: '详细鉴权'
+                    	name: '详细鉴权',
+                        path: '/components/permission'
                     },
                     {
-                        path: '/components/pageTable',
-                        name: '表格分页'
+                    	name: '表格分页',
+                        path: '/components/pageTable'
                     }
                 ]
             }

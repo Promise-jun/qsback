@@ -20,8 +20,8 @@
         <el-input type="password" v-model="changePassForm.checkPass"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm('changePassForm')">确认修改</el-button>
-        <el-button @click="resetForm('changePassForm')">重置</el-button>
+        <el-button type="primary" @click="submitForm('changePassForm')" icon="el-icon-circle-check">确认修改</el-button>
+        <el-button @click="resetForm('changePassForm')" icon="el-icon-refresh">重置</el-button>
       </el-form-item>
     </el-form>
   </div>

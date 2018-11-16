@@ -8,12 +8,10 @@
         </el-col>
       </el-header>
       <el-container>
-        <el-aside width="200px">
-          <nav-menu></nav-menu>
-        </el-aside>
-        <el-main id="container">
+        <nav-menu class="menu" ref="menu" @clickme="changeWidth"></nav-menu>
+        <div class="main" id="container" ref="main">
           <router-view/>
-        </el-main>
+        </div>
       </el-container>
     </el-container>
   </div>
@@ -25,8 +23,40 @@ import NavMenu from 'components/nav-menu/nav-menu'
 
 export default {
   name: 'App',
-  created() {
-    
+  methods: {
+    changeWidth(fold) {
+      if (fold) {
+          Velocity(this.$refs.menu.$refs.menulist, {
+            width: 65
+          }, {
+            easing: 'easeOutQuint',
+            duration: 200,
+            queue: false
+          })
+          Velocity(this.$refs.main, {
+            left: 65
+          }, {
+            easing: 'easeOutQuint',
+            duration: 200,
+            queue: false
+          })
+      } else {
+          Velocity(this.$refs.menu.$refs.menulist, {
+            width: 200
+          }, {
+            easing: 'easeOutQuint',
+            duration: 200,
+            queue: false
+          })
+          Velocity(this.$refs.main, {
+            left: 200
+          }, {
+            easing: 'easeOutQuint',
+            duration: 200,
+            queue: false
+          })
+      }
+    }
   },
   components: {
     LoginInfo,
@@ -49,7 +79,27 @@ export default {
   body > .el-container {
     margin-bottom: 40px;
   }
-  
+  .menu {
+    width: 200px;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    bottom: 0;
+    background: #324157;
+  }
+  .el-menu {
+    border-right: 0;
+  }
+  .main {
+    position: absolute;
+    top: 60px;
+    left: 200px;
+    bottom: 0;
+    right: 0;
+    background-color: #fff;
+    padding: 20px;
+  }
+    
   .el-container:nth-child(5) .el-aside,
   .el-container:nth-child(6) .el-aside {
     line-height: 260px;

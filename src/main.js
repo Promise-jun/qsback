@@ -8,6 +8,7 @@ import router from './router'
 import Velocity from 'velocity-animate' //animate动画
 
 import 'common/css/index.css'
+import 'common/iconfont/iconfont.css'
 
 import {getCookie} from 'common/js/util'
 

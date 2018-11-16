@@ -44,7 +44,7 @@
 		    </el-date-picker>
 		  </el-form-item>
 		  <el-form-item>
-		    <el-button type="primary" @click="onSubmit">查询</el-button>
+		    <el-button type="primary" @click="onSubmit" icon="el-icon-circle-plus">查询</el-button>
 		  </el-form-item>
 		</el-form>
 
@@ -56,7 +56,7 @@
 		    border
 		    :data="userList"
 		    tooltip-effect="dark"
-		    style="width: 100%"
+		    style="width: 100%; margin: 15px 0;"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column type="selection"  width="50"> </el-table-column>
 		    <el-table-column label="用户ID">
@@ -72,12 +72,40 @@
 		    <el-table-column prop="gold" label="金币"></el-table-column>
 		    <el-table-column prop="diamond" label="钻石"></el-table-column>
 		    <el-table-column prop="kefu" label="客服"></el-table-column>
-		    <el-table-column label="操作">
-		    	<template slot-scope="scope">
-					<el-button @click="editRole(scope.row)" type="primary" size="mini" icon="el-icon-edit" circle></el-button>
-			    </template>
+		    <el-table-column label="操作" width="150">
+		      <template slot-scope="scope">
+		    	<el-tooltip content="编辑" placement="top">
+				  <el-button @click="editRole(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
+				</el-tooltip>
+				<el-tooltip content="禁用" placement="top" v-show="!isLock">
+				  <el-button type="text" icon="iconfont icon-lock" style="color: #F56C6C;"></el-button>
+				</el-tooltip>
+				<el-tooltip content="启用" placement="top" v-show="isLock">
+				  <el-button type="text" icon="iconfont icon-unlock" style="color: #67C23A;"></el-button>
+				</el-tooltip>
+				<el-tooltip content="添加导师或主播" placement="top">
+				  <el-button type="text" icon="iconfont icon-plus-circle" style="color: #E6A23C;"></el-button>
+				</el-tooltip>
+				<el-tooltip content="分配客服" placement="top">
+				  <el-button type="text" icon="iconfont icon-cluster" style="color: #00A5FF;"></el-button>
+				</el-tooltip>
+				<el-tooltip content="重置密码" placement="top">
+				  <el-button type="text" icon="iconfont icon-edit-square" style="color: #F56C6C;"></el-button>
+				</el-tooltip>
+			  </template>
 		    </el-table-column>
 		</el-table>
+
+		<el-row>
+		  <el-col :span="12">
+		  	<el-button type="primary" icon="el-icon-circle-plus">添加用户</el-button>
+		  	<el-button type="primary" icon="el-icon-circle-plus">添加IM账号</el-button>
+		  	<el-button type="primary" icon="el-icon-rank">批量分配客服</el-button>
+		  </el-col>
+		  <el-col :span="12">
+		  	<el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
+		  </el-col>
+		</el-row>
 	</div>
 </template>
 
@@ -146,7 +174,8 @@
 		          	diamond: 0,
 		          	kefu: '地方可'
 		        }],
-		        multipleSelection: []
+		        multipleSelection: [],
+		        isLock: false  //是否禁用
 			}
 		},
 		methods: {
@@ -162,3 +191,9 @@
 		}
 	}
 </script>
+
+<style type="text/css" lang="scss" scoped>
+	.el-pagination {
+		float: right;
+	}
+</style>

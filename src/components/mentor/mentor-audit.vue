@@ -1,0 +1,147 @@
+<template>
+	<div>
+		<!-- 面包屑 -->
+    	<bread-crumb :dataPath="dataPath"></bread-crumb>
+
+    	<el-form :inline="true" :model="formObj" class="demo-form-inline">
+		  <el-form-item label="用户ID">
+		    <el-input v-model="formObj.userid" placeholder="请输入用户ID"></el-input>
+		  </el-form-item>
+		  <el-form-item label="用户名">
+		    <el-input v-model="formObj.nickName" placeholder="请输入用户名"></el-input>
+		  </el-form-item>
+		  <el-form-item label="姓名">
+		    <el-input v-model="formObj.name" placeholder="请输入姓名"></el-input>
+		  </el-form-item>
+		  <el-form-item label="导师审核状态">
+		    <el-select v-model="formObj.status" placeholder="请选择">
+			    <el-option v-for="item in statusArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
+			</el-select>
+		  </el-form-item>
+		  <el-form-item label="注册时间">
+		    <el-date-picker 
+		    	v-model="formObj.dateValue" 
+		    	type="daterange" 
+		    	range-separator="-" 
+		    	start-placeholder="开始日期" 
+		    	end-placeholder="结束日期">
+		    </el-date-picker>
+		  </el-form-item>
+		  <el-form-item>
+		    <el-button type="primary" @click="onSubmit" icon="el-icon-circle-plus">查询</el-button>
+		  </el-form-item>
+		</el-form>
+
+		<el-alert title="总计416个用户" type="warning" :closable="false"></el-alert>
+
+		<el-table
+		    ref="tableList"
+		    stripe
+		    border
+		    :data="tableList"
+		    tooltip-effect="dark"
+		    style="width: 100%; margin: 15px 0;"
+		    @selection-change="handleSelectionChange">
+		    <el-table-column type="selection"  width="50"> </el-table-column>
+		    <el-table-column label="用户ID">
+		      <template slot-scope="scope">{{ scope.row.userid }}</template>
+		    </el-table-column>
+		    <el-table-column prop="username" label="用户名"></el-table-column>
+		    <el-table-column prop="nickName" label="昵称"></el-table-column>
+			<el-table-column prop="sex" label="性别"></el-table-column>
+			<el-table-column prop="registerTime" label="注册时间" width="150"></el-table-column>
+		    <el-table-column prop="name" label="姓名"></el-table-column>
+		    <el-table-column prop="city" label="所在城市"></el-table-column>
+		    <el-table-column prop="workTime" label="从业时间" width="150"></el-table-column>
+		    <el-table-column prop="submitTime" label="提交时间" width="150"></el-table-column>
+		    <el-table-column prop="shStatus" label="审核状态"></el-table-column>
+		    <el-table-column label="操作">
+		    	<template slot-scope="scope">
+					<el-tooltip content="处理" placement="top">
+					  <el-button @click="editRole(scope.row)" type="text" icon="iconfont icon-wrench"></el-button>
+					</el-tooltip>
+			    </template>
+		    </el-table-column>
+		</el-table>
+
+		<el-row>
+		  <el-col :span="12">
+		  	<el-button type="primary" icon="el-icon-refresh">更新IM账号</el-button>
+		  </el-col>
+		  <el-col :span="12">
+		  	<el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
+		  </el-col>
+		</el-row>
+	</div>
+</template>
+
+<script type="text/javascript">
+	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
+
+	export default {
+		name: 'mentorlist',
+		data() {
+			return {
+				dataPath: ['用户管理', '导师管理', '导师审核'],
+				formObj: {
+					userid: '',
+					name: '',
+					nickName: '',
+					status: '',  //导师审核状态
+					dateValue: ''
+				},
+				statusArr: [{
+		          value: '1',
+		          label: '待审核'
+		        }, {
+		          value: '2',
+		          label: '审核不通过'
+		        }],
+		        tableList: [{
+		        	userid: 7541,
+		        	username: '大方点',
+		          	nickName: '俄方岁',
+		          	enterTime: '2018-11-15 11:15:15',
+		          	registerTime: '2018-11-15 11:15:15',
+		          	name: '高圆圆',
+		          	sex: "女",
+		          	city: '广东 韶关',
+		          	workTime: '2018-11-15 11:15:15',
+		          	submitTime: '2018-11-15 11:15:15',
+		          	shStatus: ''
+		        }, {
+		        	userid: 7541,
+		        	username: '大方点',
+		          	nickName: '俄方岁',
+		          	enterTime: '2018-11-15 11:15:15',
+		          	registerTime: '2018-11-15 11:15:15',
+		          	name: '高圆圆',
+		          	sex: "女",
+		          	city: '广东 韶关',
+		          	workTime: '2018-11-15 11:15:15',
+		          	submitTime: '2018-11-15 11:15:15',
+		          	shStatus: ''
+		        }],
+		        multipleSelection: []
+			}
+		},
+		methods: {
+			onSubmit() {
+	        	console.log(this.formObj);
+	      	},
+	      	handleSelectionChange(val) {
+	      		console.log(val)
+		        this.multipleSelection = val;
+		    }
+		},
+		components: {
+			BreadCrumb
+		}
+	}
+</script>
+
+<style type="text/css" lang="scss" scoped>
+	.el-pagination {
+		float: right;
+	}
+</style>

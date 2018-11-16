@@ -35,6 +35,7 @@ footer, header, menu, nav, section {
 
 body {
   line-height: 1;
+  background-color: #F0F0F0;
 }
 
 blockquote, q {
@@ -72,3 +73,7 @@ body, html {
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 } 
+
+.el-table .el-button+.el-button {
+  margin-left: 1px;
+}

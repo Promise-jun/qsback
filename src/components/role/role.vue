@@ -15,8 +15,12 @@
 		    <el-table-column prop="date" label="修改时间"></el-table-column>
 		    <el-table-column label="操作">
 		    	<template slot-scope="scope">
-					<el-button @click="editRole(scope.row)" type="primary" size="mini" icon="el-icon-edit" circle></el-button>
-					<el-button @click="delRole(scope.row)" type="danger" size="mini" icon="el-icon-delete" circle></el-button>
+		    		<el-tooltip content="编辑" placement="top">
+					  <el-button @click="editRole(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
+					</el-tooltip>
+		    		<el-tooltip content="删除" placement="top">
+					  <el-button @click="delRole(scope.row)" type="text" icon="iconfont icon-delete" style="color: red;"></el-button>
+					</el-tooltip>
 			    </template>
 		    </el-table-column>
 		</el-table>

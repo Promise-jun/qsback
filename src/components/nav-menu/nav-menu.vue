@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <el-menu router unique-opened  :default-active="onRoutes">
+  <div ref="menulist">
+    <el-menu router unique-opened :collapse="isFold" :default-active="onRoutes" background-color="#324157" text-color="#BFCBD9">
+    	<div class="fold" @click="fold"><i class="iconfont icon-swap"></i></div>
         <!-- 循环navList数组，将每项的值及index传给nav-item组件 -->
         <nav-item v-for="(item, index) in navList" :item="item" :navIndex="String(index)" :key="index"></nav-item>
     </el-menu>
@@ -12,14 +13,17 @@ import NavItem from 'components/nav-menu/nav-item'
 let data = [
     {
         path: '/',
-        name: '首页'
+        name: '首页',
+        icon: 'el-icon-menu'
     },
     {
     	name: '角色管理',
+    	icon: 'iconfont icon-team',
         path: '/role'
     },
     {
         name: '用户管理',
+        icon: 'el-icon-menu',
         child: [
             {
                 name: '客户管理',
@@ -29,19 +33,41 @@ let data = [
                 name: '导师管理',
                 child: [
                     {
-                    	name: '详细鉴权',
-                        path: '/components/permission'
+                    	name: '导师列表',
+                        path: '/mentor/list'
                     },
                     {
-                    	name: '表格分页',
-                        path: '/components/pageTable'
+                    	name: '导师审核',
+                        path: '/mentor/audit'
                     }
                 ]
+            },
+            {
+                name: '主播管理',
+                child: [
+                    {
+                    	name: '主播列表',
+                        path: '/anchor/list'
+                    },
+                    {
+                    	name: '主播审核',
+                        path: '/anchor/audit'
+                    }
+                ]
+            },
+            {
+                name: '群组管理',
+                path: '/group/list'
+            },
+            {
+                name: '后台用户管理',
+                path: '/operator/list'
             }
         ]
     },
     {
     	name: '个人中心',
+    	icon: 'el-icon-menu',
     	child: [
     		{
     			name: '修改密码',
@@ -55,7 +81,8 @@ export default {
   name: 'navMenu',
   data() {
     return {
-    	navList: data
+    	navList: data,
+    	isFold: false  //是否折叠
     }
   },
   computed: {
@@ -64,6 +91,12 @@ export default {
         return this.$route.path
     }
   },
+  methods: {
+  	fold() {
+  		this.isFold = !this.isFold
+  		this.$emit('clickme', this.isFold);
+  	}
+  },
   components: {
   	NavItem
   }
@@ -71,4 +104,14 @@ export default {
 
 </script>
 <style type="text/css" lang="scss" scoped>
+	.fold {
+		text-align: center;
+		font-size: 30px;
+		line-height: 30px;
+		color: #fff;
+		cursor: pointer;
+		&:hover {
+			background-color: #4E5C71;
+		}
+	}
 </style>

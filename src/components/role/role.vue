@@ -19,7 +19,7 @@
 					  <el-button @click="editRole(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
 					</el-tooltip>
 		    		<el-tooltip content="删除" placement="top">
-					  <el-button @click="delRole(scope.row)" type="text" icon="iconfont icon-delete" style="color: red;"></el-button>
+					  <el-button @click="delRole(scope.row)" type="text" icon="iconfont icon-delete" style="color: #F56C6C;"></el-button>
 					</el-tooltip>
 			    </template>
 		    </el-table-column>

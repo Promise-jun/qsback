@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',  // 编译发布的根目录，可配置为资源服务器域名或 CDN 域名
     proxyTable: {
         "/api": {
-            target: "http://192.168.21.191:8080", //接口地址 //https://www.junfengshow.com
+            target: "http://132.232.208.118:8080/qingshuo", //接口地址 //https://www.junfengshow.com
             // secure: false,          // 如果是https接口，需要配置这个参数
             changeOrigin: true,     // 如果接口跨域，需要进行这个参数配置
             pathRewrite: {"^/api": ""}

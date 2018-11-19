@@ -18,8 +18,27 @@ let data = [
     },
     {
     	name: '角色管理',
-    	icon: 'iconfont icon-team',
+    	icon: 'el-icon-menu',
         path: '/role'
+    },
+    {
+    	name: '功能管理',
+    	icon: 'el-icon-menu',
+        path: '/function'
+    },
+    {
+    	name: '权限管理',
+    	icon: 'el-icon-menu',
+    	child: [
+    		{
+    			name: '角色权限管理',
+    			path: '/authority/role'
+    		},
+    		{
+    			name: '用户权限管理',
+    			path: '/authority/user'
+    		}
+    	]
     },
     {
         name: '用户管理',
@@ -62,6 +81,10 @@ let data = [
             {
                 name: '后台用户管理',
                 path: '/operator/list'
+            },
+            {
+            	name: '客服组管理',
+            	path: '/servicegroup'
             }
         ]
     },

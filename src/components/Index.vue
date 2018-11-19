@@ -20,7 +20,7 @@ export default {
         method: 'post',
         url: '/system/user/findAccount',
         data: this.$qs.stringify({
-          userAccount: 'pan'
+          name: 'pan'
         })
       }).then(res => {
         console.log(res)

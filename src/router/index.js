@@ -5,6 +5,9 @@ import Login from 'components/login/login'
 import ChangePass from 'components/change-pass/change-pass'
 import NotFound from 'components/not-found/not-found'
 import Role from 'components/role/role'
+import Func from 'components/func/func'
+import AuthorityRole from 'components/authority/authority-role'
+import AuthorityUser from 'components/authority/authority-user'
 import UserList from 'components/user-list/user-list'
 import MentorList from 'components/mentor/mentor-list'
 import MentorAudit from 'components/mentor/mentor-audit'
@@ -12,6 +15,7 @@ import AnchorList from 'components/anchor/anchor-list'
 import AnchorAudit from 'components/anchor/anchor-audit'
 import GroupList from 'components/group/group-list'
 import OperatorList from 'components/operator/operator-list'
+import ServiceGroup from 'components/service-group/service-group'
 
 Vue.use(Router)
 
@@ -37,6 +41,21 @@ export default new Router({
       path: '/role',  //角色管理
       name: 'role',
       component: Role
+    },
+    {
+      path: '/function',  //功能管理
+      name: 'func',
+      component: Func
+    },
+    {
+      path: '/authority/role', //角色权限管理
+      name: 'authorityRole',
+      component: AuthorityRole
+    },
+    {
+      path: '/authority/user', //用户权限管理
+      name: 'authorityUser',
+      component: AuthorityUser
     },
     {
       path: '/userlist', //用户列表
@@ -72,6 +91,11 @@ export default new Router({
       path: '/operator/list', //后台用户列表
       name: 'operatorlist',
       component: OperatorList
+    },
+    {
+      path: '/servicegroup',
+      name: 'servicegroup',
+      component: ServiceGroup
     },
     {
       path: '/404',

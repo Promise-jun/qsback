@@ -168,8 +168,7 @@
             this.isTest = false; //倾斜特效
 
             //登录成功
-            if (data.codes === 200) {
-              console.log(data)
+            if (data.code == 200) {
               // setCookie('admin_token', 'admin');
               this.$router.push({path: '/'});
               this.$message({

@@ -89,6 +89,25 @@ let data = [
         ]
     },
     {
+    	name: '咨询管理',
+    	icon: 'el-icon-menu',
+    	child: [
+    		{
+    			name: '咨询设置',
+    			child: [
+    				{
+    					name: '心理分类',
+    					path: '/mentalCategory/list'
+    				},
+    				{
+    					name: '个性化标签',
+    					path: '/personalityLabel/list'
+    				}
+    			]
+    		}
+    	]
+    },
+    {
     	name: '个人中心',
     	icon: 'el-icon-menu',
     	child: [

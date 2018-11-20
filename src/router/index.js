@@ -16,6 +16,7 @@ import AnchorAudit from 'components/anchor/anchor-audit'
 import GroupList from 'components/group/group-list'
 import OperatorList from 'components/operator/operator-list'
 import ServiceGroup from 'components/service-group/service-group'
+import MentalCategory from 'components/mental-category/mental-category'  //心理分类
 
 Vue.use(Router)
 
@@ -93,9 +94,14 @@ export default new Router({
       component: OperatorList
     },
     {
-      path: '/servicegroup',
+      path: '/servicegroup', //客服组管理
       name: 'servicegroup',
       component: ServiceGroup
+    },
+    {
+      path: '/mentalCategory/list', //心理分类
+      name: 'mentalCategory',
+      component: MentalCategory
     },
     {
       path: '/404',

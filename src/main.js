@@ -14,7 +14,7 @@ import {getCookie} from 'common/js/util'
 
 import axios from 'axios';
 import qs from 'qs';
-axios.defaults.timeout = 5000;
+axios.defaults.timeout = 10000;
 axios.defaults.baseURL = '/api'; //这是调用数据接口
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 Vue.prototype.$qs = qs;

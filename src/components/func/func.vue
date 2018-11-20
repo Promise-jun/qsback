@@ -27,9 +27,6 @@
 		    		<el-tooltip content="删除" placement="top">
 					  <el-button @click="delRole(scope.row)" type="text" icon="iconfont icon-delete" style="color: #F56C6C;"></el-button>
 					</el-tooltip>
-					<el-tooltip content="查看" placement="top">
-					  <el-button @click="selectRole(scope.row)" type="text" icon="iconfont icon-select" style="color: #E6A23C;"></el-button>
-					</el-tooltip>
 			    </template>
 		    </el-table-column>
 		</el-table>
@@ -64,6 +61,14 @@
 		        dialogFormVisible: false,
 		        roleData: {}
 			}
+		},
+		created() {
+			console.log(123)
+			console.log(this.$route.query);
+		},
+		updated() {
+			console.log(456)
+			console.log(this.$route.query);
 		},
 		methods: {
 			// 添加角色
@@ -101,7 +106,7 @@
 	  	},
 		watch:{
 	        $route( to , from ){ //监听路由变化
-	            console.log( to.query )
+	//             console.log( to.query )
 	         }
 		},
 		components: {

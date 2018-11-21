@@ -8,7 +8,9 @@ import Role from 'components/role/role'
 import Func from 'components/func/func'
 import AuthorityRole from 'components/authority/authority-role'
 import AuthorityUser from 'components/authority/authority-user'
-import UserList from 'components/user-list/user-list'
+// 用户管理
+import UserList from 'components/user-list/user-list' //用户列表
+import UserOperate from 'components/user-list/user-operate' //新增用户、编辑用户
 import MentorList from 'components/mentor/mentor-list'
 import MentorAudit from 'components/mentor/mentor-audit'
 import AnchorList from 'components/anchor/anchor-list'
@@ -16,7 +18,11 @@ import AnchorAudit from 'components/anchor/anchor-audit'
 import GroupList from 'components/group/group-list'
 import OperatorList from 'components/operator/operator-list'
 import ServiceGroup from 'components/service-group/service-group'
-import MentalCategory from 'components/mental-category/mental-category'  //心理分类
+// 咨询管理
+import MentalCategory from 'components/consult-supervise/mental-category'  //心理分类
+import PersonalityLabel from 'components/consult-supervise/personality-label' //个性化标签
+// 数据字典
+import DataDictionary from 'components/data-dictionary/data-dictionary'
 
 Vue.use(Router)
 
@@ -61,7 +67,14 @@ export default new Router({
     {
       path: '/userlist', //用户列表
       name: 'userlist',
-      component: UserList
+      component: UserList,
+      children: [
+        {
+          path: 'addUser',
+          name: 'userOperate',
+          component: UserOperate
+        }
+      ]
     },
     {
       path: '/mentor/list', //导师列表
@@ -102,6 +115,16 @@ export default new Router({
       path: '/mentalCategory/list', //心理分类
       name: 'mentalCategory',
       component: MentalCategory
+    },
+    {
+      path: '/personalityLabel/list', //个性化标签
+      name: 'personalityLabel',
+      component: PersonalityLabel
+    },
+    {
+      path: '/dataDictionary', //数据字典
+      name: 'dataDictionary',
+      component: DataDictionary
     },
     {
       path: '/404',

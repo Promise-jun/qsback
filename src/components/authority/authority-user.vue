@@ -14,7 +14,7 @@
 		    <el-input v-model="formObj.name" placeholder="请输入"></el-input>
 		  </el-form-item>
 		  <el-form-item>
-		    <el-button type="primary" @click="onSubmit">查询</el-button>
+		    <el-button type="primary" @click="onSubmit" icon="el-icon-circle-plus">查询</el-button>
 		  </el-form-item>
 		</el-form>
 

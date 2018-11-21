@@ -7,17 +7,14 @@
 		:before-close="hidePanel"
 	>
 	  	<el-form :model="roleForm" status-icon :rules="rules" ref="roleForm" label-width="200px" class="demo-ruleForm">
-		  <el-form-item label="角色名称" prop="name">
-		    <el-input v-model="roleForm.name" autocomplete="off"></el-input>
+		  <el-form-item label="角色名称" prop="roleName">
+		    <el-input v-model="roleForm.roleName" autocomplete="off"></el-input>
 		  </el-form-item>
-		  <el-form-item label="角色级别" prop="rank">
-		    <el-input v-model="roleForm.rank" autocomplete="off"></el-input>
-		  </el-form-item>
-		  <el-form-item label="每天允许查看用户手机次数" prop="checkNum">
-		    <el-input v-model.number="roleForm.checkNum"></el-input>
+		  <el-form-item label="角色描述">
+		    <el-input v-model="roleForm.roleDescribe" autocomplete="off"></el-input>
 		  </el-form-item>
 		  <el-form-item>
-		    <el-button type="primary" @click="submitForm('roleForm')">提交</el-button>
+		    <el-button type="primary" @click="submitForm('roleForm')" :loading="submitLoading">提交</el-button>
 		    <el-button @click="hidePanel">取消</el-button>
 		  </el-form-item>
 		</el-form>
@@ -38,20 +35,17 @@
 			roleData: {
 				type: Object,
 				default: {}
+			},
+			submitLoading: {
+				type: Boolean,
+				default: false
 			}
 		},
 		data() {
 			return {
 		        rules: {
-		          name: [
-		            { required: true, message: '角色名称不能为空' },
-		          ],
-		          rank: [
-		            { required: true, message: '角色级别不能为空' },
-		          ],
-		          checkNum: [
-		            { required: true, message: '查看手机次数不能为空'},
-		            { type: 'number', message: '必须为数字值' }
+		          roleName: [
+		            { required: true, message: '角色名称不能为空' }
 		          ]
 		        }
 			}

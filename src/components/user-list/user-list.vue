@@ -98,7 +98,7 @@
 
 		<el-row>
 		  <el-col :span="12">
-		  	<el-button type="primary" icon="el-icon-circle-plus">添加用户</el-button>
+		  	<el-button type="primary" icon="el-icon-circle-plus" @click="addUser">添加用户</el-button>
 		  	<el-button type="primary" icon="el-icon-circle-plus">添加IM账号</el-button>
 		  	<el-button type="primary" icon="el-icon-rank">批量分配客服</el-button>
 		  </el-col>
@@ -106,6 +106,10 @@
 		  	<el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
 		  </el-col>
 		</el-row>
+
+		<transition name="fade">
+			<router-view class="children-view"></router-view>
+		</transition>
 	</div>
 </template>
 
@@ -179,6 +183,11 @@
 			}
 		},
 		methods: {
+		  addUser() { //添加用户
+		  	this.$router.push({
+		  		path: '/userlist/addUser'
+		  	})
+		  },
 	      onSubmit() {
 	        console.log(this.formObj);
 	      },
@@ -195,5 +204,22 @@
 <style type="text/css" lang="scss" scoped>
 	.el-pagination {
 		float: right;
+	}
+	.children-view {
+		position: absolute;
+	    top: 0;
+	    left: 0;
+	    bottom: 0;
+	    right: 0;
+	    z-index: 100;
+	    background-color: #fff;
+	    padding: 20px;
+	    overflow: scroll;
+	}
+	.fade-enter-active, .fade-leave-active {
+	  	transition: opacity .3s;
+	}
+	.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+	  	opacity: 0;
 	}
 </style>

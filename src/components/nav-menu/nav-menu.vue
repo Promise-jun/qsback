@@ -116,6 +116,11 @@ let data = [
     			path: '/changePass'
     		}
     	]
+    },
+    {
+    	name: '数据字典',
+    	icon: 'el-icon-menu',
+    	path: '/dataDictionary'
     }
 ]
 

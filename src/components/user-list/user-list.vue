@@ -5,36 +5,30 @@
 
     	<el-form :inline="true" :model="formObj" class="demo-form-inline">
 		  <el-form-item label="用户ID">
-		    <el-input v-model="formObj.userid" placeholder="请输入用户ID"></el-input>
-		  </el-form-item>
-		  <el-form-item label="手机号">
-		    <el-input v-model="formObj.phone" placeholder="请输入手机号"></el-input>
+		    <el-input v-model="formObj.userId" placeholder="请输入用户ID"></el-input>
 		  </el-form-item>
 		  <el-form-item label="姓名">
-		    <el-input v-model="formObj.name" placeholder="请输入姓名"></el-input>
+		    <el-input v-model="formObj.userName" placeholder="请输入姓名"></el-input>
 		  </el-form-item>
 		  <el-form-item label="昵称">
-		    <el-input v-model="formObj.nickName" placeholder="请输入昵称"></el-input>
+		    <el-input v-model="formObj.userNickname" placeholder="请输入昵称"></el-input>
 		  </el-form-item>
-		  <el-form-item label="淘宝账号">
-		    <el-input v-model="formObj.taobaoId" placeholder="请输入淘宝账号"></el-input>
-		  </el-form-item>
-		  <el-form-item label="渠道">
+		  <!-- <el-form-item label="渠道">
 		    <el-select v-model="formObj.canal" placeholder="请选择">
-			    <el-option v-for="item in canalArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
-			</el-select>
-		  </el-form-item>
-		  <el-form-item label="客服">
+		  			    <el-option v-for="item in canalArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
+		  			</el-select>
+		  </el-form-item> -->
+		  <!-- <el-form-item label="客服">
 		    <el-select v-model="formObj.kefu" placeholder="请选择">
-			    <el-option v-for="item in kefuArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
-			</el-select>
-		  </el-form-item>
-		  <el-form-item label="账户属性">
+		  			    <el-option v-for="item in kefuArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
+		  			</el-select>
+		  </el-form-item> -->
+		  <!-- <el-form-item label="账户属性">
 		    <el-select v-model="formObj.attr" placeholder="请选择">
-			    <el-option v-for="item in attrArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
-			</el-select>
-		  </el-form-item>
-		  <el-form-item label="注册时间">
+		  			    <el-option v-for="item in attrArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
+		  			</el-select>
+		  </el-form-item> -->
+		  <!-- <el-form-item label="注册时间">
 		    <el-date-picker 
 		    	v-model="formObj.dateValue" 
 		    	type="daterange" 
@@ -42,7 +36,7 @@
 		    	start-placeholder="开始日期" 
 		    	end-placeholder="结束日期">
 		    </el-date-picker>
-		  </el-form-item>
+		  </el-form-item> -->
 		  <el-form-item>
 		    <el-button type="primary" @click="onSubmit" icon="el-icon-circle-plus">查询</el-button>
 		  </el-form-item>
@@ -54,24 +48,22 @@
 		    ref="userlist"
 		    stripe
 		    border
+		    v-loading="loading"
 		    :data="userList"
 		    tooltip-effect="dark"
 		    style="width: 100%; margin: 15px 0;"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column type="selection"  width="50"> </el-table-column>
 		    <el-table-column label="用户ID">
-		      <template slot-scope="scope">{{ scope.row.userid }}</template>
+		      <template slot-scope="scope">{{ scope.row.userId }}</template>
 		    </el-table-column>
-		    <el-table-column prop="phone" label="手机号"></el-table-column>
-		    <el-table-column prop="nickName" label="昵称"></el-table-column>
-		    <el-table-column prop="registerTime" label="注册时间" width="150"></el-table-column>
-		    <el-table-column prop="name" label="姓名"></el-table-column>
-		    <el-table-column prop="taobaoId" label="淘宝账号"></el-table-column>
-		    <el-table-column prop="canal" label="渠道"></el-table-column>
-		    <el-table-column prop="price" label="金额"></el-table-column>
-		    <el-table-column prop="gold" label="金币"></el-table-column>
-		    <el-table-column prop="diamond" label="钻石"></el-table-column>
-		    <el-table-column prop="kefu" label="客服"></el-table-column>
+		    <el-table-column prop="userNickname" label="昵称"></el-table-column>
+		    <el-table-column prop="createTm" label="注册时间" width="150"></el-table-column>
+		    <el-table-column prop="userName" label="姓名"></el-table-column>
+		    <el-table-column prop="userSourceName" label="渠道"></el-table-column>
+		    <el-table-column prop="moneyBalance" label="金额"></el-table-column>
+		    <el-table-column prop="goldBalance" label="金币"></el-table-column>
+		    <el-table-column prop="createNm" label="客服"></el-table-column>
 		    <el-table-column label="操作" width="150">
 		      <template slot-scope="scope">
 		    	<el-tooltip content="编辑" placement="top">
@@ -103,11 +95,18 @@
 		  	<el-button type="primary" icon="el-icon-rank">批量分配客服</el-button>
 		  </el-col>
 		  <el-col :span="12">
-		  	<el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
+		  	<page-num
+		  		v-if="pageTotal.total > pageTotal.pageSize"
+				:currentpage="pageTotal.page"
+				:total="pageTotal.total"
+				:pageSize="pageTotal.pageSize"
+				:render="getList"
+				:options="pageTotal">
+			</page-num>
 		  </el-col>
 		</el-row>
 
-		<transition name="fade">
+		<transition name="fade" mode="out-in">
 			<router-view class="children-view"></router-view>
 		</transition>
 	</div>
@@ -115,88 +114,89 @@
 
 <script type="text/javascript">
 	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
+	import PageNum from 'base/page-num/page-num'
+	import { formatDate } from 'common/js/format'
 
 	export default {
 		name: 'userlist',
 		data() {
 			return {
 				dataPath: ['用户管理', '客户管理'],
+				loading: false,
 				formObj: {
-					userid: '',
-					phone: '',
-					name: '',
-					nickName: '',
-					taobaoId: '',
-					canal: '', //渠道
-					kefu: '',
-					attr: '',  //客户属性
-					dateValue: ''
+					userId: '',
+					userName: '',
+					userNickname: ''
 				},
-				canalArr: [{
-		          value: '1',
-		          label: '黄金糕'
-		        }, {
-		          value: '2',
-		          label: '双皮奶'
-		        }],
-		        kefuArr: [{
-		          value: '1',
-		          label: '黄金糕'
-		        }, {
-		          value: '2',
-		          label: '双皮奶'
-		        }],
-		        attrArr: [{
-		          value: '1',
-		          label: '黄金糕'
-		        }, {
-		          value: '2',
-		          label: '双皮奶'
-		        }],
-		        userList: [{
-		        	userid: 7541,
-		          	phone: '158****1235',
-		          	nickName: '俄方岁',
-		          	registerTime: '2018-11-15 11:15:15',
-		          	name: '',
-		          	taobaoId: '',
-		          	canal: 'APP',
-		          	price: 0,
-		          	gold: 0,
-		          	diamond: 0,
-		          	kefu: '地方可'
-		        },{
-		        	userid: 7541,
-		          	phone: '158****1235',
-		          	nickName: '俄方岁',
-		          	registerTime: '2018-11-15 11:15:15',
-		          	name: '',
-		          	taobaoId: '',
-		          	canal: 'APP',
-		          	price: 0,
-		          	gold: 0,
-		          	diamond: 0,
-		          	kefu: '地方可'
-		        }],
+		        userList: [],
 		        multipleSelection: [],
-		        isLock: false  //是否禁用
+		        isLock: false,  //是否禁用
+		        pageTotal: { //分页数据
+			        total: 0,
+			        pageSize: 10,
+			        page: 1
+			    }
 			}
 		},
+		filters: {
+		    formatDate(time) {
+		    	var date = new Date(time);
+		    	return formatDate(date, 'yyyy-MM-dd hh:mm:ss');
+		   	}
+		},
+		created() {
+			this.getList();
+		},
 		methods: {
+			getList() {
+				let uploadData = {
+					userType: 0,
+					thisPage: this.pageTotal.page,
+					limit: this.pageTotal.pageSize,
+					userId: this.formObj.userId,
+					userName: this.formObj.userName,
+					userNickname: this.formObj.userNickname
+				}
+				this.loading = true
+				this.$axios({
+					method: 'post',
+					url: '/system/user/queryForList',
+					data: this.$qs.stringify(uploadData)
+				}).then(res => {
+					this.loading = false
+					let result = res.data
+					if (result.code == 200) {
+						if (result.data.list.length) {
+							this.pageTotal = {
+				              total: parseInt(result.data.total),
+				              pageSize: parseInt(result.data.pageSize),
+				              page: parseInt(result.data.pageNum)
+				            };
+						}
+			        	this.userList = result.data.list
+					} else {
+						this.$message.error(result.msg);
+					}
+				}).catch(err => {
+			    	this.loading = false
+			        console.log(err)
+			    })
+			},
 		  addUser() { //添加用户
 		  	this.$router.push({
 		  		path: '/userlist/addUser'
 		  	})
 		  },
 	      onSubmit() {
-	        console.log(this.formObj);
+	        this.getList();
 	      },
 	      handleSelectionChange(val) {
 	        this.multipleSelection = val;
 	      }
 	    },
 		components: {
-			BreadCrumb
+			BreadCrumb,
+			PageNum
 		}
 	}
 </script>
@@ -214,7 +214,7 @@
 	    z-index: 100;
 	    background-color: #fff;
 	    padding: 20px;
-	    overflow: scroll;
+	    overflow-y: auto;
 	}
 	.fade-enter-active, .fade-leave-active {
 	  	transition: opacity .3s;

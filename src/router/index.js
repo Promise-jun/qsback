@@ -40,92 +40,138 @@ export default new Router({
       component: Login
     },
     {
-      path: '/changePass', //修改密码
-      name: 'changePass',
-      component: ChangePass
-    },
-    {
-      path: '/role',  //角色管理
-      name: 'role',
-      component: Role
-    },
-    {
-      path: '/function',  //功能管理
-      name: 'func',
-      component: Func
-    },
-    {
-      path: '/authority/role', //角色权限管理
-      name: 'authorityRole',
-      component: AuthorityRole
-    },
-    {
-      path: '/authority/user', //用户权限管理
-      name: 'authorityUser',
-      component: AuthorityUser
-    },
-    {
-      path: '/userlist', //用户列表
-      name: 'userlist',
-      component: UserList,
+      path: '/',
+      name: 'individualCenter', //个人中心
+      component: Index,
       children: [
         {
-          path: 'addUser',
-          name: 'userOperate',
-          component: UserOperate
+          path: '/changePass', //修改密码
+          name: 'changePass',
+          component: ChangePass
+        },
+      ]
+    },
+    {
+      path: '/',
+      component: Index,
+      children: [
+        {
+          path: '/role',  //角色管理
+          name: 'role',
+          component: Role
+        },
+      ]
+    },
+    {
+      path: '/',
+      component: Index,
+      children: [
+        {
+          path: '/function',  //功能管理
+          name: 'func',
+          component: Func
+        },
+      ]
+    },
+    {
+      path: '/',
+      component: Index,
+      name: 'authority',  //权限管理
+      children: [
+        {
+          path: '/authority/role', //角色权限管理
+          name: 'authorityRole',
+          component: AuthorityRole
+        },
+        {
+          path: '/authority/user', //用户权限管理
+          name: 'authorityUser',
+          component: AuthorityUser
         }
       ]
     },
     {
-      path: '/mentor/list', //导师列表
-      name: 'mentorlist',
-      component: MentorList
+      path: '/',
+      component: Index,
+      name: 'userManage', //用户管理
+      children: [
+          {
+            path: '/userlist', //用户列表
+            name: 'userlist',
+            component: UserList,
+            children: [
+                {
+                  path: 'addUser',
+                  name: 'userOperate',
+                  component: UserOperate
+                }
+            ]
+          },
+          {
+            path: '/mentor/list', //导师列表
+            name: 'mentorlist',
+            component: MentorList
+          },
+          {
+            path: '/mentor/audit', //导师审核
+            name: 'mentoraudit',
+            component: MentorAudit
+          },
+          {
+            path: '/anchor/list', //主播列表
+            name: 'anchorlist',
+            component: AnchorList
+          },
+          {
+            path: '/anchor/audit', //主播审核
+            name: 'anchoraudit',
+            component: AnchorAudit
+          },
+          {
+            path: '/group/list', //群组管理列表
+            name: 'grouplist',
+            component: GroupList
+          },
+          {
+            path: '/operator/list', //后台用户列表
+            name: 'operatorlist',
+            component: OperatorList
+          },
+          {
+            path: '/servicegroup', //客服组管理
+            name: 'servicegroup',
+            component: ServiceGroup
+          }
+      ]
     },
     {
-      path: '/mentor/audit', //导师审核
-      name: 'mentoraudit',
-      component: MentorAudit
+      path: '/',
+      component: Index,
+      name: 'consultManage', //咨询管理
+      children: [
+          {
+            path: '/mentalCategory/list', //心理分类
+            name: 'mentalCategory',
+            component: MentalCategory
+          },
+          {
+            path: '/personalityLabel/list', //个性化标签
+            name: 'personalityLabel',
+            component: PersonalityLabel
+          }
+      ]
     },
     {
-      path: '/anchor/list', //主播列表
-      name: 'anchorlist',
-      component: AnchorList
-    },
-    {
-      path: '/anchor/audit', //主播审核
-      name: 'anchoraudit',
-      component: AnchorAudit
-    },
-    {
-      path: '/group/list', //群组管理列表
-      name: 'grouplist',
-      component: GroupList
-    },
-    {
-      path: '/operator/list', //后台用户列表
-      name: 'operatorlist',
-      component: OperatorList
-    },
-    {
-      path: '/servicegroup', //客服组管理
-      name: 'servicegroup',
-      component: ServiceGroup
-    },
-    {
-      path: '/mentalCategory/list', //心理分类
-      name: 'mentalCategory',
-      component: MentalCategory
-    },
-    {
-      path: '/personalityLabel/list', //个性化标签
-      name: 'personalityLabel',
-      component: PersonalityLabel
-    },
-    {
-      path: '/dataDictionary', //数据字典
-      name: 'dataDictionary',
-      component: DataDictionary
-    },
+      path: '/',
+      component: Index,
+      children: [
+          {
+            path: '/dataDictionary', //数据字典
+            name: 'dataDictionary',
+            component: DataDictionary
+          }
+      ]
+    },   
     {
       path: '/404',
       name: "notfound",

@@ -169,6 +169,7 @@
 
             //登录成功
             if (data.code == 200) {
+              console.log(data)
               // setCookie('admin_token', 'admin');
               this.$router.push({path: '/'});
               this.$message({

@@ -12,11 +12,6 @@ import NavItem from 'components/nav-menu/nav-item'
 
 let data = [
     {
-        path: '/',
-        name: '首页',
-        icon: 'el-icon-menu'
-    },
-    {
     	name: '角色管理',
     	icon: 'el-icon-menu',
         path: '/role'

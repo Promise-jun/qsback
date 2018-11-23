@@ -78,7 +78,7 @@
 			    <el-input v-model.number="roleForm.dataUrl"></el-input>
 			  </el-form-item>
 			  <el-form-item>
-			    <el-button type="primary" @click="submitForm('roleForm')">提交</el-button>
+			    <el-button type="primary" @click="submitForm('roleForm')" :loading="submitLoading">提交</el-button>
 			    <el-button @click="dialogFormVisible = false">取消</el-button>
 			  </el-form-item>
 			</el-form>

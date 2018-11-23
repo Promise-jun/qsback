@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Index from 'components/index'
+import ParentView from 'components/parent-view/parent-view'
 import Login from 'components/login/login'
 import ChangePass from 'components/change-pass/change-pass'
 import NotFound from 'components/not-found/not-found'
@@ -96,37 +97,58 @@ export default new Router({
       name: 'userManage', //用户管理
       children: [
           {
-            path: '/userlist', //用户列表
+            path: 'userlist', //用户列表
             name: 'userlist',
             component: UserList,
             children: [
                 {
                   path: 'addUser',
-                  name: 'userOperate',
+                  name: 'userOperate', //新增用户
+                  component: UserOperate
+                },
+                {
+                  path: 'editUser/:id',
+                  name: 'userOperate', //编辑用户
                   component: UserOperate
                 }
             ]
           },
           {
-            path: '/mentor/list', //导师列表
-            name: 'mentorlist',
-            component: MentorList
+            path: 'mentor', //导师管理
+            name: 'mentorManage',
+            redirect: 'mentor/list',
+            component: ParentView,
+            children: [
+                {
+                  path: 'list', //导师列表
+                  name: 'mentorlist',
+                  component: MentorList
+                },
+                {
+                  path: 'audit', //导师审核
+                  name: 'mentoraudit',
+                  component: MentorAudit
+                }
+            ]
           },
           {
-            path: '/mentor/audit', //导师审核
-            name: 'mentoraudit',
-            component: MentorAudit
-          },
-          {
-            path: '/anchor/list', //主播列表
-            name: 'anchorlist',
-            component: AnchorList
-          },
-          {
-            path: '/anchor/audit', //主播审核
-            name: 'anchoraudit',
-            component: AnchorAudit
-          },
+            path: 'anchor', //主播管理
+            name: 'anchorManage',
+            redirect: 'anchor/list',
+            component: ParentView,
+            children: [
+                {
+                  path: 'list', //主播列表
+                  name: 'anchorlist',
+                  component: AnchorList
+                },
+                {
+                  path: 'audit', //主播审核
+                  name: 'anchoraudit',
+                  component: AnchorAudit
+                }
+            ]
+          },    
           {
             path: '/group/list', //群组管理列表
             name: 'grouplist',
@@ -149,16 +171,23 @@ export default new Router({
       component: Index,
       name: 'consultManage', //咨询管理
       children: [
-          {
-            path: '/mentalCategory/list', //心理分类
-            name: 'mentalCategory',
-            component: MentalCategory
-          },
-          {
-            path: '/personalityLabel/list', //个性化标签
-            name: 'personalityLabel',
-            component: PersonalityLabel
-          }
+        {
+          path: 'consultSet', //咨询设置
+          redirect: 'consultSet/mentalCategory',
+          component: ParentView,
+          children: [
+              {
+                path: 'mentalCategory', //心理分类
+                name: 'mentalCategory',
+                component: MentalCategory
+              },
+              {
+                path: 'personalityLabel', //个性化标签
+                name: 'personalityLabel',
+                component: PersonalityLabel
+              }
+          ]
+        }      
       ]
     },
     {

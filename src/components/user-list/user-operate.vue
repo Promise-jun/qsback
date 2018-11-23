@@ -26,7 +26,7 @@
 					    <el-input v-model="formData.userName" autocomplete="off" placeholder="请输入姓名"></el-input>
 					</el-form-item>
 					<el-form-item label="手机号" prop="userPhone">
-					    <el-input v-model="formData.userPhone" autocomplete="off" placeholder="请输入手机号"></el-input>
+					    <el-input v-model.number="formData.userPhone" autocomplete="off" placeholder="请输入手机号"></el-input>
 					</el-form-item>
 					<!-- <el-form-item label="淘宝号" prop="taobaoId">
 					    <el-input v-model="formData.taobaoId" autocomplete="off" placeholder="请输入淘宝号"></el-input>
@@ -60,7 +60,7 @@
 						</el-upload>
 					</el-form-item>
 					<el-form-item>
-					    <el-button type="primary" icon="el-icon-success" @click="submitForm('ruleForm')">提交</el-button>
+					    <el-button type="primary" icon="el-icon-success" @click="submitForm('ruleForm')" :loading="submitLoading">提交</el-button>
 					    <el-button icon="el-icon-refresh" @click="resetForm('ruleForm')">重置</el-button>
 					</el-form-item>
 				</el-form>
@@ -102,18 +102,31 @@
 <script type="text/javascript">
 	import BreadCrumb from 'base/bread-crumb/bread-crumb'
 	import { VueCropper }  from 'vue-cropper' 
+	import { isvalidPhone } from 'common/js/validate'
 
 	export default {
 		name: 'userOperate',
 		data() {
+			var validPhone=(rule, value,callback)=>{
+		      	if (!value){
+		          	callback(new Error('请输入手机号'))
+		      	}else  if (!isvalidPhone(value)){
+		        	callback(new Error('请输入正确的11位手机号'))
+		      	}else {
+		          	callback()
+		      	}
+			};
 			return {
-				dataPath: ['用户管理', '客户管理', '新增用户'],
+				dataPath: ['用户管理', '客户管理', '用户操作'],
 				rules: {
 					userAccount: [
 						{ required: true, message: '用户名不能为空'}
 					],
 					userSex: [
 						{ required: true, message: '性别不能为空'}
+					],
+					userPhone: [
+						{ validator: validPhone }//这里需要用到全局变量
 					],
 					email: [
 						{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
@@ -152,6 +165,7 @@
 		          label: '客服2'
 		        }],
 				formData: {
+					userId: '', //用户id
 					userImage: '',
 					userType: 0, //用户类型, 0：普通用户
 					userAccount: '', //用户账号
@@ -166,7 +180,36 @@
 				}
 			}
 		},
+		created() {
+			this.getInfo();
+		},
 		methods: {
+			getInfo() {
+				let uploadId = this.$route.params.id
+				if (uploadId) {
+					this.formData.userId = uploadId
+					this.$axios({
+						method: 'post',
+						url: '/system/user/find',
+						data: this.$qs.stringify({
+							ID: uploadId
+						})
+					}).then(res => {
+						let result = res.data
+						if (result.code == 200) {
+							this.formData.userNickname = result.data.userNickname
+							this.formData.userSex = result.data.userSex.toString()
+							this.formData.userName = result.data.userName
+						} else {
+							this.$message.error(result.msg);
+						}
+					}).catch(err => {
+				        console.log(err)
+				    })
+				} else {
+					this.formData.userId = ''
+				}
+			},
 		    beforeAvatarUpload(file) {
 		        const isJPG = file.type === 'image/jpeg';
 		        const isLt2M = file.size / 1024 / 1024 < 2;
@@ -206,29 +249,15 @@
 		        this.$refs[formName].validate((valid) => {
 		          	if (valid) {
 		          		this.submitLoading = true
-		            	this.$axios({
-					        method: 'post',
-					        url: '/system/user/saveForUser',
-					        data: this.$qs.stringify(this.formData)
-					    }).then(res => {
-					        let result = res.data
-					        this.submitLoading = false
-					        if (result.code == 200) {
-					        	this.$router.push({
-							  		path: '/userlist'
-							  	})
-					        	this.dialogFormVisible = false;
-					        	this.$message({
-						          message: '创建成功',
-						          type: 'success'
-						        });
-					        } else {
-					        	this.$message.error(result.msg);
-					        }
-					    }).catch(err => {
-					    	this.submitLoading = false
-					        console.log(err)
-					    })
+		          		if (this.formData.userId == '') { //新增
+		          			let urls = '/system/user/saveForUser'
+		          			let text = '创建成功'
+		          			this.upload(urls, text)
+		          		} else { //编辑
+		          			let urls = '/system/user/editForUser'
+		          			let text = '编辑成功'
+		          			this.upload(urls, text)
+		          		}
 		          	} else {
 		            	console.log('error submit!!');
 		            	return false;
@@ -237,6 +266,29 @@
 		    },
 		    resetForm(formName) {
 		        this.$refs[formName].resetFields();
+		    },
+		    upload(urls, text) {
+		    	this.$axios({
+			        method: 'post',
+			        url: urls,
+			        data: this.$qs.stringify(this.formData)
+			    }).then(res => {
+			        let result = res.data
+			        this.submitLoading = false
+			        if (result.code == 200) {
+			        	this.$router.back();
+			        	this.dialogFormVisible = false;
+			        	this.$message({
+				          message: text,
+				          type: 'success'
+				        });
+			        } else {
+			        	this.$message.error(result.msg);
+			        }
+			    }).catch(err => {
+			    	this.submitLoading = false
+			        console.log(err)
+			    })
 		    }
 		},
 		components: {

@@ -42,7 +42,7 @@
 		  </el-form-item>
 		</el-form>
 
-		<el-alert title="总计416个用户" type="warning" :closable="false"></el-alert>
+		<el-alert :title="'总计' + pageTotal.total + '个用户'" type="warning" :closable="false"></el-alert>
 
 		<el-table
 		    ref="userlist"
@@ -58,16 +58,20 @@
 		      <template slot-scope="scope">{{ scope.row.userId }}</template>
 		    </el-table-column>
 		    <el-table-column prop="userNickname" label="昵称"></el-table-column>
-		    <el-table-column prop="createTm" label="注册时间" width="150"></el-table-column>
+		    <el-table-column prop="createTm" label="注册时间" width="150">
+		      <template slot-scope="scope">{{ scope.row.createTm | formatDate }}</template>
+		    </el-table-column>
 		    <el-table-column prop="userName" label="姓名"></el-table-column>
 		    <el-table-column prop="userSourceName" label="渠道"></el-table-column>
-		    <el-table-column prop="moneyBalance" label="金额"></el-table-column>
+		    <el-table-column label="金额">
+		      <template slot-scope="scope">￥{{ scope.row.moneyBalance | moneyFilter }}</template>
+		    </el-table-column>
 		    <el-table-column prop="goldBalance" label="金币"></el-table-column>
 		    <el-table-column prop="createNm" label="客服"></el-table-column>
 		    <el-table-column label="操作" width="150">
 		      <template slot-scope="scope">
 		    	<el-tooltip content="编辑" placement="top">
-				  <el-button @click="editRole(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
+				  <el-button @click="edit(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
 				</el-tooltip>
 				<el-tooltip content="禁用" placement="top" v-show="!isLock">
 				  <el-button type="text" icon="iconfont icon-lock" style="color: #F56C6C;"></el-button>
@@ -133,7 +137,7 @@
 		        isLock: false,  //是否禁用
 		        pageTotal: { //分页数据
 			        total: 0,
-			        pageSize: 10,
+			        pageSize: 5,
 			        page: 1
 			    }
 			}
@@ -142,7 +146,13 @@
 		    formatDate(time) {
 		    	var date = new Date(time);
 		    	return formatDate(date, 'yyyy-MM-dd hh:mm:ss');
-		   	}
+		   	},
+		   	moneyFilter(value) {
+			  	// 截取当前数据到小数点后两位
+			    let realVal = Number(value).toFixed(2)
+			    // num.toFixed(2)获取的是字符串
+			    return realVal
+			}
 		},
 		created() {
 			this.getList();
@@ -182,18 +192,30 @@
 			        console.log(err)
 			    })
 			},
-		  addUser() { //添加用户
-		  	this.$router.push({
-		  		path: '/userlist/addUser'
-		  	})
-		  },
-	      onSubmit() {
-	        this.getList();
-	      },
-	      handleSelectionChange(val) {
-	        this.multipleSelection = val;
-	      }
+		  	addUser() { //添加用户
+		  		this.$router.push({
+		  			path: '/userlist/addUser'
+		  		})
+		  	},
+		  	edit(row) { //编辑用户
+		  		this.$router.push({
+		  			path: '/userlist/editUser/' + row.userId
+		  		})
+		  	},
+	      	onSubmit() {
+	        	this.getList();
+	      	},
+	      	handleSelectionChange(val) {
+	        	this.multipleSelection = val;
+	      	}
 	    },
+	    watch: {
+           	$route( to , from ){
+           		if (to.name == 'userlist') {
+           			this.getList();
+           		}
+            }
+        },
 		components: {
 			BreadCrumb,
 			PageNum

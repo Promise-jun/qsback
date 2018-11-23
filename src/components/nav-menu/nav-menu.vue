@@ -92,11 +92,11 @@ let data = [
     			child: [
     				{
     					name: '心理分类',
-    					path: '/mentalCategory/list'
+    					path: '/consultSet/mentalCategory'
     				},
     				{
     					name: '个性化标签',
-    					path: '/personalityLabel/list'
+    					path: '/consultSet/personalityLabel'
     				}
     			]
     		}

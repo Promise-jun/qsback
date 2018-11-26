@@ -22,6 +22,15 @@ import ServiceGroup from 'components/service-group/service-group'
 // 咨询管理
 import MentalCategory from 'components/consult-supervise/mental-category'  //心理分类
 import PersonalityLabel from 'components/consult-supervise/personality-label' //个性化标签
+import AtionMenuList from 'components/consult-supervise/ationMenu-list' //套餐列表
+import AtionMenuAuditing from 'components/consult-supervise/ationMenu-auditing' //套餐审核
+// 直播管理
+import GalleryList from 'components/live-supervise/gallery-list' //图库管理
+import GalleryOperate from 'components/live-supervise/gallery-operate' //新增图片， 编辑图片
+import GiftList from 'components/live-supervise/gift-list' //礼物管理
+import GiftOperate from 'components/live-supervise/gift-operate' //新增礼物， 编辑礼物
+import ForeshowList from 'components/live-supervise/foreshow-list' //直播预告列表
+import LiveRoomList from 'components/live-supervise/liveRoom-list' //直播间列表
 // 数据字典
 import DataDictionary from 'components/data-dictionary/data-dictionary'
 
@@ -103,12 +112,12 @@ export default new Router({
             children: [
                 {
                   path: 'addUser',
-                  name: 'userOperate', //新增用户
+                  name: 'addUser', //新增用户
                   component: UserOperate
                 },
                 {
                   path: 'editUser/:id',
-                  name: 'userOperate', //编辑用户
+                  name: 'editUser', //编辑用户
                   component: UserOperate
                 }
             ]
@@ -187,7 +196,82 @@ export default new Router({
                 component: PersonalityLabel
               }
           ]
-        }      
+        },
+        {
+          path: 'consultationMenu', //咨询套餐
+          component: ParentView,
+          children: [
+              {
+                path: 'list', //套餐列表
+                name: 'ationMenuList',
+                component: AtionMenuList
+              },
+              {
+                path: 'auditing', //套餐审核
+                name: 'ationMenuAuditing',
+                component: AtionMenuAuditing
+              }
+          ]
+        }
+      ]
+    },
+    {
+      path: '/',
+      component: Index,
+      name: 'liveManage', //直播管理
+      children: [
+        {
+          path: 'liveSet', //直播设置
+          component: ParentView,
+          children: [
+              {
+                path: 'gallery', //图库管理
+                name: 'galleryList',
+                component: GalleryList,
+                children: [
+                  {
+                    path: 'addGallery', //新增图片
+                    name: 'addGallery',
+                    component: GalleryOperate
+                  }
+                ]
+              },
+              {
+                path: 'gift', //礼物管理
+                name: 'giftList',
+                component: GiftList,
+                children: [
+                  {
+                    path: 'addGift', //新增礼物
+                    name: 'addGift',
+                    component: GiftOperate
+                  }
+                ]
+              }
+          ]
+        },
+        {
+          path: 'liveForeshow', //直播预告
+          component: ParentView,
+          children: [
+              {
+                path: 'list', //列表
+                name: 'foreshowList',
+                component: ForeshowList
+              }
+          ]
+        },
+        {
+          path: 'liveRoom', //直播间管理
+          component: ParentView,
+          children: [
+              {
+                path: 'list', //列表
+                name: 'liveRoomList',
+                component: LiveRoomList
+              }
+          ]
+        }
       ]
     },
     {

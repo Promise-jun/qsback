@@ -99,6 +99,46 @@ let data = [
     					path: '/consultSet/personalityLabel'
     				}
     			]
+    		},
+    		{
+    			name: '咨询套餐',
+    			child: [
+    				{
+    					name: '套餐列表',
+    					path: '/consultationMenu/list'
+    				},
+    				{
+    					name: '套餐审核',
+    					path: '/consultationMenu/auditing'
+    				}
+    			]
+    		}
+    	]
+    },
+    {
+    	name: '直播管理',
+    	icon: 'el-icon-menu',
+    	child: [
+    		{
+    			name: '直播设置',
+    			child: [
+    				{
+    					name: '图库管理',
+    					path: '/liveSet/gallery'
+    				},
+    				{
+    					name: '礼物管理',
+    					path: '/liveSet/gift'
+    				}
+    			]
+    		},
+    		{
+    			name: '直播预告',
+    			path: '/liveForeshow/list'
+    		},
+    		{
+    			name: '直播间管理',
+    			path: '/liveRoom/list'
     		}
     	]
     },

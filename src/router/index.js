@@ -31,6 +31,12 @@ import GiftList from 'components/live-supervise/gift-list' //礼物管理
 import GiftOperate from 'components/live-supervise/gift-operate' //新增礼物， 编辑礼物
 import ForeshowList from 'components/live-supervise/foreshow-list' //直播预告列表
 import LiveRoomList from 'components/live-supervise/liveRoom-list' //直播间列表
+// 电台管理
+import RadioList from 'components/radio-supervise/radio-list' //电台分类
+import ProgramList from 'components/radio-supervise/program-list' //专辑列表
+import ProgramOperate from 'components/radio-supervise/program-operate' //添加专辑
+import AnchorRadio from 'components/radio-supervise/anchor-radio' //节目列表
+import RadioCount from 'components/radio-supervise/radio-count' //节目统计
 // 数据字典
 import DataDictionary from 'components/data-dictionary/data-dictionary'
 
@@ -269,6 +275,52 @@ export default new Router({
                 path: 'list', //列表
                 name: 'liveRoomList',
                 component: LiveRoomList
+              }
+          ]
+        }
+      ]
+    },
+    {
+      path: '/',
+      component: Index,
+      name: 'radioManage', //电台管理
+      children: [
+        {
+          path: 'radioSet', //电台设置
+          component: ParentView,
+          children: [
+              {
+                path: 'list', //电台分类
+                name: 'radioList',
+                component: RadioList
+              }
+          ]
+        },
+        {
+          path: 'program', //专辑管理
+          component: ParentView,
+          children: [
+              {
+                path: 'list', //专辑列表
+                name: 'programList', 
+                component: ProgramList,
+                children: [
+                  {
+                    path: 'addProgram', //添加专辑
+                    name: 'addProgram',
+                    component: ProgramOperate
+                  }
+                ]
+              },
+              {
+                path: 'anchorRadio', //节目列表
+                name: 'anchorRadio',
+                component: AnchorRadio
+              },
+              {
+                path: 'radioCount', //节目统计
+                name: 'radioCount',
+                component: RadioCount
               }
           ]
         }

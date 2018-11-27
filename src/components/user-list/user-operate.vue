@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="children-view">
 		<!-- 面包屑 -->
     	<bread-crumb :dataPath="dataPath"></bread-crumb>
 
@@ -329,5 +329,16 @@
 	}
 	.pic-box {
 		height: 400px;
+	}
+	.children-view {
+		position: absolute;
+	    top: 0;
+	    left: 0;
+	    bottom: 0;
+	    right: 0;
+	    z-index: 100;
+	    background-color: #fff;
+	    padding: 20px;
+	    overflow-y: auto;
 	}
 </style>

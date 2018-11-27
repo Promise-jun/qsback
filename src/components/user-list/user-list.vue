@@ -111,7 +111,7 @@
 		</el-row>
 
 		<transition name="fade" mode="out-in">
-			<router-view class="children-view"></router-view>
+			<router-view></router-view>
 		</transition>
 	</div>
 </template>
@@ -226,17 +226,6 @@
 <style type="text/css" lang="scss" scoped>
 	.el-pagination {
 		float: right;
-	}
-	.children-view {
-		position: absolute;
-	    top: 0;
-	    left: 0;
-	    bottom: 0;
-	    right: 0;
-	    z-index: 100;
-	    background-color: #fff;
-	    padding: 20px;
-	    overflow-y: auto;
 	}
 	.fade-enter-active, .fade-leave-active {
 	  	transition: opacity .3s;

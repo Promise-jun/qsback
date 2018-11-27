@@ -292,11 +292,6 @@
 			    })
 		    }
 	  	},
-		watch:{
-	        $route( to , from ){ //监听路由变化
-	//             console.log( to.query )
-	         }
-		},
 		components: {
 			BreadCrumb,
 			PageNum

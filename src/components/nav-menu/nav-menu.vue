@@ -143,6 +143,38 @@ let data = [
     	]
     },
     {
+    	name: '电台管理',
+    	icon: 'el-icon-menu',
+    	child: [
+    		{
+    			name: '电台设置',
+    			child: [
+    				{
+    					name: '电台分类',
+    					path: '/radioSet/list'
+    				}
+    			]
+    		},
+    		{
+    			name: '专辑管理',
+    			child: [
+    				{
+    					name: '专辑列表',
+    					path: '/program/list'
+    				},
+    				{
+    					name: '节目列表',
+    					path: '/program/anchorRadio'
+    				},
+    				{
+    					name: '节目统计',
+    					path: '/program/radioCount'
+    				}
+    			]
+    		}
+    	]
+    },
+    {
     	name: '个人中心',
     	icon: 'el-icon-menu',
     	child: [

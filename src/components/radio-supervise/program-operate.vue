@@ -4,22 +4,38 @@
     	<bread-crumb :dataPath="dataPath"></bread-crumb>
 
     	<el-row :gutter="20">
-		  	<el-col :span="12" :offset="1">
+		  	<el-col :span="18" :offset="1">
 		  		<el-form :model="formData" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm">
-					<el-form-item label="状态" prop="status">
-					    <el-select v-model="formData.status" placeholder="请选择状态">
-					  		<el-option label="可用" value="1"></el-option>
-					  		<el-option label="不可用" value="2"></el-option>
+		  			<el-form-item label="选择主播" prop="userAccount">
+					    
+					</el-form-item>
+					<el-form-item label="专辑名称" prop="userAccount">
+					    <el-input v-model="formData.userAccount" autocomplete="off" placeholder="请输入专辑名称"></el-input>
+					</el-form-item>
+					<el-form-item label="是否上架" prop="status">
+					    <el-select v-model="formData.status" placeholder="请选择是否上架">
+					  		<el-option label="上架" value="1"></el-option>
+					  		<el-option label="未上架" value="2"></el-option>
 					  	</el-select>
 					</el-form-item>
-					<el-form-item label="菜单" prop="type">
-					    <el-select v-model="formData.type" placeholder="请选择类型">
-					  		<el-option label="主题" value="1"></el-option>
-					  		<el-option label="心情" value="2"></el-option>
-					  		<el-option label="场景" value="3"></el-option>
-					  	</el-select>
+					<el-form-item label="收藏数量" prop="userAccount">
+					    <el-input v-model="formData.userAccount" autocomplete="off" placeholder="请输入收藏数量"></el-input>
 					</el-form-item>
-					<el-form-item label="图片">
+					<el-form-item label="播放次数" prop="userAccount">
+					    <el-input v-model="formData.userAccount" autocomplete="off" placeholder="请输入播放次数"></el-input>
+					</el-form-item>
+					<el-form-item label="专辑分类" prop="userAccount">
+					    <el-select v-model="formData.theme" filterable placeholder="请选择主题(必填)">
+						    <el-option v-for="item in themeList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+						</el-select>
+						<el-select v-model="formData.mood" multiple collapse-tags placeholder="请选择心情(多选)">
+						    <el-option v-for="item in moodList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+						</el-select>
+						<el-select v-model="formData.mood" multiple collapse-tags placeholder="请选择场景(多选)">
+						    <el-option v-for="item in moodList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="礼物图片">
 						<el-upload
 							ref="upload"
 						  	class="avatar-uploader"
@@ -30,6 +46,15 @@
 						  	<img v-if="formData.userImage" :src="formData.userImage" class="avatar">
 						  	<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 						</el-upload>
+					</el-form-item>
+					<el-form-item label="专辑介绍" prop="userAccount">
+					    <el-input 
+					    	type="textarea" 
+					    	:rows="5" 
+					    	placeholder="请填写不少于10最大不超过30个字专辑介绍" 
+					    	v-model="formData.textarea"
+					    >
+					    </el-input>
 					</el-form-item>
 					<el-form-item>
 					    <el-button type="primary" icon="el-icon-success" @click="submitForm('ruleForm')" :loading="submitLoading">提交</el-button>
@@ -76,21 +101,44 @@
 	import { VueCropper }  from 'vue-cropper' 
 
 	export default {
-		name: 'galleryOperate',
+		name: 'programOperate',
 		data() {
 			return {
-				dataPath: ['直播管理', '直播设置', '图库管理', '图片操作'],
+				dataPath: ['电台管理', '专辑管理', '专辑列表', '添加专辑'],
 				rules: {
-					status: [
-						{ required: true, message: '状态不能为空'}
-					],
-					type: [
-						{ required: true, message: '菜单不能为空'}
-					],	
-					headUrl: [
-						{ required: true, message: '图片不能为空'}
+					user: [
+						{ required: true, message: '礼物名称不能为空'}
 					]
 				},
+				themeList: [{
+		          value: '1',
+		          label: '恋爱'
+		        }, {
+		          value: '2',
+		          label: '治愈'
+		        }, {
+		          value: '3',
+		          label: '家庭'
+		        }, {
+		          value: '4',
+		          label: '两性'
+		        }, {
+		          value: '5',
+		          label: '音乐'
+		        }],
+		        moodList: [{
+		        	value: 1,
+		        	label: '宅着'
+		        }, {
+		        	value: 2,
+		        	label: '运动'
+		        }, {
+		        	value: 3,
+		        	label: '旅行'
+		        }, {
+		        	value: 4,
+		        	label: '散步'
+		        }],
 				submitLoading: false, //提交按钮loading
 				picDialogVisible: false, //图片裁剪弹窗
 				picOption: {  //图片裁剪配置
@@ -107,7 +155,9 @@
         			fixedNumber: [1, 1],
         			centerBox: true
 				},
-				formData: {}
+				formData: {
+					mood: []
+				}
 			}
 		},
 		methods: {
@@ -158,7 +208,7 @@
 		    },
 		    resetForm(formName) {
 		        this.$refs[formName].resetFields();
-		    },
+		    }
 		},
 		components: {
 			BreadCrumb,

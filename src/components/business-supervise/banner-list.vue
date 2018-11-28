@@ -6,25 +6,22 @@
     	<el-form :inline="true" :model="formObj" class="demo-form-inline">
 		  <el-form-item label="状态">
 		    <el-select v-model="formObj.status" placeholder="请选择状态">
-		  		<el-option label="全部" value="0"></el-option>
-		  		<el-option label="可用" value="1"></el-option>
-		  		<el-option label="不可用" value="2"></el-option>
+		  		<el-option label="显示" value="1"></el-option>
+		  		<el-option label="不显示" value="2"></el-option>
 		  	</el-select>
 		  </el-form-item>
 		  <el-form-item label="类型">
 		    <el-select v-model="formObj.type" placeholder="请选择类型">
-		  		<el-option label="全部" value="0"></el-option>
-		  		<el-option label="主题" value="1"></el-option>
-		  		<el-option label="心情" value="2"></el-option>
-		  		<el-option label="场景" value="3"></el-option>
+		  		<el-option label="电台" value="1"></el-option>
+		  		<el-option label="直播" value="2"></el-option>
+		  		<el-option label="微课" value="3"></el-option>
+		  		<el-option label="首页" value="4"></el-option>
 		  	</el-select>
 		  </el-form-item>
 		  <el-form-item>
 		    <el-button type="primary" @click="onSubmit" icon="el-icon-circle-plus">查询</el-button>
 		  </el-form-item>
 		</el-form>
-
-		<el-alert :title="'总计' + pageTotal.total + '张图片'" type="warning" :closable="false"></el-alert>
 
 		<el-table
 		    ref="tableData"
@@ -40,11 +37,12 @@
 		      	<img :src="scope.row.picUrl" class="pic" @click="showBigPic(scope.row.picUrl)">
 		      </template>
 		    </el-table-column>
-		    <el-table-column prop="picType" label="类型"></el-table-column>
-		    <el-table-column prop="picStatus" label="状态"></el-table-column>
-		    <el-table-column prop="createTm" label="时间">
-		      <template slot-scope="scope">{{ scope.row.createTm | formatDate }}</template>
-		    </el-table-column>
+		    <el-table-column prop="linkUrl" label="跳转链接"></el-table-column>
+		    <el-table-column prop="sort" label="排序"></el-table-column>
+		    <el-table-column prop="remarks" label="备注"></el-table-column>
+		    <el-table-column prop="status" label="状态"></el-table-column>
+		    <el-table-column prop="menu" label="菜单"></el-table-column>
+		    <el-table-column prop="type" label="客户端类型"></el-table-column>
 		    <el-table-column label="操作">
 		      <template slot-scope="scope">
 		    		<el-tooltip content="编辑" placement="top">
@@ -59,7 +57,7 @@
 
 		<el-row>
 		  <el-col :span="12">
-		  	<el-button type="primary" icon="el-icon-circle-plus" @click="add">添加图片</el-button>
+		  	<el-button type="primary" icon="el-icon-circle-plus" @click="add">添加banner图</el-button>
 		  </el-col>
 		  <el-col :span="12">
 		  	<page-num
@@ -72,11 +70,11 @@
 			</page-num>
 		  </el-col>
 		</el-row>
-		
+
 		<el-dialog title="图片" :visible.sync="bigPicVisible" :center="true">
 		  	<img :src="bigPicurl" class="big-pic">
 		</el-dialog>
-		
+
 		<transition name="fade" mode="out-in">
 			<router-view></router-view>
 		</transition>
@@ -86,36 +84,32 @@
 <script type="text/javascript">
 	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 	import PageNum from 'base/page-num/page-num'
-	import { formatDate } from 'common/js/format'
-	
+
 	export default {
-		name: 'galleryList',
+		name: 'bannerList',
 		data() {
 			return {
-				dataPath: ['直播管理', '直播设置', '图库管理'],
+				dataPath: ['运营管理', '广告管理', 'banner图管理'],
 				pageTotal: { //分页数据
 				    total: 0,
-			        pageSize: 5,
+			        pageSize: 10,
 			        page: 1
 			    },
-			    loading: false,
+			    bigPicVisible: false,
+				bigPicurl: '',
 				formObj: {},
+				loading: false,
 				tableData: [{
 					picId: 1,
-					picUrl: 'http://img3.imgtn.bdimg.com/it/u=3360690558,3623061169&fm=11&gp=0.jpg',
-					picType: '场景',
-					picStatus: '可用',
-					createTm: 1543209657000
-				}],
-				bigPicVisible: false,
-				bigPicurl: ''
+					picUrl: 'http://www.qi-che.com/upimg/rnwcars/m_359_n.jpg',
+					linkUrl: 'http://www.qingshuo.com/download/app_download.html',
+					sort: 0,
+					remarks: '情说官网',
+					status: '显示',
+					menu: '首页',
+					type: 'H5'
+				}]
 			}
-		},
-		filters: {
-		    formatDate(time) {
-		    	var date = new Date(time);
-		    	return formatDate(date, 'yyyy-MM-dd hh:mm:ss');
-		   	}
 		},
 		created() {
 			this.getList()
@@ -124,10 +118,10 @@
 			getList() {
 
 			},
-			add() { //添加图片
+			add() { //添加banner图
 				this.$router.push({
-		  			path: '/liveSet/gallery/addGallery'
-		  		})
+					path: '/advertisement/banner/addBanner'
+				})
 			},
 			onSubmit() {
 	        	this.getList();

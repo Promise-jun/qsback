@@ -4,27 +4,28 @@
     	<bread-crumb :dataPath="dataPath"></bread-crumb>
 
     	<el-form :inline="true" :model="formObj" class="demo-form-inline">
+		  <el-form-item label="用户ID">
+		    <el-input v-model="formObj.userId" placeholder="请输入用户ID"></el-input>
+		  </el-form-item>
+		  <el-form-item label="标题">
+		    <el-input v-model="formObj.userName" placeholder="请输入标题"></el-input>
+		  </el-form-item>
 		  <el-form-item label="状态">
 		    <el-select v-model="formObj.status" placeholder="请选择状态">
-		  		<el-option label="全部" value="0"></el-option>
-		  		<el-option label="可用" value="1"></el-option>
-		  		<el-option label="不可用" value="2"></el-option>
+		  		<el-option label="上架" value="1"></el-option>
+		  		<el-option label="未上架" value="2"></el-option>
 		  	</el-select>
 		  </el-form-item>
 		  <el-form-item label="类型">
-		    <el-select v-model="formObj.type" placeholder="请选择类型">
-		  		<el-option label="全部" value="0"></el-option>
-		  		<el-option label="主题" value="1"></el-option>
-		  		<el-option label="心情" value="2"></el-option>
-		  		<el-option label="场景" value="3"></el-option>
+		    <el-select v-model="formObj.status" placeholder="请选择类型">
+		  		<el-option label="免费" value="1"></el-option>
+		  		<el-option label="付费" value="2"></el-option>
 		  	</el-select>
 		  </el-form-item>
 		  <el-form-item>
 		    <el-button type="primary" @click="onSubmit" icon="el-icon-circle-plus">查询</el-button>
 		  </el-form-item>
 		</el-form>
-
-		<el-alert :title="'总计' + pageTotal.total + '张图片'" type="warning" :closable="false"></el-alert>
 
 		<el-table
 		    ref="tableData"
@@ -34,17 +35,25 @@
 		    :data="tableData"
 		    tooltip-effect="dark"
 		    style="width: 100%; margin: 15px 0;">
-		    <el-table-column prop="picId" label="ID" width="50"></el-table-column>
-		    <el-table-column label="图片">
+		    <el-table-column prop="name" label="姓名"></el-table-column>
+		    <el-table-column label="标题">
+		    	<template slot-scope="scope">
+		    		<router-link :to="{ name:'seeCourse',params:{ id: scope.row.id } }">{{ scope.row.title }}</router-link>
+		    	</template>
+		    </el-table-column>
+		    <el-table-column prop="summary" label="概述"></el-table-column>
+		    <el-table-column label="封面">
 		      <template slot-scope="scope">
 		      	<img :src="scope.row.picUrl" class="pic" @click="showBigPic(scope.row.picUrl)">
 		      </template>
 		    </el-table-column>
-		    <el-table-column prop="picType" label="类型"></el-table-column>
-		    <el-table-column prop="picStatus" label="状态"></el-table-column>
-		    <el-table-column prop="createTm" label="时间">
-		      <template slot-scope="scope">{{ scope.row.createTm | formatDate }}</template>
-		    </el-table-column>
+		    <el-table-column prop="theme" label="主题"></el-table-column>
+		    <el-table-column prop="price" label="价格"></el-table-column>
+		    <el-table-column prop="num" label="数量"></el-table-column>
+		    <el-table-column prop="human" label="人气"></el-table-column>
+		    <el-table-column prop="status" label="状态"></el-table-column>
+		    <el-table-column prop="type" label="类型"></el-table-column>
+		    <el-table-column prop="groom" label="推荐"></el-table-column>
 		    <el-table-column label="操作">
 		      <template slot-scope="scope">
 		    		<el-tooltip content="编辑" placement="top">
@@ -59,7 +68,7 @@
 
 		<el-row>
 		  <el-col :span="12">
-		  	<el-button type="primary" icon="el-icon-circle-plus" @click="add">添加图片</el-button>
+		  	<el-button type="primary" icon="el-icon-circle-plus" @click="add">新建专栏</el-button>
 		  </el-col>
 		  <el-col :span="12">
 		  	<page-num
@@ -72,11 +81,11 @@
 			</page-num>
 		  </el-col>
 		</el-row>
-		
+
 		<el-dialog title="图片" :visible.sync="bigPicVisible" :center="true">
 		  	<img :src="bigPicurl" class="big-pic">
 		</el-dialog>
-		
+
 		<transition name="fade" mode="out-in">
 			<router-view></router-view>
 		</transition>
@@ -86,36 +95,36 @@
 <script type="text/javascript">
 	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 	import PageNum from 'base/page-num/page-num'
-	import { formatDate } from 'common/js/format'
-	
+
 	export default {
-		name: 'galleryList',
+		name: 'topicColumnList',
 		data() {
 			return {
-				dataPath: ['直播管理', '直播设置', '图库管理'],
+				dataPath: ['课程管理', '音频课程'],
 				pageTotal: { //分页数据
 				    total: 0,
-			        pageSize: 5,
+			        pageSize: 10,
 			        page: 1
 			    },
+			    formObj: {},
 			    loading: false,
-				formObj: {},
-				tableData: [{
-					picId: 1,
-					picUrl: 'http://img3.imgtn.bdimg.com/it/u=3360690558,3623061169&fm=11&gp=0.jpg',
-					picType: '场景',
-					picStatus: '可用',
-					createTm: 1543209657000
-				}],
-				bigPicVisible: false,
-				bigPicurl: ''
+			    tableData: [{
+			    	id: '23',
+			    	name: '1212',
+			    	title: '成长的烦恼',
+			    	summary: '孩子幼年的教育',
+			    	picUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1543381946645&di=f460d27bba8fd0e663433d350d903fb6&imgtype=0&src=http%3A%2F%2Fpic.58pic.com%2F58pic%2F11%2F68%2F32%2F08658PICred.jpg',
+			    	theme: '婚恋情感',
+			    	price: 9.99,
+			    	num: 100,
+			    	human: 88,
+			    	status: '上架',
+			    	type: '付费',
+			    	groom: '推荐'
+			    }],
+			    bigPicVisible: false,
+			    bigPicurl: ''
 			}
-		},
-		filters: {
-		    formatDate(time) {
-		    	var date = new Date(time);
-		    	return formatDate(date, 'yyyy-MM-dd hh:mm:ss');
-		   	}
 		},
 		created() {
 			this.getList()
@@ -124,10 +133,10 @@
 			getList() {
 
 			},
-			add() { //添加图片
+			add() { //新建专栏
 				this.$router.push({
-		  			path: '/liveSet/gallery/addGallery'
-		  		})
+					path: '/topicColumn/list/addColumn'
+				})
 			},
 			onSubmit() {
 	        	this.getList();

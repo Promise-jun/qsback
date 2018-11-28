@@ -24,6 +24,11 @@ import MentalCategory from 'components/consult-supervise/mental-category'  //心
 import PersonalityLabel from 'components/consult-supervise/personality-label' //个性化标签
 import AtionMenuList from 'components/consult-supervise/ationMenu-list' //套餐列表
 import AtionMenuAuditing from 'components/consult-supervise/ationMenu-auditing' //套餐审核
+// 运营管理
+import BannerList from 'components/business-supervise/banner-list' //binner图管理
+import BannerOperate from 'components/business-supervise/banner-operate' //添加banner，编辑banner
+import CoverList from 'components/business-supervise/cover-list' //app启动图管理
+import CoverOperate from 'components/business-supervise/cover-operate' //添加启动图，编辑启动图
 // 直播管理
 import GalleryList from 'components/live-supervise/gallery-list' //图库管理
 import GalleryOperate from 'components/live-supervise/gallery-operate' //新增图片， 编辑图片
@@ -37,6 +42,11 @@ import ProgramList from 'components/radio-supervise/program-list' //专辑列表
 import ProgramOperate from 'components/radio-supervise/program-operate' //添加专辑
 import AnchorRadio from 'components/radio-supervise/anchor-radio' //节目列表
 import RadioCount from 'components/radio-supervise/radio-count' //节目统计
+// 课程管理
+import TopicColumnList from 'components/course-supervise/topicColumn-list' //音频课程列表
+import SeeCourse from 'components/course-supervise/see-course' //查看课程
+import ColumnOperate from 'components/course-supervise/column-operate' //添加专栏，编辑专栏
+import CourseOperate from 'components/course-supervise/course-operate' //添加课程，编辑课程
 // 数据字典
 import DataDictionary from 'components/data-dictionary/data-dictionary'
 
@@ -224,6 +234,43 @@ export default new Router({
     {
       path: '/',
       component: Index,
+      name: 'businessManage', //运营管理
+      children: [
+        {
+          path: 'advertisement', //广告管理
+          component: ParentView,
+          children: [
+              {
+                path: 'banner', //banner图列表
+                name: 'bannerList', 
+                component: BannerList,
+                children: [
+                  {
+                    path: 'addBanner', //添加banner
+                    name: 'addBanner',
+                    component: BannerOperate
+                  }
+                ]
+              },
+              {
+                path: 'cover', //APP启动图列表
+                name: 'coverList',
+                component: CoverList,
+                children: [
+                  {
+                    path: 'addCover', //添加启动图
+                    name: 'addCover',
+                    component: CoverOperate
+                  }
+                ]
+              }
+          ]
+        }
+      ]
+    },
+    {
+      path: '/',
+      component: Index,
       name: 'liveManage', //直播管理
       children: [
         {
@@ -321,6 +368,43 @@ export default new Router({
                 path: 'radioCount', //节目统计
                 name: 'radioCount',
                 component: RadioCount
+              }
+          ]
+        }
+      ]
+    },
+    {
+      path: '/',
+      component: Index,
+      name: 'courseManage', //课程管理
+      children: [
+        {
+          path: 'topicColumn', //音频课程
+          component: ParentView,
+          children: [
+              {
+                path: 'list', //列表
+                name: 'topicColumnList',
+                component: TopicColumnList,
+                children: [
+                    {
+                      path: 'addColumn', //添加专栏
+                      name: 'addColumn', 
+                      component: ColumnOperate
+                    },
+                    {
+                      path: ':id', //查看课程
+                      name: 'seeCourse',
+                      component: SeeCourse,
+                      children: [
+                          {
+                            path: 'addCourse', //添加课程
+                            name: 'addCourse',
+                            component: CourseOperate
+                          }
+                      ]
+                    }
+                ]
               }
           ]
         }

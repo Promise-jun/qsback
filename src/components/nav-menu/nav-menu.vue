@@ -116,6 +116,25 @@ let data = [
     	]
     },
     {
+    	name: '运营管理',
+    	icon: 'el-icon-menu',
+    	child: [
+    		{
+    			name: '广告管理',
+    			child: [
+    				{
+    					name: 'banner图管理',
+    					path: '/advertisement/banner'
+    				},
+    				{
+    					name: 'APP启动图管理',
+    					path: '/advertisement/cover'
+    				}
+    			]
+    		}
+    	]
+    },
+    {
     	name: '直播管理',
     	icon: 'el-icon-menu',
     	child: [
@@ -171,6 +190,16 @@ let data = [
     					path: '/program/radioCount'
     				}
     			]
+    		}
+    	]
+    },
+    {
+    	name: '课程管理',
+    	icon: 'el-icon-menu',
+    	child: [
+    		{
+    			name: '音频课程',
+    			path: '/topicColumn/list'
     		}
     	]
     },

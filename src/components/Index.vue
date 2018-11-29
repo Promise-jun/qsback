@@ -91,7 +91,6 @@ export default {
     top: 60px;
     left: 0;
     bottom: 0;
-    background: #324157;
   }
   .el-menu {
     border-right: 0;

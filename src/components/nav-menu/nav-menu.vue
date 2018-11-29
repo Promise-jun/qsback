@@ -1,6 +1,6 @@
 <template>
   <div ref="menulist">
-    <el-menu router unique-opened :collapse="isFold" :default-active="onRoutes" background-color="#324157" text-color="#BFCBD9">
+    <el-menu router unique-opened :collapse="isFold" :default-active="onRoutes">
     	<div class="fold" @click="fold"><i class="iconfont icon-swap"></i></div>
         <!-- 循环navList数组，将每项的值及index传给nav-item组件 -->
         <nav-item v-for="(item, index) in navList" :item="item" :navIndex="String(index)" :key="index"></nav-item>
@@ -131,6 +131,49 @@ let data = [
     					path: '/advertisement/cover'
     				}
     			]
+    		},
+    		{
+    			name: '互动管理',
+    			child: [
+    				{
+    					name: '关键词管理',
+    					path: '/interaction/keyWords'
+    				},
+    				{
+    					name: '音频聊天记录',
+    					path: '/interaction/audioChat'
+    				},
+    				{
+    					name: '图文聊天记录',
+    					path: '/interaction/textChat'
+    				}
+    			]
+    		},
+    		{
+    			name: '数据统计',
+    			child: [
+    				{
+    					name: '客服统计',
+    					path: '/statistics/kefu'
+    				},
+    				{
+    					name: '咨询师统计',
+    					path: '/statistics/mentor'
+    				}
+    			]
+    		},
+    		{
+    			name: '杂志管理',
+    			child: [
+    				{
+    					name: '杂志分类',
+    					path: '/magazine/classify'
+    				}
+    			]
+    		},
+    		{
+    			name: '举报信息',
+    			path: '/reportInfo'
     		}
     	]
     },
@@ -251,10 +294,10 @@ export default {
 		text-align: center;
 		font-size: 30px;
 		line-height: 30px;
-		color: #fff;
+		color: #303133;
 		cursor: pointer;
 		&:hover {
-			background-color: #4E5C71;
+			background-color: #ECF5FF;
 		}
 	}
 </style>

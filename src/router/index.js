@@ -25,10 +25,61 @@ import PersonalityLabel from 'components/consult-supervise/personality-label' //
 import AtionMenuList from 'components/consult-supervise/ationMenu-list' //套餐列表
 import AtionMenuAuditing from 'components/consult-supervise/ationMenu-auditing' //套餐审核
 // 运营管理
-import BannerList from 'components/business-supervise/banner-list' //binner图管理
-import BannerOperate from 'components/business-supervise/banner-operate' //添加banner，编辑banner
-import CoverList from 'components/business-supervise/cover-list' //app启动图管理
-import CoverOperate from 'components/business-supervise/cover-operate' //添加启动图，编辑启动图
+const BannerList = resolve => { //binner图管理
+  import('components/business-supervise/banner-list').then((comp) => {
+    resolve(comp)
+  })
+}
+const BannerOperate = resolve => { //添加banner，编辑banner
+  import('components/business-supervise/banner-operate').then((comp) => {
+    resolve(comp)
+  })
+}
+const CoverList = resolve => { //app启动图管理
+  import('components/business-supervise/cover-list').then((comp) => {
+    resolve(comp)
+  })
+}
+const CoverOperate = resolve => { //添加启动图，编辑启动图
+  import('components/business-supervise/cover-operate').then((comp) => {
+    resolve(comp)
+  })
+}
+const KeyWords = resolve => { //互动管理 关键词
+  import('components/business-supervise/key-words').then((comp) => {
+    resolve(comp)
+  })
+}
+const AudioChat = resolve => { //音频聊天记录
+  import('components/business-supervise/audio-chat').then(comp => {
+    resolve(comp)
+  })
+}
+const TextChat = resolve => { //图文聊天记录
+  import('components/business-supervise/text-chat').then(comp => {
+    resolve(comp)
+  })
+}
+const KefuStatistics = resolve => { //客服统计
+  import('components/business-supervise/kefu-statistics').then(comp => {
+    resolve(comp)
+  })
+}
+const MentorStatistics = resolve => { //咨询师统计
+  import('components/business-supervise/mentor-statistics').then(comp => {
+    resolve(comp)
+  })
+}
+const MagazineClassify = resolve => { //杂志分类
+  import('components/business-supervise/magazine-classify').then(comp => {
+    resolve(comp)
+  })
+}
+const ReportInfo = resolve => { //举报信息
+  import('components/business-supervise/report-info').then(comp => {
+    resolve(comp)
+  })
+}
 // 直播管理
 import GalleryList from 'components/live-supervise/gallery-list' //图库管理
 import GalleryOperate from 'components/live-supervise/gallery-operate' //新增图片， 编辑图片
@@ -265,6 +316,59 @@ export default new Router({
                 ]
               }
           ]
+        },
+        {
+          path: 'interaction', //互动管理
+          component: ParentView,
+          children: [
+              {
+                path: 'keyWords', //关键词
+                name: 'keyWords',
+                component: KeyWords
+              },
+              {
+                path: 'audioChat', //音频聊天记录
+                name: 'audioChat',
+                component: AudioChat
+              },
+              {
+                path: 'textChat', //图文聊天记录
+                name: 'textChat',
+                component: TextChat
+              }
+          ]
+        },
+        {
+          path: 'statistics', //数据统计
+          component: ParentView,
+          children: [
+              {
+                path: 'kefu', //客服统计
+                name: 'kefuStatistics',
+                component: KefuStatistics
+              },
+              {
+                path: 'mentor', //咨询师统计
+                name: 'mentorStatistics',
+                component: MentorStatistics
+              }
+          ]
+        },
+        {
+          path: 'magazine', //杂志管理
+          component: ParentView,
+          children: [
+              {
+                path: 'classify', //杂志分类
+                name: 'magazineClassify',
+                component: MagazineClassify
+              }
+          ]
+        },
+        {
+          path: 'reportInfo', //举报信息
+          name: 'reportInfo',
+          component: ReportInfo
         }
       ]
     },

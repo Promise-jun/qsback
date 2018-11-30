@@ -19,6 +19,23 @@ import AnchorAudit from 'components/anchor/anchor-audit'
 import GroupList from 'components/group/group-list'
 import OperatorList from 'components/operator/operator-list'
 import ServiceGroup from 'components/service-group/service-group'
+// 咨询订单
+const PlatformOrder = resolve => { //平台订单
+  import('components/consult-order/platform-order').then(comp => {
+    resolve(comp)
+  })
+}
+const KefuIntervene = resolve => {
+  import('components/consult-order/kefu-intervene').then(comp => {
+    resolve(comp)
+  })
+}
+// 课程订单
+const CourseOrderList = resolve => { //订单列表
+  import('components/course-order/courseOrder-list').then(comp => {
+    resolve(comp)
+  })
+}
 // 咨询管理
 import MentalCategory from 'components/consult-supervise/mental-category'  //心理分类
 import PersonalityLabel from 'components/consult-supervise/personality-label' //个性化标签
@@ -72,6 +89,16 @@ const MentorStatistics = resolve => { //咨询师统计
 }
 const MagazineClassify = resolve => { //杂志分类
   import('components/business-supervise/magazine-classify').then(comp => {
+    resolve(comp)
+  })
+}
+const MagazineList = resolve => { //杂志列表
+  import('components/business-supervise/magazine-list').then(comp => {
+    resolve(comp)
+  })
+}
+const MagazineAuditing = resolve => { //杂志审核
+  import('components/business-supervise/magazine-auditing').then(comp => {
     resolve(comp)
   })
 }
@@ -245,6 +272,41 @@ export default new Router({
     {
       path: '/',
       component: Index,
+      name: 'consultOrder', //咨询订单
+      children: [
+        {
+          path: 'applicationConsultation', //平台订单管理
+          component: ParentView,
+          children: [
+              {
+                path: 'platformOrder', //平台订单
+                name: 'platformOrder',
+                component: PlatformOrder
+              },
+              {
+                path: 'kefuIntervene', //客服介入订单
+                name: 'kefuIntervene',
+                component: KefuIntervene
+              }
+          ]
+        }
+      ]
+    },
+    {
+      path: '/',
+      component: Index,
+      name: 'courseOrder', //课程订单
+      children: [
+        {
+          path: 'courseOrder/list', //订单列表
+          name: 'courseOrderList',
+          component: CourseOrderList
+        }
+      ]
+    },
+    {
+      path: '/',
+      component: Index,
       name: 'consultManage', //咨询管理
       children: [
         {
@@ -362,6 +424,16 @@ export default new Router({
                 path: 'classify', //杂志分类
                 name: 'magazineClassify',
                 component: MagazineClassify
+              },
+              {
+                path: 'list', //杂志列表
+                name: 'magazineList',
+                component: MagazineList
+              },
+              {
+                path: 'auditing', //杂志审核
+                name: 'magazineAuditing',
+                component: MagazineAuditing
               }
           ]
         },

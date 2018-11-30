@@ -25,7 +25,6 @@
     },
     methods: {
       handleSizeChange(val) {
-        console.log(123 + val)
         this.options.page = 1;
         this.options.pageSize = val;
         this.render();

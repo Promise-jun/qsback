@@ -84,6 +84,35 @@ let data = [
         ]
     },
     {
+    	name: '咨询订单',
+    	icon: 'el-icon-menu',
+    	child: [
+    		{
+    			name: '平台订单管理',
+    			child: [
+    				{
+    					name: '平台订单',
+    					path: '/applicationConsultation/platformOrder'
+    				},
+    				{
+    					name: '客服介入订单',
+    					path: '/applicationConsultation/kefuIntervene'
+    				}
+    			]
+    		}
+    	]
+    },
+    {
+    	name: '课程订单',
+    	icon: 'el-icon-menu',
+    	child: [
+    		{
+    			name: '订单列表',
+    			path: '/courseOrder/list'
+    		}
+    	]
+    },
+    {
     	name: '咨询管理',
     	icon: 'el-icon-menu',
     	child: [
@@ -168,6 +197,14 @@ let data = [
     				{
     					name: '杂志分类',
     					path: '/magazine/classify'
+    				},
+    				{
+    					name: '杂志列表',
+    					path: '/magazine/list'
+    				},
+    				{
+    					name: '杂志审核',
+    					path: '/magazine/auditing'
     				}
     			]
     		},

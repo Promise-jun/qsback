@@ -1,7 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
     	角色列表：
     	<el-select v-model="value" placeholder="请选择" @change="changeVal">
 		    <el-option v-for="item in roleList" :key="item.roleId" :label="item.roleName" :value="item.roleId"></el-option>
@@ -31,14 +29,12 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb'
 	import { formatAuthority } from 'common/js/util'
 
 	export default {
 		name: 'authorityRole',
 		data() {
 			return {
-				dataPath: ['权限管理', '角色权限管理'],
 				loading: false,
 				roleList: [], //角色列表
 		        value: '',  //当前选择角色
@@ -104,9 +100,6 @@
 					return
 				}
 			}
-		},
-		components: {
-			BreadCrumb
 		}
 	}
 </script>

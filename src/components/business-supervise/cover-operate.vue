@@ -1,8 +1,5 @@
 <template>
 	<div class="children-view">
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-row :gutter="20">
 		  	<el-col :span="12" :offset="1">
 		  		<el-form :model="formData" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm">
@@ -74,14 +71,12 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb'
 	import { VueCropper }  from 'vue-cropper' 
 
 	export default {
 		name: 'bannerOperate',
 		data() {
 			return {
-				dataPath: ['运营管理', '广告管理', 'APP启动图管理', '启动图操作'],
 				rules: {
 					status: [
 						{ required: true, message: '状态不能为空'}
@@ -163,7 +158,6 @@
 		    },
 		},
 		components: {
-			BreadCrumb,
 			VueCropper
 		}
 	}
@@ -203,7 +197,7 @@
 	}
 	.children-view {
 		position: absolute;
-	    top: 0;
+	    top: 44px;
 	    left: 0;
 	    bottom: 0;
 	    right: 0;

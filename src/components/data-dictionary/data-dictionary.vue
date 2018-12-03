@@ -1,7 +1,6 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
+		<el-alert v-if="classify !== ''" :title="'所属分类：' + classify" type="info" :closable="false"></el-alert>
 
     	<el-table
 		    :data="tableData"
@@ -72,7 +71,6 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb'
 	import PageNum from 'base/page-num/page-num'
 	import { formatDate } from 'common/js/format'
 
@@ -80,7 +78,6 @@
 		name: 'dataDictionary',
 		data() {
 			return {
-				dataPath: ['数据字典'],
 				rules: {
 		          dicName: [
 		            { required: true, message: '数据名称不能为空' },
@@ -98,9 +95,10 @@
 				},
 				pageTotal: { //分页数据
 			        total: 0,
-			        pageSize: 6,
+			        pageSize: 10,
 			        page: 1
-			    }
+			    },
+			    classify: ''
 			}
 		},
 		filters: {
@@ -127,7 +125,7 @@
 				this.formData.dicPid = parseInt(this.$route.query.dicId)
 				if (!this.formData.dicPid) {
 					this.formData.dicPid = 0
-					this.dataPath = ['数据字典']
+					this.classify = ''
 					return
 				}
 				//查找数据字典
@@ -140,7 +138,7 @@
 				}).then(res => {
 					let result = res.data
 					if (result.code == 200) {
-						this.dataPath = ['数据字典', result.data.dicName]
+						this.classify = result.data.dicName
 					} else {
 						this.$message.error(result.msg);
 					}
@@ -288,13 +286,15 @@
 		    }
 		},
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}
 </script>
 
 <style type="text/css" lang="scss" scoped>
+	.el-alert {
+		margin-bottom: 15px;
+	}
 	.el-row {
 		margin-top: 15px;
 		& .el-pagination {

@@ -1,8 +1,5 @@
 <template>
 	<div class="children-view">
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-form :inline="true" :model="formObj" class="demo-form-inline">
 		  <el-form-item label="用户ID">
 		    <el-input v-model="formObj.userId" placeholder="请输入用户ID"></el-input>
@@ -105,14 +102,12 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 	import PageNum from 'base/page-num/page-num'
 
 	export default {
 		name: 'seeCourse',
 		data() {
 			return {
-				dataPath: ['课程管理', '音频课程', '查看课程'],
 				pageTotal: { //分页数据
 				    total: 0,
 			        pageSize: 10,
@@ -147,7 +142,7 @@
 			},
 			add() { //创建课程
 				this.$router.push({
-					path: '/topicColumn/list/' + this.$route.params.id + '/addCourse'
+					path: '/topicColumn/' + this.$route.params.id + '/addCourse'
 				})
 			},
 			onSubmit() {
@@ -159,7 +154,6 @@
 	      	}
 		},
 		components: {
-			BreadCrumb,
 			PageNum
 		}	
 	}
@@ -168,7 +162,7 @@
 <style type="text/css" lang="scss" scoped>
 	.children-view {
 		position: absolute;
-	    top: 0;
+	    top: 44px;
 	    left: 0;
 	    bottom: 0;
 	    right: 0;

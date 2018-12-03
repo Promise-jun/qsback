@@ -1,8 +1,5 @@
 <template>
 	<div class="children-view">
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-row :gutter="20">
 		  	<el-col :span="12" :offset="1">
 		  		<el-form :model="formData" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm">
@@ -102,14 +99,12 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb'
 	import { VueCropper }  from 'vue-cropper' 
 	
 	export default {
 		name: 'courseOperate',
 		data() {
 			return {
-				dataPath: ['课程管理', '音频课程', '查看课程', '课程操作'],
 				rules: {
 					status: [
 						{ required: true, message: '状态不能为空'}
@@ -208,7 +203,6 @@
 		    },
 		},
 		components: {
-			BreadCrumb,
 			VueCropper
 		}
 	}

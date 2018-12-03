@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-row :gutter="20">
 		  <el-col :span="6">
 
@@ -101,13 +98,10 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb'
-
 	export default {
 		name: 'servicegroup',
 		data() {
 			return {
-				dataPath: ['用户管理', '客服组管理'],
 				isActive: '',
 				groupList: [{
 					id: 1,
@@ -170,9 +164,6 @@
 	      		console.log(val)
 		        this.multipleSelection = val;
 		    }
-		},
-		components: {
-			BreadCrumb
 		}
 	}
 </script>

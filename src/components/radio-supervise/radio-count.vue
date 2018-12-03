@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-form :inline="true" :model="formObj" class="demo-form-inline">
     	  <el-form-item label="选择时间">
 		    <el-date-picker v-model="formObj.month" type="month" placeholder="选择日期"></el-date-picker>
@@ -46,7 +43,6 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 	import PageNum from 'base/page-num/page-num'
 	
 	export default {
@@ -82,7 +78,6 @@
 	      	}
 	    },
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}

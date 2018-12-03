@@ -1,7 +1,6 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
+		<el-alert v-if="classify !== ''" :title="'所属分类：' + classify" type="info" :closable="false"></el-alert>
 
     	<el-table
 		    :data="tableData"
@@ -87,7 +86,6 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb'
 	import PageNum from 'base/page-num/page-num'
 	import { formatDate } from 'common/js/format'
 
@@ -95,7 +93,6 @@
 		name: 'func',
 		data() {
 			return {
-				dataPath: ['功能管理'],
 				rules: {
 		          menuName: [
 		            { required: true, message: '名称不能为空' }
@@ -121,7 +118,8 @@
 		        	dataUrl: '',
 		        	parentMenucode: 0
 		        },
-		        tableData: []
+		        tableData: [],
+		        classify: ''
 			}
 		},
 		beforeRouteUpdate (to, from, next) {
@@ -142,7 +140,7 @@
 				this.roleForm.parentMenucode = parseInt(this.$route.query.authorityId)
 				if (!this.roleForm.parentMenucode) {
 					this.roleForm.parentMenucode = 0
-					this.dataPath = ['功能管理']
+					this.classify = ''
 					return
 				}
 				//查找菜单
@@ -155,7 +153,7 @@
 				}).then(res => {
 					let result = res.data
 					if (result.code == 200) {
-						this.dataPath = ['功能管理', result.data.menuName]
+						this.classify = result.data.menuName
 					} else {
 						this.$message.error(result.msg);
 					}
@@ -293,13 +291,15 @@
 		    }
 	  	},
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}
 </script>
 
 <style type="text/css" lang="scss" scoped>
+	.el-alert {
+		margin-bottom: 15px;
+	}
 	.el-row {
 		margin-top: 15px;
 		& .el-pagination {

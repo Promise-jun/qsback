@@ -1,8 +1,5 @@
 <template>
   <div>
-    <!-- 面包屑 -->
-    <bread-crumb :dataPath="dataPath"></bread-crumb>
-    
     <el-form :model="changePassForm" 
             status-icon 
             :rules="changePassRules" 
@@ -28,8 +25,6 @@
 </template>
 
 <script>
-import BreadCrumb from 'base/bread-crumb/bread-crumb' 
-
 export default {
   name: 'changePass',
   data () {
@@ -96,9 +91,6 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     }
-  },
-  components: {
-    BreadCrumb
   }
 }
 </script>

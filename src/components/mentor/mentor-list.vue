@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-form :inline="true" :model="formObj" class="demo-form-inline">
 		  <el-form-item label="用户ID">
 		    <el-input v-model="formObj.userid" placeholder="请输入用户ID"></el-input>
@@ -86,13 +83,10 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
-
 	export default {
 		name: 'mentorlist',
 		data() {
 			return {
-				dataPath: ['用户管理', '导师管理', '导师列表'],
 				formObj: {
 					userid: '',
 					name: '',
@@ -147,9 +141,6 @@
 	      		console.log(val)
 		        this.multipleSelection = val;
 		    }
-		},
-		components: {
-			BreadCrumb
 		}
 	}
 </script>

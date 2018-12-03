@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-		
 		<el-table
 		    :data="tableData"
 		    stripe
@@ -66,14 +63,12 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb'
 	import PageNum from 'base/page-num/page-num'
 
 	export default {
 		name: 'magazineClassify',
 		data() {
 			return {
-				dataPath: ['运营管理', '杂志管理', '杂志分类'],
 				rules: {
 		          title: [
 		            { required: true, message: '标题不能为空' }
@@ -138,7 +133,6 @@
 		    },
 		},
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}

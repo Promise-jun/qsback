@@ -1,7 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
 		<el-row>
 		  <el-col :span="24">
 		  	状态：
@@ -41,7 +39,6 @@
 		  	<el-button type="primary" icon="el-icon-circle-plus" @click="add">新增标签</el-button>
 		  </el-col>
 		  <el-col :span="12">
-		  	<!-- <el-pagination background layout="prev, pager, next" :total="total" @current-change="currentPage"></el-pagination> -->
 		  	<page-num
 				v-if="pageTotal.total > pageTotal.pageSize"
 				:currentpage="pageTotal.page"
@@ -74,7 +71,6 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb'
 	import PageNum from 'base/page-num/page-num'
 	import { formatDate } from 'common/js/format' //时间格式化方法
 
@@ -82,7 +78,6 @@
 		name: 'personalityLabel',
 		data() {
 			return {
-				dataPath: ['咨询管理', '咨询设置', '个性化标签'],
 				rules: {
 		          name: [
 		            { required: true, message: '名称不能为空' },
@@ -160,7 +155,6 @@
 		    },
 		},
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}

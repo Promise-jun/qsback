@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-table
 		    :data="tableData"
 		    stripe
@@ -60,7 +57,6 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb'
 	import PageNum from 'base/page-num/page-num'
 	import RoleDialog from 'components/role/role-dialog'
 	import { formatDate } from 'common/js/format'
@@ -69,7 +65,6 @@
 		name: 'role',
 		data() {
 			return {
-				dataPath: ['角色管理'],
 				loading: false,
 		        dialogTitle: '添加角色',
 		        dialogFormVisible: false,
@@ -209,7 +204,6 @@
 	      }
 	    },
 		components: {
-			BreadCrumb,
 			PageNum,
 			RoleDialog
 		}

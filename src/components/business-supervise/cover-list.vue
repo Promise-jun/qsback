@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
 		<el-table
 		    ref="tableData"
 		    stripe
@@ -60,7 +57,6 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 	import PageNum from 'base/page-num/page-num'
 	import { formatDate } from 'common/js/format'
 
@@ -68,7 +64,6 @@
 		name: 'bannerList',
 		data() {
 			return {
-				dataPath: ['运营管理', '广告管理', 'APP启动图管理'],
 				pageTotal: { //分页数据
 				    total: 0,
 			        pageSize: 10,
@@ -110,7 +105,6 @@
 	      	}
 		},
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}

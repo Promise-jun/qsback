@@ -9,6 +9,8 @@
     <el-container>
       <nav-menu class="menu" ref="menu" @clickme="changeWidth"></nav-menu>
       <div class="main" id="container" ref="main">
+        <!-- 面包屑 -->
+        <bread-crumb></bread-crumb>
         <transition name="fade" mode="out-in">
           <router-view></router-view>
         </transition>
@@ -18,6 +20,7 @@
 </template>
 
 <script>
+import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 import LoginInfo from 'components/login/login-info'
 import NavMenu from 'components/nav-menu/nav-menu'
 
@@ -64,6 +67,7 @@ export default {
     }
   },
   components: {
+    BreadCrumb,
     LoginInfo,
     NavMenu
   }

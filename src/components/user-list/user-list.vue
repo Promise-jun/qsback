@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-form :inline="true" :model="formObj" class="demo-form-inline">
 		  <el-form-item label="用户ID">
 		    <el-input v-model="formObj.userId" placeholder="请输入用户ID"></el-input>
@@ -54,8 +51,10 @@
 		    style="width: 100%; margin: 15px 0;"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column type="selection"  width="50"> </el-table-column>
-		    <el-table-column label="用户ID">
-		      <template slot-scope="scope">{{ scope.row.userId }}</template>
+		    <el-table-column label="用户ID" :show-overflow-tooltip="true">
+		      <template slot-scope="scope">
+		      	<router-link target="_blank" :to="{path:'/userlist/userDetail', query:{userId: scope.row.userId}}">{{ scope.row.userId }}</router-link>
+		      </template>
 		    </el-table-column>
 		    <el-table-column prop="userNickname" label="昵称"></el-table-column>
 		    <el-table-column prop="createTm" label="注册时间" width="150">
@@ -117,7 +116,6 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 	import PageNum from 'base/page-num/page-num'
 	import { formatDate } from 'common/js/format'
 
@@ -125,7 +123,6 @@
 		name: 'userlist',
 		data() {
 			return {
-				dataPath: ['用户管理', '客户管理'],
 				loading: false,
 				formObj: {
 					userId: '',
@@ -217,7 +214,6 @@
             }
         },
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}

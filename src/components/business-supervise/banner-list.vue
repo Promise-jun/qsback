@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-form :inline="true" :model="formObj" class="demo-form-inline">
 		  <el-form-item label="状态">
 		    <el-select v-model="formObj.status" placeholder="请选择状态">
@@ -82,14 +79,12 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 	import PageNum from 'base/page-num/page-num'
 
 	export default {
 		name: 'bannerList',
 		data() {
 			return {
-				dataPath: ['运营管理', '广告管理', 'banner图管理'],
 				pageTotal: { //分页数据
 				    total: 0,
 			        pageSize: 10,
@@ -132,7 +127,6 @@
 	      	}
 		},
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}

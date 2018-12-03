@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-table
 		    ref="tableData"
 		    stripe
@@ -36,7 +33,6 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 	import PageNum from 'base/page-num/page-num'
 	import { formatDate } from 'common/js/format'
 	
@@ -44,7 +40,6 @@
 		name: 'reportInfo',
 		data() {
 			return {
-				dataPath: ['运营管理', '举报信息'],
 				pageTotal: { //分页数据
 				    total: 0,
 			        pageSize: 10,
@@ -75,7 +70,6 @@
 			}
 		},
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}

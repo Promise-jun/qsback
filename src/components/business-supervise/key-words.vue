@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-form :inline="true" class="demo-form-inline">
 		  <el-form-item label="关键词">
 		  	<el-input v-model="keyWords" placeholder="请输入关键词"></el-input>
@@ -75,7 +72,6 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 	import PageNum from 'base/page-num/page-num'
 	import { formatDate } from 'common/js/format'
 	
@@ -83,7 +79,6 @@
 		name: 'keyWords',
 		data() {
 			return {
-				dataPath: ['运营管理', '互动管理', '关键词管理'],
 				rules: {
 		          keyWords: [
 		            { required: true, message: '关键词不能为空' }
@@ -153,7 +148,6 @@
 		    },
 	      },
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}

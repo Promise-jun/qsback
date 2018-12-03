@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-form :inline="true" :model="formObj" class="demo-form-inline">
 		  <el-form-item label="用户ID">
 		    <el-input v-model="formObj.userId" placeholder="请输入用户ID"></el-input>
@@ -93,14 +90,12 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 	import PageNum from 'base/page-num/page-num'
 
 	export default {
 		name: 'topicColumnList',
 		data() {
 			return {
-				dataPath: ['课程管理', '音频课程'],
 				pageTotal: { //分页数据
 				    total: 0,
 			        pageSize: 10,
@@ -135,7 +130,7 @@
 			},
 			add() { //新建专栏
 				this.$router.push({
-					path: '/topicColumn/list/addColumn'
+					path: '/topicColumn/addColumn'
 				})
 			},
 			onSubmit() {
@@ -147,7 +142,6 @@
 	      	}
 		},
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}

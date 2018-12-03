@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-form :inline="true" :model="formObj" class="demo-form-inline">
 		  <el-form-item label="状态">
 		    <el-select v-model="formObj.status" placeholder="请选择状态">
@@ -84,7 +81,6 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 	import PageNum from 'base/page-num/page-num'
 	import { formatDate } from 'common/js/format'
 	
@@ -92,7 +88,6 @@
 		name: 'galleryList',
 		data() {
 			return {
-				dataPath: ['直播管理', '直播设置', '图库管理'],
 				pageTotal: { //分页数据
 				    total: 0,
 			        pageSize: 5,
@@ -138,7 +133,6 @@
 	      	}
 		},
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}

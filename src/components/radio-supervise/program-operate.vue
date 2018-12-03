@@ -1,8 +1,5 @@
 <template>
 	<div class="children-view">
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-row :gutter="20">
 		  	<el-col :span="18" :offset="1">
 		  		<el-form :model="formData" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm">
@@ -97,14 +94,12 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb'
 	import { VueCropper }  from 'vue-cropper' 
 
 	export default {
 		name: 'programOperate',
 		data() {
 			return {
-				dataPath: ['电台管理', '专辑管理', '专辑列表', '添加专辑'],
 				rules: {
 					user: [
 						{ required: true, message: '礼物名称不能为空'}
@@ -211,7 +206,6 @@
 		    }
 		},
 		components: {
-			BreadCrumb,
 			VueCropper
 		}
 	}
@@ -251,7 +245,7 @@
 	}
 	.children-view {
 		position: absolute;
-	    top: 0;
+	    top: 44px;
 	    left: 0;
 	    bottom: 0;
 	    right: 0;

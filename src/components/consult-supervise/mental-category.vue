@@ -1,7 +1,6 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
+		<el-alert v-if="classify !== ''" :title="'所属分类：' + classify" type="info" :closable="false"></el-alert>
 
     	<el-table
 		    :data="tableData"
@@ -65,14 +64,12 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb'
 	import PageNum from 'base/page-num/page-num'
 
 	export default {
 		name: 'mentalCategory',
 		data() {
 			return {
-				dataPath: ['咨询管理', '咨询设置', '心理分类'],
 				rules: {
 		          categoryTitle: [
 		            { required: true, message: '标题不能为空' },
@@ -95,7 +92,8 @@
 			        pageSize: 6,
 			        page: 1
 			    },
-			    loading: false
+			    loading: false,
+			    classify: ''
 			}
 		},
 		mounted() {
@@ -106,7 +104,26 @@
 				this.formData.categoryParentId = this.$route.query.categoryId
 				if (!this.formData.categoryParentId) {
 					this.formData.categoryParentId = 0
+					this.classify = ''
+					return
 				}
+				// 查找心理分类
+				this.$axios({
+					method: 'post',
+					url: '/system/Category/findForCategory',
+					data: this.$qs.stringify({
+						ID: this.formData.categoryParentId
+					})
+				}).then(res => {
+					let result = res.data
+					if (result.code == 200) {
+						this.classify = result.data.categoryTitle
+					} else {
+						this.$message.error(result.msg);
+					}
+				}).catch(err => {
+			        console.log(err)
+			    })
 			},
 			getList() { //获取表格数据
 				this.getQuery();
@@ -256,13 +273,15 @@
 	        }
 		},
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}
 </script>
 
 <style type="text/css" lang="scss" scoped>
+	.el-alert {
+		margin-bottom: 15px;
+	}
 	.el-row {
 		margin-top: 15px;
 		& .el-pagination {

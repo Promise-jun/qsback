@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-form :inline="true" :model="formObj" class="demo-form-inline">
 		  <el-form-item label="用户名">
 		    <el-input v-model="formObj.userId" placeholder="请输入用户名"></el-input>
@@ -92,7 +89,6 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 	import PageNum from 'base/page-num/page-num'
 	import { formatDate } from 'common/js/format'
 	
@@ -100,7 +96,6 @@
 		name: 'ationMenuList',
 		data() {
 			return {
-				dataPath: ['咨询管理', '咨询套餐', '套餐列表'],
 				formObj: {}, //搜索信息
 				pageTotal: { //分页数据
 			        total: 0,
@@ -135,7 +130,6 @@
 	      	}
 		},
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}

@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-alert :title="'总计' + pageTotal.total + '条咨询'" type="warning" :closable="false"></el-alert>
 
     	<el-table
@@ -56,7 +53,6 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 	import PageNum from 'base/page-num/page-num'
 	import { formatDate } from 'common/js/format'
 
@@ -64,7 +60,6 @@
 		name: 'kefuIntervene',
 		data() {
 			return {
-				dataPath: ['咨询订单', '平台订单管理', '客服介入订单'],
 				pageTotal: { //分页数据
 				    total: 0,
 			        pageSize: 10,
@@ -102,7 +97,6 @@
 			}
 		},
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}

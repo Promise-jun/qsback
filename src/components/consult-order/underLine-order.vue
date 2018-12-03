@@ -2,16 +2,26 @@
 	<div>
     	<el-form :inline="true" :model="formObj" class="demo-form-inline">
     	  <el-form-item label="咨询单号">
-		    <el-input v-model="formObj.courseId" placeholder="请输入咨询单号"></el-input>
+		    <el-input v-model="formObj.userName" placeholder="请输入咨询单号"></el-input>
 		  </el-form-item>
 		  <el-form-item label="用户昵称">
 		    <el-input v-model="formObj.courseName" placeholder="请输入用户昵称"></el-input>
 		  </el-form-item>
+		  <el-form-item label="导师姓名">
+		    <el-input v-model="formObj.courseName" placeholder="请输入导师姓名"></el-input>
+		  </el-form-item>
+		  <el-form-item label="淘宝账号">
+		    <el-input v-model="formObj.courseName" placeholder="请输入淘宝账号"></el-input>
+		  </el-form-item>
 		  <el-form-item label="用户手机号">
 		    <el-input v-model="formObj.courseName" placeholder="请输入用户手机号"></el-input>
 		  </el-form-item>
-		  <el-form-item label="导师姓名">
-		    <el-input v-model="formObj.courseName" placeholder="请输入导师姓名"></el-input>
+		  <el-form-item label="客服">
+		    <el-select v-model="formObj.status" placeholder="请选择客服">
+		    	<el-option label="全部" value="0"></el-option>
+		  		<el-option label="客服一号" value="1"></el-option>
+		  		<el-option label="客服二号" value="2"></el-option>
+		  	</el-select>
 		  </el-form-item>
 		  <el-form-item label="订单状态">
 		    <el-select v-model="formObj.status" placeholder="请选择订单状态">
@@ -41,6 +51,13 @@
 		  <el-form-item label="用户ID">
 		    <el-input v-model="formObj.userName" placeholder="请输入用户ID"></el-input>
 		  </el-form-item>
+		  <el-form-item label="协助客服">
+		    <el-select v-model="formObj.status" placeholder="请选择协助客服">
+		    	<el-option label="全部" value="0"></el-option>
+		  		<el-option label="客服一号" value="1"></el-option>
+		  		<el-option label="客服二号" value="2"></el-option>
+		  	</el-select>
+		  </el-form-item>
 		  <el-form-item label="服务形式">
 		    <el-select v-model="formObj.status" placeholder="请选择服务形式">
 		    	<el-option label="全部" value="0"></el-option>
@@ -55,21 +72,6 @@
 		    	<el-option label="全部" value="0"></el-option>
 		  		<el-option label="有" value="1"></el-option>
 		  		<el-option label="没有" value="2"></el-option>
-		  	</el-select>
-		  </el-form-item>
-		  <el-form-item label="订单来源">
-		    <el-select v-model="formObj.status" placeholder="请选择订单来源">
-		    	<el-option label="全部" value="0"></el-option>
-		  		<el-option label="IOS" value="1"></el-option>
-		  		<el-option label="安卓" value="2"></el-option>
-		  		<el-option label="PC" value="3"></el-option>
-		  	</el-select>
-		  </el-form-item>
-		  <el-form-item label="客服">
-		    <el-select v-model="formObj.status" placeholder="请选择客服">
-		    	<el-option label="全部" value="0"></el-option>
-		  		<el-option label="客服一号" value="1"></el-option>
-		  		<el-option label="客服二号" value="2"></el-option>
 		  	</el-select>
 		  </el-form-item>
 		  <el-form-item label="支付时间">
@@ -94,7 +96,7 @@
 		    <el-button type="primary" @click="onSubmit" icon="el-icon-circle-plus">查询</el-button>
 		  </el-form-item>
 		</el-form>
-
+		
 		<el-alert :title="'总计' + pageTotal.total + '条咨询'" type="warning" :closable="false"></el-alert>
 
 		<el-table
@@ -107,7 +109,8 @@
 		    style="width: 100%; margin: 15px 0;">
 		    <el-table-column prop="orderId" label="订单号"></el-table-column>
 		    <el-table-column prop="way" label="服务方式"></el-table-column>
-		    <el-table-column prop="userName" label="用户昵称"></el-table-column>
+		    <el-table-column prop="phone" label="手机号"></el-table-column>
+		    <el-table-column prop="taobaoId" label="淘宝账号"></el-table-column>
 		    <el-table-column prop="tutor" label="导师姓名"></el-table-column>
 		    <el-table-column label="创建时间">
 		    	<template slot-scope="scope">
@@ -122,8 +125,8 @@
 		    <el-table-column prop="totalLen" label="总时长(分钟)"></el-table-column>
 		    <el-table-column prop="surplusLen" label="剩余时长(分钟)"></el-table-column>
 		    <el-table-column prop="totalPrice" label="订单总价(￥)"></el-table-column>
-		    <el-table-column prop="orderstatus" label="订单状态"></el-table-column>
 		    <el-table-column prop="kefu" label="客服"></el-table-column>
+		    <el-table-column prop="orderstatus" label="订单状态"></el-table-column>
 		    <el-table-column label="完成时间">
 		    	<template slot-scope="scope">
 					{{scope.row.achieveTm | formatDate}}
@@ -137,9 +140,12 @@
 			  </template>
 		    </el-table-column>
 		</el-table>
-
+		
 		<el-row>
-		  <el-col :span="24">
+		  <el-col :span="12">
+		  	<el-button type="primary" icon="el-icon-circle-plus" @click="add">新增咨询</el-button>
+		  </el-col>
+		  <el-col :span="12">
 		  	<page-num
 		  		v-if="pageTotal.total > pageTotal.pageSize"
 				:currentpage="pageTotal.page"
@@ -156,9 +162,9 @@
 <script type="text/javascript">
 	import PageNum from 'base/page-num/page-num'
 	import { formatDate } from 'common/js/format'
-	
+
 	export default {
-		name: 'platformOrder',
+		name: 'underLineOrder',
 		data() {
 			return {
 				pageTotal: { //分页数据
@@ -171,7 +177,7 @@
 			    tableData: [{
 			    	orderId: 'ZL20180302000028',
 			    	way: '通话',
-			    	userName: '情说107965',
+			    	phone: '18367979488',
 			    	tutor: '李易峰',
 			    	createTm: 1543209657000,
 			    	payTm: 1543209667000,
@@ -199,6 +205,9 @@
 			},
 			onSubmit() {
 	        	this.getList();
+	      	},
+	      	add() { //新增咨询
+
 	      	}
 		},
 		components: {

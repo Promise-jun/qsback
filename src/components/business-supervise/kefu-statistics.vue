@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-form :inline="true" class="demo-form-inline">
     	  <el-form-item label="统计时间">
 		    <el-date-picker
@@ -58,14 +55,12 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 	import PageNum from 'base/page-num/page-num'
 
 	export default {
 		name: 'kefuStatistics',
 		data() {
 			return {
-				dataPath: ['运营管理', '数据统计', '客服统计'],
 				pageTotal: { //分页数据
 				    total: 0,
 			        pageSize: 10,
@@ -141,7 +136,6 @@
 	      	}
 		},
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}

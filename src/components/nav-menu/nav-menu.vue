@@ -99,6 +99,36 @@ let data = [
     					path: '/applicationConsultation/kefuIntervene'
     				}
     			]
+    		},
+    		{
+    			name: '梦立方',
+    			child: [
+    				{
+    					name: '正式订单',
+    					path: '/dreamCube/formalOrder'
+    				},
+    				{
+    					name: '体验订单',
+    					path: '/dreamCube/experienceOrder'
+    				}
+    			]
+    		},
+    		{
+    			name: '悦然一心',
+    			child: [
+    				{
+    					name: '正式订单',
+    					path: '/pleasantHeart/formalOrder'
+    				},
+    				{
+    					name: '体验订单',
+    					path: '/pleasantHeart/experienceOrder'
+    				}
+    			]
+    		},
+    		{
+    			name: '线下订单',
+    			path: '/underLineOrder'
     		}
     	]
     },
@@ -233,11 +263,11 @@ let data = [
     		},
     		{
     			name: '直播预告',
-    			path: '/liveForeshow/list'
+    			path: '/liveForeshow'
     		},
     		{
     			name: '直播间管理',
-    			path: '/liveRoom/list'
+    			path: '/liveRoom'
     		}
     	]
     },
@@ -279,7 +309,7 @@ let data = [
     	child: [
     		{
     			name: '音频课程',
-    			path: '/topicColumn/list'
+    			path: '/topicColumn'
     		}
     	]
     },

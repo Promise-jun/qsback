@@ -1,8 +1,5 @@
 <template>
 	<div>
-		<!-- 面包屑 -->
-    	<bread-crumb :dataPath="dataPath"></bread-crumb>
-
     	<el-form :inline="true" :model="formObj" class="demo-form-inline">
 		  <el-form-item label="用户ID">
 		    <el-input v-model="formObj.userId" placeholder="请输入用户ID"></el-input>
@@ -91,14 +88,12 @@
 </template>
 
 <script type="text/javascript">
-	import BreadCrumb from 'base/bread-crumb/bread-crumb' 
 	import PageNum from 'base/page-num/page-num'
 	
 	export default {
 		name: 'programList',
 		data() {
 			return {
-				dataPath: ['电台管理', '专辑管理', '专辑列表'],
 				pageTotal: { //分页数据
 				    total: 0,
 			        pageSize: 10,
@@ -145,7 +140,6 @@
 	      	}
 	    },
 		components: {
-			BreadCrumb,
 			PageNum
 		}
 	}

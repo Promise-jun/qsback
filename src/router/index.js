@@ -56,6 +56,72 @@ const CourseOrderList = resolve => { //订单列表
     resolve(comp)
   })
 }
+// 资金管理
+const WithdrawCash = resolve => { //提现列表
+  import('components/fund-supervise/withdraw-cash').then(comp => {
+    resolve(comp)
+  })
+}
+const RechargeList = resolve => { //充值列表
+  import('components/fund-supervise/recharge-list').then(comp => {
+    resolve(comp)
+  })
+}
+const AddAndSubtractMoney = resolve => { //加减币管理
+  import('components/fund-supervise/addAndSubtract-money').then(comp => {
+    resolve(comp)
+  })
+}
+const FundFlow = resolve => { //资金流水
+  import('components/fund-supervise/fund-flow').then(comp => {
+    resolve(comp)
+  })
+}
+const BusinessList = resolve => { //交易列表
+  import('components/fund-supervise/business-list').then(comp => {
+    resolve(comp)
+  })
+}
+const FinanceList = resolve => { //财务明细
+  import('components/fund-supervise/finance-list').then(comp => {
+    resolve(comp)
+  })
+}
+const RefundmentList = resolve => { //退款列表
+  import('components/fund-supervise/refundment-list').then(comp => {
+    resolve(comp)
+  })
+}
+const GoldRecord = resolve => { //金币兑换记录
+  import('components/fund-supervise/gold-record').then(comp => {
+    resolve(comp)
+  })
+}
+const GoldNullah = resolve => { //金币流水
+  import('components/fund-supervise/gold-nullah').then(comp => {
+    resolve(comp)
+  })
+}
+const GoldAddSub = resolve => { //金币加减币
+  import('components/fund-supervise/gold-addSub').then(comp => {
+    resolve(comp)
+  })
+}
+const DiamondRecord = resolve => { //钻石兑换记录
+  import('components/fund-supervise/diamond-record').then(comp => {
+    resolve(comp)
+  })
+}
+const DiamondNullah = resolve => { //钻石流水
+  import('components/fund-supervise/diamond-nullah').then(comp => {
+    resolve(comp)
+  })
+}
+const DiamondAddSub = resolve => { //钻石加减币
+  import('components/fund-supervise/diamond-addSub').then(comp => {
+    resolve(comp)
+  })
+}
 // 咨询管理
 import MentalCategory from 'components/consult-supervise/mental-category'  //心理分类
 import PersonalityLabel from 'components/consult-supervise/personality-label' //个性化标签
@@ -511,6 +577,164 @@ export default new Router({
             title: '订单列表',
             goto: '/courseOrder/list'
           }
+        }
+      ]
+    },
+    {
+      path: '/',
+      component: Index,
+      name: 'fundManage', //资金管理
+      meta: {
+        title: '资金管理',
+        goto: ''
+      },
+      children: [
+        {
+          path: 'cashManage', //现金管理
+          component: ParentView,
+          meta: {
+            title: '现金管理',
+            goto: ''
+          },
+          children: [
+              {
+                path: 'withdrawCash', //提现列表
+                name: 'withdrawCash',
+                component: WithdrawCash,
+                meta: {
+                  title: '提现列表',
+                  goto: '/cashManage/withdrawCash'
+                }
+              },
+              {
+                path: 'rechargeList', //充值列表
+                name: 'rechargeList',
+                component: RechargeList,
+                meta: {
+                  title: '充值列表',
+                  goto: '/cashManage/rechargeList'
+                }
+              },
+              {
+                path: 'addAndSubtractMoney', //加减币管理
+                name: 'addAndSubtractMoney',
+                component: AddAndSubtractMoney,
+                meta: {
+                  title: '加减币管理',
+                  goto: '/cashManage/addAndSubtractMoney'
+                }
+              },
+              {
+                path: 'fundFlow', //资金流水
+                name: 'fundFlow',
+                component: FundFlow,
+                meta: {
+                  title: '资金流水',
+                  goto: '/cashManage/fundFlow'
+                }
+              },
+              {
+                path: 'businessList', //交易列表
+                name: 'businessList',
+                component: BusinessList,
+                meta: {
+                  title: '交易列表',
+                  goto: '/cashManage/businessList'
+                }
+              },
+              {
+                path: 'financeList', //财务明细
+                name: 'financeList', 
+                component: FinanceList,
+                meta: {
+                  title: '财务明细',
+                  goto: '/cashManage/financeList'
+                }
+              },
+              {
+                path: 'refundmentList', //退款列表
+                name: 'refundmentList',
+                component: RefundmentList,
+                meta: {
+                  title: '退款列表',
+                  goto: '/cashManage/refundmentList'
+                }
+              }
+          ]
+        },
+        {
+          path: 'gold', //金币管理
+          component: ParentView,
+          meta: {
+            title: '金币管理',
+            goto: ''
+          },
+          children: [
+              {
+                path: 'goldRecord', //金币兑换记录
+                name: 'goldRecord',
+                component: GoldRecord,
+                meta: {
+                  title: '金币兑换记录',
+                  goto: '/gold/goldRecord'
+                }
+              },
+              {
+                path: 'goldNullah', //金币流水
+                name: 'goldNullah',
+                component: GoldNullah,
+                meta: {
+                  title: '金币流水',
+                  goto: '/gold/goldNullah'
+                }
+              },
+              {
+                path: 'goldAddSub', //金币加减币
+                name: 'goldAddSub', 
+                component: GoldAddSub,
+                meta: {
+                  title: '金币加减币',
+                  goto: '/gold/goldAddSub'
+                }
+              }
+          ]
+        },
+        {
+          path: 'diamond', //钻石管理
+          component: ParentView,
+          meta: {
+            title: '钻石管理',
+            goto: ''
+          },
+          children: [
+              {
+                path: 'diamondRecord', //钻石兑换记录
+                name: 'diamondRecord',
+                component: DiamondRecord,
+                meta: {
+                  title: '钻石兑换记录',
+                  goto: '/diamond/diamondRecord'
+                }
+              },
+              {
+                path: 'diamondNullah', //钻石流水
+                name: 'diamondNullah',
+                component: DiamondNullah,
+                meta: {
+                  title: '钻石流水',
+                  goto: '/diamond/diamondNullah'
+                }
+              },
+              {
+                path: 'diamondAddSub', //钻石加减币
+                name: 'diamondAddSub',
+                component: DiamondAddSub,
+                meta: {
+                  title: '钻石加减币',
+                  goto: '/diamond/diamondAddSub'
+                }
+              }
+          ]
         }
       ]
     },

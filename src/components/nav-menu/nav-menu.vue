@@ -143,6 +143,79 @@ let data = [
     	]
     },
     {
+    	name: '资金管理',
+    	icon: 'el-icon-menu',
+    	child: [
+    		{
+    			name: '现金管理',
+    			child: [
+    				{
+    					name: '提现列表',
+    					path: '/cashManage/withdrawCash'
+    				},
+    				{
+    					name: '充值列表',
+    					path: '/cashManage/rechargeList'
+    				},
+    				{
+    					name: '加减币管理',
+    					path: '/cashManage/addAndSubtractMoney'
+    				},
+    				{
+    					name: '资金流水',
+    					path: '/cashManage/fundFlow'
+    				},
+    				{
+    					name: '交易列表',
+    					path: '/cashManage/businessList'
+    				},
+    				{
+    					name: '财务明细',
+    					path: '/cashManage/financeList'
+    				},
+    				{
+    					name: '退款列表',
+    					path: '/cashManage/refundmentList'
+    				}
+    			]
+    		},
+    		{
+    			name: '金币管理',
+    			child: [
+    				{
+    					name: '金币兑换记录',
+    					path: '/gold/goldRecord'
+    				},
+    				{
+    					name: '金币流水',
+    					path: '/gold/goldNullah'
+    				},
+    				{
+    					name: '金币加减币',
+    					path: '/gold/goldAddSub'
+    				}
+    			]
+    		},
+    		{
+    			name: '钻石管理',
+    			child: [
+    				{
+    					name: '钻石兑换记录',
+    					path: '/diamond/diamondRecord'
+    				},
+    				{
+    					name: '钻石流水',
+    					path: '/diamond/diamondNullah'
+    				},
+    				{
+    					name: '钻石加减币',
+    					path: '/diamond/diamondAddSub'
+    				}
+    			]
+    		}
+    	]
+    },
+    {
     	name: '咨询管理',
     	icon: 'el-icon-menu',
     	child: [

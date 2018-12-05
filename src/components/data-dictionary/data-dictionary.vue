@@ -1,156 +1,98 @@
 <template>
-	<div>
-		<el-alert v-if="classify !== ''" :title="'所属分类：' + classify" type="info" :closable="false"></el-alert>
-
-    	<el-table
-		    :data="tableData"
-		    stripe
-		    border
-		    v-loading="loading"
-		    style="width: 100%"
-		>	
-		    <el-table-column label="数据名称">
-		    	<template slot-scope="scope">
-		    		<router-link :to="{ name:'dataDictionary',query:{ dicId: scope.row.dicId } }">
-		    			{{ scope.row.dicName }}
-		    		</router-link>
-		    	</template>
-		    </el-table-column>
-		    <el-table-column prop="dicRemark" label="字段注释" show-overflow-tooltip></el-table-column>
-		    <el-table-column prop="createNm" label="创建人"></el-table-column>
-		    <el-table-column label="创建时间">
-		    	<template slot-scope="scope">{{ scope.row.createTm | formatDate }}</template>
-		    </el-table-column>
-		    <el-table-column prop="updateNm" label="最后更新人"></el-table-column>
-		    <el-table-column label="最后更新时间">
-		    	<template slot-scope="scope">{{ scope.row.updateTm | formatDate }}</template>
-		    </el-table-column>
-		    <el-table-column label="操作">
-		    	<template slot-scope="scope">
-		    		<el-tooltip content="编辑" placement="top">
-					  <el-button @click="edit(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
-					</el-tooltip>
-		    		<el-tooltip content="删除" placement="top">
-					  <el-button @click="del(scope.row)" type="text" icon="iconfont icon-delete" style="color: #F56C6C;"></el-button>
-					</el-tooltip>
-			    </template>
-		    </el-table-column>
-		</el-table>
-
-		<el-row>
-		  <el-col :span="12">
-		  	<el-button type="primary" icon="el-icon-circle-plus" @click="add">添加</el-button>
-		  </el-col>
-		  <el-col :span="12">
-		  	<page-num
-		  		v-if="pageTotal.total > pageTotal.pageSize"
-				:currentpage="pageTotal.page"
-				:total="pageTotal.total"
-				:pageSize="pageTotal.pageSize"
-				:render="getList"
-				:options="pageTotal">
-			</page-num>
-		  </el-col>
+    <article>
+    	<el-row>
+		 	<el-col :span="18">
+		 		<el-card class="box-card">
+				  	<div slot="header" class="clearfix">
+				    	<span>数据字典</span>
+				    	<el-button style="float: right; padding: 3px 0" type="text" @click="add">添加分类</el-button>
+				  	</div>
+				  	<el-tree
+			            ref="tree"
+			            node-key="dicId"
+			            v-loading="loading"
+			            :key="treeKey"
+			            :data="data"
+			            :props="defaultProps"
+			            :default-expanded-keys="treeExpandedKeys"
+			            :lazy="true"
+			            :load="loadTreeNode"
+			            @node-expand="treeExpand"
+			            @node-collapse="treeCollapse">
+				        <span class="custom-tree-node" slot-scope="{ node, data }">
+				            <span>{{ node.label }}</span>
+				            <span class="custom__tree__icons">
+				                <el-tooltip class="item" effect="dark" content="新增" placement="top">
+				                    <i class="tree-icon el-icon-plus" @click.stop="append(data)"></i>
+				                </el-tooltip>
+				                <el-tooltip class="item" effect="dark" content="编辑" placement="top">
+				                    <i class="tree-icon el-icon-edit" @click.stop="edit(node, data)"></i>
+				                </el-tooltip>
+				                <el-tooltip class="item" effect="dark" content="删除" placement="top">
+				                    <i class="tree-icon el-icon-close" @click.stop="remove(node, data)"></i>
+				                </el-tooltip>
+				            </span>
+				        </span>
+			        </el-tree>
+				</el-card>
+		 	</el-col>
 		</el-row>
-
-		<el-dialog :title="dialogTitle" :visible.sync="dialogVisible">
-		  <el-form :model="formData" status-icon :rules="rules" ref="roleForm" label-width="100px">
-		    <el-form-item label="数据名称" prop="dicName">
-		      <el-input v-model="formData.dicName" autocomplete="off"></el-input>
-		    </el-form-item>
-		    <el-form-item label="字段注释">
-		      <el-input v-model="formData.dicRemark" autocomplete="off"></el-input>
-		    </el-form-item>
-		    <el-form-item>
-			  <el-button type="primary" @click="submitForm('roleForm')" :loading="submitLoading">提交</el-button>
-			  <el-button @click="dialogVisible = false">取消</el-button>
-			</el-form-item>
-		  </el-form>
-		</el-dialog>
-	</div>
+			        
+        <el-dialog top="5vh" class="dialog" title="新增子节点" :visible.sync="isShowDlg">
+            <el-form label-width="120px" ref="nodeQuery"
+                     :model="nodeQuery" class="demo-form-inline" :rules="rules">
+                <el-form-item label="数据名称" prop="dicName">
+			      <el-input v-model="nodeQuery.dicName" autocomplete="off"></el-input>
+			    </el-form-item>
+			    <el-form-item label="字段注释">
+			      <el-input v-model="nodeQuery.dicRemark" autocomplete="off"></el-input>
+			    </el-form-item>
+                <el-form-item class="btns__adjust">
+                    <el-button size="medium" type="primary" @click="sure" :loading="submitLoading">确定</el-button>
+                    <el-button size="medium" @click="reset">取消</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
+    </article>
 </template>
 
-<script type="text/javascript">
-	import PageNum from 'base/page-num/page-num'
-	import { formatDate } from 'common/js/format'
-
-	export default {
-		name: 'dataDictionary',
-		data() {
-			return {
-				rules: {
+<script>
+    export default {
+        data() {
+            return {
+            	rules: {
 		          dicName: [
 		            { required: true, message: '数据名称不能为空' },
 		          ]
 		        },
-				loading: false,
-				dialogTitle: '新增',
-				dialogVisible: false,
-				submitLoading: false, //提交按钮loading
-				tableData: [],   //表格数据
-				formData: {
-					dicName: '',
-					dicRemark: '',
-					dicPid: 0  //父类id
-				},
-				pageTotal: { //分页数据
-			        total: 0,
-			        pageSize: 10,
-			        page: 1
-			    },
-			    classify: ''
-			}
-		},
-		filters: {
-		    formatDate(time) {
-		    	var date = new Date(time);
-		    	return formatDate(date, 'yyyy-MM-dd hh:mm:ss');
-		   	}
-		},
-		beforeRouteUpdate (to, from, next) {
-		    // 在当前路由改变，但是该组件被复用时调用
-		    // 举例来说，对于一个带有动态参数的路径 /foo/:id，在 /foo/1 和 /foo/2 之间跳转的时候，
-		    // 由于会渲染同样的 Foo 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。
-		    // 可以访问组件实例 `this`
-		    next()
-		    this.getQuery()
-		    this.getList()
-		},
-		created() {
-			this.getQuery()
-			this.getList()
-		},
-		methods: {
-			getQuery() {
-				this.formData.dicPid = parseInt(this.$route.query.dicId)
-				if (!this.formData.dicPid) {
-					this.formData.dicPid = 0
-					this.classify = ''
-					return
-				}
-				//查找数据字典
-				this.$axios({
-					method: 'post',
-					url: '/sys/dic/findById',
-					data: this.$qs.stringify({
-						ID: this.formData.dicPid
-					})
-				}).then(res => {
-					let result = res.data
-					if (result.code == 200) {
-						this.classify = result.data.dicName
-					} else {
-						this.$message.error(result.msg);
-					}
-				}).catch(err => {
-			        console.log(err)
-			    })
-			},
-			getList() {
-				let uploadData = {
-					dicPid: this.formData.dicPid,
-					thisPage: this.pageTotal.page,
-					limit: this.pageTotal.pageSize
+                data: [], // tree数据源
+                defaultProps: { // 树相关属性设置
+                    dicId: "",
+                    children: "childList",
+                    label: "dicName",
+                    isLeaf: 'leaf'
+                },
+                activeData: null,   // 当前操作数据
+                treeExpandedKeys: [],   // 记录打开节点的数组
+                treeKey: '',    // 控制tree渲染的key
+                nodeQuery: { // 编辑树节点表单的model
+                    dicName: '',    
+                    dicRemark: '',
+                    dicPid: 0  //父类id
+                },
+                isShowDlg: false,    // 是否显示编辑节点弹框
+                loading: false, //加载数据loading
+                submitLoading: false //按钮提交loading
+            }
+        },
+        methods: {
+            // 加载树
+            loadTreeNode(node, resolve) {
+                this.nodeQuery.dicPid = node.parent ? node.data.dicId : 0;
+                let uploadData = {
+					dicPid: this.nodeQuery.dicPid,
+					thisPage: 1,
+					limit: 100
 				}
 				this.loading = true
 				this.$axios({
@@ -159,40 +101,47 @@
 					data: this.$qs.stringify(uploadData)
 				}).then(res => {
 					this.loading = false
-					let result = res.data
-					if (result.code == 200) {
-						if (result.data.list.length) {
-							this.pageTotal = {
-				              total: parseInt(result.data.total),
-				              pageSize: parseInt(result.data.pageSize),
-				              page: parseInt(result.data.pageNum)
-				            };
-						}
-			        	this.tableData = result.data.list
-					} else {
-						this.$message.error(result.msg);
-					}
+					const result = res.data;
+                    const treeData = result.data.list;
+                    if (result.code == 200 && node.level === 0) {
+                        // 如果是第一次加载数据，直接返回数据
+                        resolve(treeData);
+                    } else if(result.code == 200) {
+                        // 如果非第一次加载数据，将返回数据拼接到操作节点的childList属性中
+                        node.data.childList = treeData;
+                        resolve(treeData);
+                    } else {
+                        resolve([]);
+                        this.$message({
+                            type: 'error',
+                            message: '加载数据出错！'
+                        });
+                    }
 				}).catch(err => {
 			    	this.loading = false
 			        console.log(err)
 			    })
-			},
-			add() {
-				this.dialogVisible = true;
-				this.dialogTitle = '新增';
-				delete this.formData.dicId;
-				this.formData.dicName = ''
-				this.formData.dicRemark = ''
-			},
-			edit(row) {
-				this.dialogVisible = true;
-				this.dialogTitle = '编辑';
-				this.formData.dicId = row.dicId
-				this.formData.dicName = row.dicName
-				this.formData.dicRemark = row.dicRemark
-			},
-			del(row) {
-				this.$confirm('此操作将删除该分类, 是否继续?', '提示', {
+            },
+
+            // 添加根节点
+            add() {
+            	this.editType = "ADD";
+            	this.isShowDlg = true;
+            	// 记录当前节点数据，供新增弹框关闭后回调用
+                this.activeData = {};
+            },
+
+            // 新增节点
+            append(data) {
+                this.editType = "ADD";
+                this.isShowDlg = true;
+                // 记录当前节点数据，供新增弹框关闭后回调用
+                this.activeData = data;
+            },
+
+            // 移除节点
+            remove(node, data) {
+                this.$confirm('此操作将删除该分类, 是否继续?', '提示', {
 		          confirmButtonText: '确定',
 		          cancelButtonText: '取消',
 		          type: 'warning',
@@ -202,13 +151,14 @@
 				        method: 'post',
 				        url: '/sys/dic/deleteForDic',
 				        data: this.$qs.stringify({
-				        	dicId: row.dicId,
+				        	dicId: data.dicId,
 				        	isDel: 1
 				        })
 				    }).then(res => {
 				        let result = res.data
 				        if (result.code == 200) {
-				        	this.getList();
+				        	// 重新渲染tree
+                        	this.renderTree();
 				        	this.$message({
 					          message: '删除成功',
 					          type: 'success'
@@ -222,33 +172,34 @@
 		        }).catch(() => {
 
 		        });
-			},
-			submitForm(formName) { //提交表单
-		        this.$refs[formName].validate((valid) => {
-		          if (valid) {
-		          	this.submitLoading = true
-		          	if (!this.formData.dicId) { //新增
-		          		this.addClassify();
-		          	} else { //编辑
-		          		this.editClassify();
-		          	}
-		          } else {
-		            console.log('error submit!!');
-		            return false;
-		          }
-		        });
-		    },
-		    addClassify() {
+            },
+
+            // 编辑节点
+            edit(node, data) {
+                this.nodeQuery.dicName = data.dicName;
+                this.nodeQuery.dicRemark = data.dicRemark;
+                // 记录当前操作数据
+                this.activeData = data;
+                this.editType = "EDIT";
+                this.isShowDlg = true;
+            },
+
+            // 新增节点回调函数
+            appendCallback() {
+                const data = this.activeData;
+                const nodeQuery = this.nodeQuery;
+                nodeQuery.dicPid = data.dicId ? data.dicId : 0;
+                // 将新节点名称和父节点id传递到后台
 		    	this.$axios({
 			        method: 'post',
 			        url: '/sys/dic/saveForDic',
-			        data: this.$qs.stringify(this.formData)
+			        data: this.$qs.stringify(this.nodeQuery)
 			    }).then(res => {
 			        let result = res.data
 			        this.submitLoading = false
 			        if (result.code == 200) {
-			        	this.getList();
-			        	this.dialogVisible = false;
+			        	this.renderTree();
+			        	this.isShowDlg = false;
 			        	this.$message({
 				          message: '添加成功',
 				          type: 'success'
@@ -260,18 +211,31 @@
 			    	this.submitLoading = false
 			        console.log(err)
 			    })
-		    },
-		    editClassify() {
-		    	this.$axios({
+            },
+
+            // 编辑节点回调函数
+            editCallback() {
+                const data = this.activeData,
+                    nodeQuery = this.nodeQuery;
+                data.dicName = nodeQuery.dicName;
+                data.dicRemark = nodeQuery.dicRemark;
+                let uploadData = {
+                	dicId: data.dicId,
+                	dicName: data.dicName,
+                	dicPid: data.dicPid,
+                	dicRemark: data.dicRemark
+                }
+                // 将节点新名称和节点id传递到后台
+                this.$axios({
 			        method: 'post',
 			        url: '/sys/dic/editForDic',
-			        data: this.$qs.stringify(this.formData)
+			        data: this.$qs.stringify(uploadData)
 			    }).then(res => {
 			        let result = res.data
 			        this.submitLoading = false
 			        if (result.code == 200) {
-			        	this.getList();
-			        	this.dialogVisible = false;
+			        	this.renderTree()
+			        	this.isShowDlg = false;
 			        	this.$message({
 				          message: '修改成功',
 				          type: 'success'
@@ -283,22 +247,63 @@
 			    	this.submitLoading = false
 			        console.log(err)
 			    })
-		    }
-		},
-		components: {
-			PageNum
-		}
-	}
+            },
+
+            // 刷新key值，重新渲染tree
+            renderTree() {
+                this.treeKey = +new Date();
+            },
+
+            // 当节点打开时，记录下打开节点的id
+            treeExpand(data, node, self) {
+                this.treeExpandedKeys.push(data.dicId);
+            },
+
+            // 当节点关闭时，移除节点的id
+            treeCollapse(data) {
+                const index = this.treeExpandedKeys.indexOf(data.dicId);
+                if (index > -1) {
+                    this.treeExpandedKeys.splice(index, 1);
+                }
+            },
+
+            // tree noed 新增/编辑确定事件
+            sure() {
+                const editType = this.editType;
+                this.$refs["nodeQuery"].validate(valid => {
+                    if (valid) {
+                    	this.submitLoading = true
+                        editType === "ADD" ? this.appendCallback() : this.editCallback();
+                        this.reset();
+                    } else {
+                        console.log("error submit!!");
+                        return false;
+                    }
+                });
+            },
+
+            // tree node 弹框取消事件
+            reset() {
+                this.activeData = null;
+                this.isShowDlg = false;
+                this.nodeQuery = {
+                    dicName: '',
+                    dicRemark: '',
+                    dicPid: 0  //父类id
+                };
+                this.editType = "ADD";
+            }
+        }
+    };
 </script>
 
 <style type="text/css" lang="scss" scoped>
-	.el-alert {
-		margin-bottom: 15px;
-	}
-	.el-row {
-		margin-top: 15px;
-		& .el-pagination {
-			float: right;
-		}
-	}
+	.custom-tree-node {
+    	flex: 1;
+    	display: flex;
+    	align-items: center;
+    	justify-content: space-between;
+    	font-size: 14px;
+    	padding-right: 8px;
+  	}
 </style>

@@ -24,6 +24,11 @@ import AnchorAudit from 'components/anchor/anchor-audit'
 import GroupList from 'components/group/group-list'
 import OperatorList from 'components/operator/operator-list'
 import ServiceGroup from 'components/service-group/service-group'
+const BusinessGroup = resolve => { //业务组管理
+  import('components/business-group/business-group').then(comp => {
+    resolve(comp)
+  })
+}
 // 咨询订单
 const PlatformOrder = resolve => { //平台订单
   import('components/consult-order/platform-order').then(comp => {
@@ -448,6 +453,15 @@ export default new Router({
             meta: {
               title: '客服组管理',
               goto: '/servicegroup'
+            }
+          },
+          {
+            path: '/businessGroup', //业务组管理
+            name: 'businessGroup',
+            component: BusinessGroup,
+            meta: {
+              title: '业务组管理',
+              goto: '/businessGroup'
             }
           }
       ]

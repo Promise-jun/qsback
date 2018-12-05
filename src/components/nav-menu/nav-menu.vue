@@ -80,6 +80,10 @@ let data = [
             {
             	name: '客服组管理',
             	path: '/servicegroup'
+            },
+            {
+            	name: '业务组管理',
+            	path: '/businessGroup'
             }
         ]
     },

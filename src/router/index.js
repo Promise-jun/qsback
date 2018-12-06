@@ -18,8 +18,18 @@ const UserDetail = resolve => { //用户详情
 }
 import UserOperate from 'components/user-list/user-operate' //新增用户、编辑用户
 import MentorList from 'components/mentor/mentor-list'
+const MentorDetail = resolve => { //导师详情
+  import('components/mentor/mentor-detail').then(comp => {
+    resolve(comp)
+  })
+}
 import MentorAudit from 'components/mentor/mentor-audit'
 import AnchorList from 'components/anchor/anchor-list'
+const AnchorDetail = resolve => { //主播详情
+  import('components/anchor/anchor-detail').then(comp => {
+    resolve(comp)
+  })
+}
 import AnchorAudit from 'components/anchor/anchor-audit'
 import GroupList from 'components/group/group-list'
 import OperatorList from 'components/operator/operator-list'
@@ -395,6 +405,15 @@ export default new Router({
                     title: '导师审核',
                     goto: '/mentor/audit'
                   }
+                },
+                {
+                  path: 'mentorDetail', //导师详情
+                  name: 'mentorDetail',
+                  component: MentorDetail,
+                  meta: {
+                    title: '导师详情',
+                    goto: '/mentor/mentorDetail'
+                  }
                 }
             ]
           },
@@ -424,6 +443,15 @@ export default new Router({
                   meta: {
                     title: '主播审核',
                     goto: '/anchor/audit'
+                  }
+                },
+                {
+                  path: 'anchorDetail', //主播详情
+                  name: 'anchorDetail',
+                  component: AnchorDetail,
+                  meta: {
+                    title: '主播详情',
+                    goto: '/anchor/anchorDetail'
                   }
                 }
             ]

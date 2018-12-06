@@ -1,7 +1,7 @@
 <template>
 	<div class="children-view user-detail">
 		<el-row>
-		  	<el-col :span="24" class="title">用户详情</el-col>
+		  	<el-col :span="24" class="title">导师详情</el-col>
 		</el-row>
 
 		<el-row class="basic-info" :gutter="20">
@@ -43,13 +43,6 @@
 					  			<label>性别：</label>
 					  			<span>-</span>
 					  		</p>
-					  		<p>
-					  			<label>淘宝号：</label>
-					  			<span>1294902039</span>
-					  			<el-tooltip content="编辑" placement="top">
-					  				<i class="el-icon-edit edit" @click="changeTaobaoId"></i>
-					  			</el-tooltip>
-					  		</p>
 					  	</el-col>
 					  	<el-col :span="8">
 					  		<p>
@@ -61,18 +54,36 @@
 					  			<span>330721199206022414</span>
 					  		</p>
 					  		<p>
-					  			<label>相册：</label>
-					  			<span>12</span>
+					  			<label>身高：</label>
+					  			<span>168cm</span>
 					  		</p>
 					  		<p>
 					  			<label>类型：</label>
-					  			<span>注册用户</span>
+					  			<span>国家一级咨询师</span>
 					  		</p>
 					  		<p>
-					  			<label>绑定：</label>
+					  			<label>状态：</label>
 					  			<span>手机</span>
 					  		</p>
 					  	</el-col>
+				  	</el-row>
+				  	<el-row class="mentor-data">
+				  		<el-col :span="6">
+				  			<p class="label">粉丝</p>
+				  			<p class="num">201</p>
+				  		</el-col>
+				  		<el-col :span="6">
+				  			<p class="label">评分</p>
+				  			<p class="num">5.0</p>
+				  		</el-col>
+				  		<el-col :span="6">
+				  			<p class="label">30天咨询人数</p>
+				  			<p class="num">302</p>
+				  		</el-col>
+				  		<el-col :span="6">
+				  			<p class="label">30天获得钻石</p>
+				  			<p class="num">540</p>
+				  		</el-col>
 				  	</el-row>
 				</el-card>
 		  	</el-col>
@@ -81,22 +92,18 @@
 				  	<div slot="header" class="clearfix">
 					    <span>其他信息</span>
 					</div>
-					<el-row :gutter="10" class="module other-info">
+					<el-row :gutter="10" class="module mentor-other-info">
 					  	<el-col :span="12">
 					  		<p class="user-grade">
-					  			<label>用户等级：</label>
+					  			<label>导师等级：</label>
 					  			<span>
 					  				<i class="left">LV</i>
 					  				<i class="right">99</i>
 					  			</span>
 					  		</p>
 					  		<p>
-					  			<label>业务所属：</label>
-					  			<span>杭州分公司</span>
-					  		</p>
-					  		<p>
-					  			<label>接手客服：</label>
-					  			<span>小兔子</span>
+					  			<label>单次价格：</label>
+					  			<span>100元/次</span>
 					  			<el-tooltip content="编辑" placement="top">
 					  				<i class="el-icon-edit edit" @click="kefuVisible = true"></i>
 					  			</el-tooltip>
@@ -104,22 +111,19 @@
 					  	</el-col>
 					  	<el-col :span="12">
 					  		<p>
-					  			<label>会员权限：</label>
-					  			<span>暂无</span>
+					  			<label>30天咨询时长：</label>
+					  			<span>0小时</span>
 					  		</p>
 					  		<p>
-					  			<label>业务推广：</label>
-					  			<span>暂无</span>
-					  		</p>
-					  		<p>
-					  			<label>APP版本：</label>
-					  			<span>2.0</span>
+					  			<label>30天直播时长：</label>
+					  			<span>0小时</span>
 					  		</p>
 					  	</el-col>
 				  	</el-row>
 				  	<div class="btns">
-					    <el-button type="primary">禁言用户</el-button>
-						<el-button type="danger">禁用用户</el-button>
+				  		<p>语音介绍：</p>
+				  		<audio class="mentor-audio" src="" controls=""></audio>
+					    <el-button type="primary">上传语音</el-button>
 					</div>
 				</el-card>
 		  	</el-col>
@@ -134,6 +138,9 @@
 		  	</el-tab-pane>
 		  	<el-tab-pane label="互动信息" lazy>
 		  		<interact-info></interact-info>
+		  	</el-tab-pane>
+		  	<el-tab-pane label="主播信息" lazy>
+		  		<anchor-info></anchor-info>
 		  	</el-tab-pane>
 		</el-tabs>
 
@@ -160,9 +167,10 @@
 	import FundInfo from 'components/userDetail-tab/fund-info'
 	import DitchInfo from 'components/userDetail-tab/ditch-info'
 	import InteractInfo from 'components/userDetail-tab/interact-info'
+	import AnchorInfo from 'components/userDetail-tab/anchor-info'
 
 	export default {
-		name: 'userDetail',
+		name: 'mentorDetail',
 		data() {
 			return {
 				picDialogVisible: false, //图片裁剪弹窗
@@ -240,7 +248,8 @@
 			cutOutPic,
 			FundInfo,
 			DitchInfo,
-			InteractInfo
+			InteractInfo,
+			AnchorInfo
 		}
 	}
 </script>

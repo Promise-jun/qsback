@@ -41,7 +41,9 @@
 		    @selection-change="handleSelectionChange">
 		    <el-table-column type="selection"  width="50"> </el-table-column>
 		    <el-table-column label="用户ID">
-		      <template slot-scope="scope">{{ scope.row.userid }}</template>
+		      <template slot-scope="scope">
+		      	<router-link target="_blank" :to="{path:'/mentor/mentorDetail', query:{userId: scope.row.userId}}">{{ scope.row.userId }}</router-link>
+		      </template>
 		    </el-table-column>
 		    <el-table-column prop="name" label="姓名"></el-table-column>
 		    <el-table-column prop="age" label="年龄"></el-table-column>
@@ -105,7 +107,7 @@
 		          label: '注销'
 		        }],
 		        tableList: [{
-		        	userid: 7541,
+		        	userId: 7541,
 		          	nickName: '俄方岁',
 		          	enterTime: '2018-11-15 11:15:15',
 		          	name: '高圆圆',
@@ -117,7 +119,7 @@
 		          	ywss: '',
 		          	tuijian: '推荐'
 		        }, {
-		        	userid: 7541,
+		        	userId: 7541,
 		          	nickName: '俄方岁',
 		          	enterTime: '2018-11-15 11:15:15',
 		          	name: '高圆圆',

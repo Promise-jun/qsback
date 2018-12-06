@@ -41,7 +41,9 @@
 		    @selection-change="handleSelectionChange">
 		    <el-table-column type="selection"  width="50"> </el-table-column>
 		    <el-table-column label="用户ID">
-		      <template slot-scope="scope">{{ scope.row.userid }}</template>
+		      <template slot-scope="scope">
+		      	<router-link target="_blank" :to="{path:'/anchor/anchorDetail', query:{userId: scope.row.userId}}">{{ scope.row.userId }}</router-link>
+		      </template>
 		    </el-table-column>
 		    <el-table-column prop="username" label="用户名"></el-table-column>
 		    <el-table-column prop="phone" label="手机号"></el-table-column>
@@ -95,7 +97,7 @@
 		          label: '注销'
 		        }],
 		        tableList: [{
-		        	userid: 7541,
+		        	userId: 7541,
 		        	username: "大方点",
 		        	phone: "135****4532",
 		          	nickName: '俄方岁',
@@ -106,7 +108,7 @@
 		          	syjf: 100,
 		          	price: 200
 		        },{
-		        	userid: 7541,
+		        	userId: 7541,
 		        	username: "大方点",
 		        	phone: "135****4532",
 		          	nickName: '俄方岁',

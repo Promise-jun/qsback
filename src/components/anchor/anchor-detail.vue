@@ -1,7 +1,7 @@
 <template>
 	<div class="children-view user-detail">
 		<el-row>
-		  	<el-col :span="24" class="title">用户详情</el-col>
+		  	<el-col :span="24" class="title">主播详情</el-col>
 		</el-row>
 
 		<el-row class="basic-info" :gutter="20">
@@ -135,6 +135,9 @@
 		  	<el-tab-pane label="互动信息" lazy>
 		  		<interact-info></interact-info>
 		  	</el-tab-pane>
+		  	<el-tab-pane label="主播信息" lazy>
+		  		<anchor-info></anchor-info>
+		  	</el-tab-pane>
 		</el-tabs>
 
 		<!-- 图片裁剪 -->
@@ -160,9 +163,10 @@
 	import FundInfo from 'components/userDetail-tab/fund-info'
 	import DitchInfo from 'components/userDetail-tab/ditch-info'
 	import InteractInfo from 'components/userDetail-tab/interact-info'
+	import AnchorInfo from 'components/userDetail-tab/anchor-info'
 
 	export default {
-		name: 'userDetail',
+		name: 'anchorDetail',
 		data() {
 			return {
 				picDialogVisible: false, //图片裁剪弹窗
@@ -240,7 +244,8 @@
 			cutOutPic,
 			FundInfo,
 			DitchInfo,
-			InteractInfo
+			InteractInfo,
+			AnchorInfo
 		}
 	}
 </script>

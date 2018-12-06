@@ -79,13 +79,13 @@
 				  <el-button type="text" icon="iconfont icon-unlock" style="color: #67C23A;"></el-button>
 				</el-tooltip>
 				<el-tooltip content="添加导师或主播" placement="top">
-				  <el-button type="text" icon="iconfont icon-plus-circle" style="color: #E6A23C;"></el-button>
+				  <el-button @click="add(scope.row)" type="text" icon="iconfont icon-plus-circle" style="color: #E6A23C;"></el-button>
 				</el-tooltip>
 				<el-tooltip content="分配客服" placement="top">
-				  <el-button type="text" icon="iconfont icon-cluster" style="color: #00A5FF;"></el-button>
+				  <el-button @click="allot(scope.row)" type="text" icon="iconfont icon-cluster" style="color: #00A5FF;"></el-button>
 				</el-tooltip>
 				<el-tooltip content="重置密码" placement="top">
-				  <el-button type="text" icon="iconfont icon-edit-square" style="color: #F56C6C;"></el-button>
+				  <el-button @click="changePass(scope.row)" type="text" icon="iconfont icon-edit-square" style="color: #F56C6C;"></el-button>
 				</el-tooltip>
 			  </template>
 		    </el-table-column>
@@ -95,7 +95,7 @@
 		  <el-col :span="12">
 		  	<el-button type="primary" icon="el-icon-circle-plus" @click="addUser">添加用户</el-button>
 		  	<el-button type="primary" icon="el-icon-circle-plus">添加IM账号</el-button>
-		  	<el-button type="primary" icon="el-icon-rank">批量分配客服</el-button>
+		  	<el-button type="primary" icon="el-icon-rank" @click="batchAllot()">批量分配客服</el-button>
 		  </el-col>
 		  <el-col :span="12">
 		  	<page-num
@@ -108,6 +108,42 @@
 			</page-num>
 		  </el-col>
 		</el-row>
+		
+		<!-- 申请导师或主播 -->
+		<el-dialog title="提示" :visible.sync="applicationVisible" width="30%">
+			请选择：
+	      	<el-select v-model="application" placeholder="请选择">
+	        	<el-option label="申请导师" value="1"></el-option>
+	       	 	<el-option label="申请主播" value="2"></el-option>
+	      	</el-select>
+		  	<div slot="footer" class="dialog-footer">
+		    	<el-button @click="applicationVisible = false">取 消</el-button>
+		    	<el-button type="primary" @click="applicationVisible = false">确 定</el-button>
+		  	</div>
+		</el-dialog>
+
+		<!-- 分配客服 -->
+		<el-dialog title="提示" :visible.sync="kefuVisible" width="30%">
+			客服：
+	      	<el-select v-model="kefu" placeholder="请选择">
+	        	<el-option label="无" value="0"></el-option>
+	       	 	<el-option label="客服一号" value="1"></el-option>
+	      	</el-select>
+		  	<div slot="footer" class="dialog-footer">
+		    	<el-button @click="kefuVisible = false">取 消</el-button>
+		    	<el-button type="primary" @click="kefuVisible = false">确 定</el-button>
+		  	</div>
+		</el-dialog>
+
+		<!-- 重置密码 -->
+		<el-dialog title="提示" :visible.sync="passVisible" width="30%">
+	      	<el-input v-model="pass" placeholder="请输入新密码"></el-input>
+		  	<div slot="footer" class="dialog-footer">
+		    	<el-button @click="passVisible = false">取 消</el-button>
+		    	<el-button type="primary" @click="passVisible = false">确 定</el-button>
+		  	</div>
+		</el-dialog>
+
 
 		<transition name="fade" mode="out-in">
 			<router-view></router-view>
@@ -136,7 +172,13 @@
 			        total: 0,
 			        pageSize: 5,
 			        page: 1
-			    }
+			    },
+			    application: '1', //申请导师或主播
+			    applicationVisible: false,
+			    kefu: '0', //分配客服
+			    kefuVisible: false,
+			    pass: '', //重置密码
+			    passVisible: false
 			}
 		},
 		filters: {
@@ -203,8 +245,27 @@
 	        	this.getList();
 	      	},
 	      	handleSelectionChange(val) {
-	        	this.multipleSelection = val;
-	      	}
+	      		this.multipleSelection = []
+	      		val.map(v => {
+	      			this.multipleSelection.push(v.userId)
+	      		})
+	      	},
+	      	add(row) { //添加导师或主播
+		  		this.applicationVisible = true
+		  	},
+		  	allot(row) { //分配客服
+		  		this.kefuVisible = true
+		  	},
+		  	changePass(row) { //重置密码
+		  		this.passVisible = true
+		  	},
+		  	batchAllot() { //批量分配客服
+		  		if (!this.multipleSelection.length) {
+		  			this.$message.error('请至少选择一项');
+		  			return
+		  		}
+		  		this.kefuVisible = true
+		  	}
 	    },
 	    watch: {
            	$route( to , from ){

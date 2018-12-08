@@ -55,7 +55,7 @@
 		    <el-table-column prop="zxnum" label="30天咨询人数"></el-table-column>
 		    <el-table-column prop="ywss" label="业务所属"></el-table-column>
 		    <el-table-column prop="tuijian" label="是否推荐"></el-table-column>
-		    <el-table-column label="操作">
+		    <el-table-column label="操作" width="90">
 		    	<template slot-scope="scope">
 					<el-tooltip content="上调" placement="top">
 					  <el-button type="text" icon="iconfont icon-arrowup" style="color: #67C23A;"></el-button>
@@ -75,20 +75,35 @@
 
 		<el-row>
 		  <el-col :span="12">
+		  	<el-button type="primary" icon="el-icon-circle-plus">申请导师</el-button>
 		  	<el-button type="primary" icon="el-icon-refresh">更新IM账号</el-button>
 		  </el-col>
 		  <el-col :span="12">
-		  	<el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
+		  	<page-num
+		  		v-if="pageTotal.total > pageTotal.pageSize"
+				:currentpage="pageTotal.page"
+				:total="pageTotal.total"
+				:pageSize="pageTotal.pageSize"
+				:render="getList"
+				:options="pageTotal">
+			</page-num>
 		  </el-col>
 		</el-row>
 	</div>
 </template>
 
 <script type="text/javascript">
+	import PageNum from 'base/page-num/page-num'
+
 	export default {
 		name: 'mentorlist',
 		data() {
 			return {
+				pageTotal: { //分页数据
+			        total: 0,
+			        pageSize: 5,
+			        page: 1
+			    },
 				formObj: {
 					userid: '',
 					name: '',
@@ -136,6 +151,9 @@
 			}
 		},
 		methods: {
+			getList() {
+				
+			},
 			onSubmit() {
 	        	console.log(this.formObj);
 	      	},
@@ -143,6 +161,9 @@
 	      		console.log(val)
 		        this.multipleSelection = val;
 		    }
+		},
+		components: {
+			PageNum
 		}
 	}
 </script>

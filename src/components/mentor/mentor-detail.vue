@@ -223,7 +223,7 @@
 		  		<fund-info></fund-info>
 		  	</el-tab-pane>
 		  	<el-tab-pane label="服务时间" lazy>
-		  		
+		  		<service-time></service-time> 
 		  	</el-tab-pane>
 		  	<el-tab-pane label="服务定价" lazy>
 		  		<service-pricing></service-pricing>
@@ -232,7 +232,7 @@
 		  		<aptitude-abstract></aptitude-abstract>
 		  	</el-tab-pane>
 		  	<el-tab-pane label="操作日志" lazy>
-		  		
+		  		<operation-log></operation-log>
 		  	</el-tab-pane>
 		</el-tabs>
 
@@ -304,8 +304,10 @@
 <script type="text/javascript">
 	import cutOutPic from 'base/cutOut-pic/cutOut-pic'
 	import FundInfo from 'components/userDetail-tab/fund-info'
+	import ServiceTime from 'components/userDetail-tab/service-time' //服务时间
 	import ServicePricing from 'components/userDetail-tab/service-pricing' //服务定价
 	import AptitudeAbstract from 'components/userDetail-tab/aptitude-abstract' //资质简介
+	import OperationLog from 'components/userDetail-tab/operation-log' //操作日志
 
 	export default {
 		name: 'mentorDetail',
@@ -493,8 +495,10 @@
 		components: {
 			cutOutPic,
 			FundInfo,
+			ServiceTime,
 			ServicePricing,
-			AptitudeAbstract
+			AptitudeAbstract,
+			OperationLog
 		}
 	}
 </script>

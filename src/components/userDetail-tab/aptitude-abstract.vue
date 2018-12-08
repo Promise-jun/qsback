@@ -1,6 +1,6 @@
 <template>
 	<div>
-	  	<el-row :gutter="20">
+	  	<el-row :gutter="20" class="top-info">
 		  	<el-col :span="12">
 		  		<p>
 		  			<label>所在城市：</label>
@@ -155,6 +155,55 @@
   				list-type="picture-card"
   				:on-preview="photoPreview"
   				:on-success="photoSuccess"
+  				:before-upload="photoBeforeUpload"
+  				:on-remove="photoRemove">
+  					<i class="el-icon-plus"></i>
+			</el-upload>
+		</el-card>
+
+		<el-card class="box-card">
+		  	<div slot="header" class="clearfix">
+		    	<span>简介</span>
+		    	<el-button style="float: right; padding: 3px 0" type="text" @click="abstractEdit">编辑</el-button>
+		  	</div>
+		  	<div class="show-edit-cont" v-html="abstractHtml"></div>
+		</el-card>
+
+		<el-card class="box-card">
+		  	<div slot="header" class="clearfix">
+		    	<span>职业背景</span>
+		    	<el-button style="float: right; padding: 3px 0" type="text" @click="vocationEdit">编辑</el-button>
+		  	</div>
+		  	<div class="show-edit-cont" v-html="vocationHtml"></div>
+		</el-card>
+
+		<el-card class="box-card">
+		  	<div slot="header" class="clearfix">
+		    	<span>自动回复</span>
+		    	<el-button style="float: right; padding: 3px 0" type="text" @click="replyEdit">编辑</el-button>
+		  	</div>
+		  	<div class="show-edit-cont" v-html="replyHtml" style="height: 100px;"></div>
+		</el-card>
+
+		<el-card class="box-card">
+		  	<div slot="header" class="clearfix">
+		    	<span>合同信息</span>
+		  	</div>
+		  	<ul class="pic-list">
+		  		<li>
+		  			<img src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=377934783,1794723300&fm=27&gp=0.jpg">
+		  			<span class="pic-mb">
+		  				<span><i class="el-icon-zoom-in"></i></span>
+		  				<span><i class="el-icon-delete"></i></span>
+		  			</span>
+		  		</li>
+		  	</ul>
+			<el-upload
+  				action="https://jsonplaceholder.typicode.com/posts/"
+  				list-type="picture-card"
+  				:on-preview="photoPreview"
+  				:on-success="photoSuccess"
+  				:before-upload="photoBeforeUpload"
   				:on-remove="photoRemove">
   					<i class="el-icon-plus"></i>
 			</el-upload>
@@ -235,6 +284,25 @@
 			</el-form>
 		</el-dialog>
 
+		<!-- 图片裁剪 -->
+		<cut-out-pic :picDialogVisible.sync="picDialogVisible" :picOption="picOption" @upload="uploadImg"></cut-out-pic>
+	
+		<!-- 富文本编辑器 -->
+		<el-dialog
+		  	title="内容编辑"
+		  	:visible.sync="editorDialogVisible"
+		  	:modal="false"
+		  	width="70%"
+		>	
+			<div>
+				<editor id="tinymce" v-model="tinymceHtml" :init="editorInit"></editor>
+			</div>
+		  	<span slot="footer" class="dialog-footer">
+		    	<el-button @click="editorDialogVisible = false">取 消</el-button>
+		    	<el-button type="primary" @click="confirmEditor">确 定</el-button>
+		  	</span>
+		</el-dialog>
+
 		<el-dialog title="图片" :visible.sync="bigPicVisible" :center="true" :modal="false">
 		  	<img :src="bigPicurl" class="big-pic">
 		</el-dialog>
@@ -242,6 +310,22 @@
 </template>
 
 <script type="text/javascript">
+	import CutOutPic from 'base/cutOut-pic/cutOut-pic' //图片裁剪
+	// 富文本编辑器
+	import tinymce from 'tinymce/tinymce'
+	import 'tinymce/themes/modern/theme'
+	import 'tinymce/plugins/image'
+	import 'tinymce/plugins/link'
+	import 'tinymce/plugins/media'
+	import 'tinymce/plugins/code'
+	import 'tinymce/plugins/table'
+	import 'tinymce/plugins/lists'
+	import 'tinymce/plugins/contextmenu'
+	import 'tinymce/plugins/wordcount'
+	import 'tinymce/plugins/colorpicker'
+	import 'tinymce/plugins/textcolor'
+	import Editor from '@tinymce/tinymce-vue'
+	 
 	
 	export default {
 		name: "aptitudeAbstract",
@@ -299,14 +383,55 @@
         		}],
         		aptitudeVisible: false,
         		aptitudeForm: {},
-        		aptitudeList: [{
+        		aptitudeList: [{ //资质列表
         			label: '国家二级心理咨询师',
         			value: 1
         		}, {
         			label: '国家三级心理咨询师',
         			value: 2
-        		}], //资质列表
+        		}],
+        		// 相册
+        		picDialogVisible: false, //图片裁剪弹窗
+				picOption: {  //图片裁剪配置
+					img: '../../assets/a.jpg',
+					info: true,
+					outputSize: 1,
+					outputType: "png",
+					canScale: true,
+					autoCrop: true,
+					autoCropWidth: 250,
+        			autoCropHeight: 250,
+        			fixed: true,
+        			infoTrue: true,
+        			fixedNumber: [1, 1],
+        			centerBox: true
+				},
+				//简介内容
+				abstractHtml: '',
+				//职业背景
+				vocationHtml: '',
+				//富文本编辑器
+				editorDialogVisible: false,
+				tinymceType: 1,
+				tinymceHtml: '',
+				editorInit: {
+				  	language_url: '/static/zh_CN.js',
+				  	language: 'zh_CN',
+				  	skin_url: '/static/skins/lightgray',
+				  	height: 300,
+				  	plugins: 'image link media lists code table colorpicker textcolor wordcount contextmenu',
+				  	toolbar: 
+          'bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image code | removeformat',
+          			branding: false,
+				  	images_upload_handler: (blobInfo, success, failure) => {
+				  		this.handleImgUpload(blobInfo, success, failure)
+				  	}
+				},
+				replyHtml: '' //自动回复
 			}
+		},
+		mounted() {
+			tinymce.init({})
 		},
 		methods: {
 			// 改变地址
@@ -470,7 +595,38 @@
 	      		this.bigPicVisible = true
 	      		this.bigPicurl = url
 	      	},
-	      	//相册
+	      	//相册，合同信息
+	      	photoBeforeUpload(file) {
+		        const isJPG = file.type === 'image/jpeg';
+		        const isLt2M = file.size / 1024 / 1024 < 2;
+
+		        if (!isJPG) {
+		          this.$message.error('上传头像图片只能是 JPG 格式!');
+		        }
+		        if (!isLt2M) {
+		          this.$message.error('上传头像图片大小不能超过 2MB!');
+		        }
+
+		        this.picDialogVisible = true
+		    	var reader = new FileReader();
+		        reader.onload = e => {
+			        let data;
+					
+			        if (typeof e.target.result === "object") {
+			          // 把Array Buffer转化为blob 如果是base64不需要
+			          data = window.URL.createObjectURL(new Blob([e.target.result]));
+			        } else {
+			          data = e.target.result;
+			        }
+			        this.picOption.img = data
+			    };
+			    reader.readAsArrayBuffer(file);
+		       
+		        return isJPG && isLt2M
+		    },
+		    uploadImg(data) { //确定上传
+		    	this.picDialogVisible = false
+		    },
 	      	photoSuccess(file, fileList) {
 				console.log(fileList)
 			},
@@ -481,12 +637,66 @@
         		this.bigPicurl = file.url;
         		this.bigPicVisible = true;
       		},
+      		//富文本编辑器
+      		handleImgUpload (blobInfo, success, failure) {
+			  	let formdata = new FormData()
+			  	formdata.set('upload_file', blobInfo.blob())
+			  	axios.post('/api/upload', formdata).then(res => {
+			    	success(res.data.data.src)
+			  	}).catch(res => {
+			    	failure('error')
+			  	})
+			},
+			// 提交编辑
+			confirmEditor() {
+				if (this.tinymceType == 1) { //简介
+					this.abstractHtml = this.tinymceHtml
+				} else if (this.tinymceType == 2) { //职业背景
+					this.vocationHtml = this.tinymceHtml
+				}
+				this.editorDialogVisible = false
+			},
+			// 简介编辑
+			abstractEdit() {
+				this.tinymceType = 1
+				this.tinymceHtml = this.abstractHtml
+				this.editorDialogVisible = true
+			},
+			// 职业背景编辑
+			vocationEdit() {
+				this.tinymceType = 2
+				this.tinymceHtml = this.vocationHtml
+				this.editorDialogVisible = true
+			},
+			// 自动回复
+			replyEdit() {
+				this.$prompt('输入自动回复内容', '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消'
+		        }).then(({ value }) => {
+		        	if (value == '' || value == null) {
+		        		this.$message.error('自动回复不能为空');
+		        		return
+		        	}
+		        	this.replyHtml = value
+		          	this.$message({
+		           		type: 'success',
+		            	message: '你的内容是: ' + value
+		          	});
+		        }).catch(() => {
+		          	 
+		        });
+			}
+		},
+		components: {
+			CutOutPic,
+			Editor
 		}
 	}
 </script>
 
 <style type="text/css" lang="scss" scoped>
-	p {
+	.top-info p {
 		padding: 8px 0;
 		font-family: PingFangSC-Medium;
 		font-size: 16px;
@@ -590,5 +800,9 @@
 				opacity: 1;
 			}
 		}
+	}
+	.show-edit-cont {
+		height: 200px;
+		overflow-y: auto;
 	}
 </style>

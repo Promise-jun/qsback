@@ -66,6 +66,16 @@
 				  	<el-button type="primary" icon="el-icon-circle-plus">添加用户</el-button>
 				  	<el-button type="primary" icon="el-icon-circle-plus">创建小组</el-button>
 				  </el-col>
+				  <el-col :span="12">
+				  	<page-num
+				  		v-if="pageTotal.total > pageTotal.pageSize"
+						:currentpage="pageTotal.page"
+						:total="pageTotal.total"
+						:pageSize="pageTotal.pageSize"
+						:render="getList"
+						:options="pageTotal">
+					</page-num>
+				  </el-col>
 				</el-row>
 			</el-card>
 
@@ -98,6 +108,8 @@
 </template>
 
 <script type="text/javascript">
+	import PageNum from 'base/page-num/page-num'
+
 	export default {
 		name: 'servicegroup',
 		data() {
@@ -135,10 +147,18 @@
 		          	addTime: '2018-10-10 10:12'
 		        }],
 		        multipleSelection: [],
-		        isChargeman: false  //是否为组长
+		        isChargeman: false,  //是否为组长
+		        pageTotal: { //分页数据
+			        total: 0,
+			        pageSize: 5,
+			        page: 1
+			    },
 			}
 		},
 		methods: {
+			getList() {
+
+			},
 			addGroup() { //添加分组
 				this.isGroupForm = true;
 			},
@@ -164,11 +184,17 @@
 	      		console.log(val)
 		        this.multipleSelection = val;
 		    }
+		},
+		components: {
+			PageNum
 		}
 	}
 </script>
 
 <style type="text/css" lang="scss" scoped="">
+	.el-pagination {
+		float: right;
+	}
 	.item {
 		padding: 6px;
 		cursor: pointer;

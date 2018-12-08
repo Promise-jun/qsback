@@ -45,7 +45,18 @@
 		    <el-table-column prop="qscode" label="关联的用户情说号"></el-table-column>
 		    <el-table-column label="操作">
 		    	<template slot-scope="scope">
-					<el-button @click="editRole(scope.row)" type="primary" size="mini" icon="el-icon-edit" circle></el-button>
+					<el-tooltip content="编辑" placement="top">
+				  		<el-button @click="edit(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
+					</el-tooltip>
+					<el-tooltip content="删除" placement="top">
+				  		<el-button @click="del(scope.row)" type="text" icon="iconfont icon-delete" style="color: #F56C6C;"></el-button>
+					</el-tooltip>
+					<el-tooltip content="创建IM账号" placement="top">
+				  		<el-button @click="del(scope.row)" type="text" icon="iconfont icon-file-markdown" style="color: #67C23A;"></el-button>
+					</el-tooltip>
+					<el-tooltip content="关联用户账号" placement="top">
+				  		<el-button @click="associate(scope.row)" type="text" icon="iconfont icon-deploymentunit" style="color: #E6A23C;"></el-button>
+					</el-tooltip>
 			    </template>
 		    </el-table-column>
 		</el-table>
@@ -56,17 +67,44 @@
 		  	<el-button type="primary" icon="el-icon-circle-plus">分组</el-button>
 		  </el-col>
 		  <el-col :span="12">
-		  	<el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
+		  	<page-num
+		  		v-if="pageTotal.total > pageTotal.pageSize"
+				:currentpage="pageTotal.page"
+				:total="pageTotal.total"
+				:pageSize="pageTotal.pageSize"
+				:render="getList"
+				:options="pageTotal">
+			</page-num>
 		  </el-col>
 		</el-row>
+
+		<el-dialog title="提示" :visible.sync="associateVisible" width="40%">
+		  	<el-form :model="associateForm">
+		    	<el-form-item label="输入请说号" label-width="100px">
+		      		<el-input v-model="associateForm.name" autocomplete="off"></el-input>
+		    	</el-form-item>
+		  	</el-form>
+		  	<div slot="footer" class="dialog-footer">
+		   		<el-button @click="associateVisible = false">取 消</el-button>
+		   		<el-button type="danger" @click="associateVisible = false">取消关联</el-button>
+		    	<el-button type="primary" @click="associateVisible = false">确 定</el-button>
+		  	</div>
+		</el-dialog>
 	</div>
 </template>
 
 <script type="text/javascript">
+	import PageNum from 'base/page-num/page-num'
+
 	export default {
 		name: 'mentorlist',
 		data() {
 			return {
+				pageTotal: { //分页数据
+			        total: 0,
+			        pageSize: 5,
+			        page: 1
+			    },
 				formObj: {
 					userid: '',
 					name: '',
@@ -108,17 +146,30 @@
 		          	name: '高圆圆',
 		          	qscode: '123456'
 		        }],
-		        multipleSelection: []
+		        multipleSelection: [],
+		        // 关联用户账号
+		        associateVisible: false,
+		        associateForm: {}
 			}
 		},
 		methods: {
+			getList() {
+				
+			},
 			onSubmit() {
 	        	console.log(this.formObj);
 	      	},
 	      	handleSelectionChange(val) {
 	      		console.log(val)
 		        this.multipleSelection = val;
+		    },
+		    // 关联用户账号
+		    associate(row) {
+		    	this.associateVisible = true
 		    }
+		},
+		components: {
+			PageNum
 		}
 	}
 </script>

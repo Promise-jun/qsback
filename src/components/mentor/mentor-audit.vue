@@ -66,17 +66,31 @@
 		  	<el-button type="primary" icon="el-icon-refresh">更新IM账号</el-button>
 		  </el-col>
 		  <el-col :span="12">
-		  	<el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
+		  	<page-num
+		  		v-if="pageTotal.total > pageTotal.pageSize"
+				:currentpage="pageTotal.page"
+				:total="pageTotal.total"
+				:pageSize="pageTotal.pageSize"
+				:render="getList"
+				:options="pageTotal">
+			</page-num>
 		  </el-col>
 		</el-row>
 	</div>
 </template>
 
 <script type="text/javascript">
+	import PageNum from 'base/page-num/page-num'
+
 	export default {
 		name: 'mentorlist',
 		data() {
 			return {
+				pageTotal: { //分页数据
+			        total: 0,
+			        pageSize: 5,
+			        page: 1
+			    },
 				formObj: {
 					userid: '',
 					name: '',
@@ -120,6 +134,9 @@
 			}
 		},
 		methods: {
+			getList() {
+				
+			},
 			onSubmit() {
 	        	console.log(this.formObj);
 	      	},
@@ -127,6 +144,9 @@
 	      		console.log(val)
 		        this.multipleSelection = val;
 		    }
+		},
+		components: {
+			PageNum
 		}
 	}
 </script>

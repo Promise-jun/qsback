@@ -31,6 +31,11 @@ const AnchorDetail = resolve => { //主播详情
   })
 }
 import AnchorAudit from 'components/anchor/anchor-audit'
+const AnchorAuditDetail = resolve => { // 主播审核详情
+  import('components/anchor/anchor-audit-detail').then(comp => {
+    resolve(comp)
+  })
+}
 import GroupList from 'components/group/group-list'
 import OperatorList from 'components/operator/operator-list'
 import ServiceGroup from 'components/service-group/service-group'
@@ -452,6 +457,15 @@ export default new Router({
                   meta: {
                     title: '主播详情',
                     goto: '/anchor/anchorDetail'
+                  }
+                },
+                {
+                  path: 'anchorAuditDetail', //主播审核
+                  name: 'anchorAuditDetail',
+                  component: AnchorAuditDetail,
+                  meta: {
+                    title: '主播审核详情',
+                    goto: '/anchor/anchorAuditDetail'
                   }
                 }
             ]

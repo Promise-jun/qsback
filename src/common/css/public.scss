@@ -69,10 +69,14 @@
 				width: 80px;
 			}
 		}
-		& .mentor-other-info {
+		& .mentor-other-info,
+		& .audit-other-info {
 			& label {
 				width: auto;
 			}
+		}
+		& .audit-other-info {
+			height: 187px;
 		}
 		& .btns {
 			padding: 13px 0 14px;

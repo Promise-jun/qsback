@@ -65,7 +65,7 @@
 
 		<el-row>
 		  <el-col :span="12">
-		  	<el-button type="primary" icon="el-icon-circle-plus">申请主播</el-button>
+		  	<el-button type="primary" icon="el-icon-circle-plus" @click="addAnchor">申请主播</el-button>
 		  	<el-button type="primary" icon="el-icon-refresh">更新IM账号</el-button>
 		  </el-col>
 		  <el-col :span="12">
@@ -147,6 +147,13 @@
 	      	handleSelectionChange(val) {
 	      		console.log(val)
 		        this.multipleSelection = val;
+		    },
+		    // 申请主播
+		    addAnchor() {
+		    	let {href} = this.$router.resolve({
+		    		path: '/anchor/addAnchor'
+		    	});
+				window.open(href, '_blank');
 		    }
 		},
 		components: {

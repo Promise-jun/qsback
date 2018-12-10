@@ -23,10 +23,25 @@ const MentorDetail = resolve => { //导师详情
     resolve(comp)
   })
 }
+const AddMentor = resolve => { //申请导师
+  import('components/mentor/add-mentor').then(comp => {
+    resolve(comp)
+  })
+}
 import MentorAudit from 'components/mentor/mentor-audit'
+const MentorAuditDetail = resolve => { //导师审核详情
+  import('components/mentor/mentor-audit-detail').then(comp => {
+    resolve(comp)
+  })
+}
 import AnchorList from 'components/anchor/anchor-list'
 const AnchorDetail = resolve => { //主播详情
   import('components/anchor/anchor-detail').then(comp => {
+    resolve(comp)
+  })
+}
+const AddAnchor = resolve => { //申请主播
+  import('components/anchor/add-anchor').then(comp => {
     resolve(comp)
   })
 }
@@ -419,6 +434,24 @@ export default new Router({
                     title: '导师详情',
                     goto: '/mentor/mentorDetail'
                   }
+                },
+                {
+                  path: 'addMentor', //申请导师
+                  name: 'addMentor',
+                  component: AddMentor,
+                  meta: {
+                    title: '申请导师',
+                    goto: '/mentor/addMentor'
+                  }
+                },
+                {
+                  path: 'mentorAuditDetail', //导师审核详情
+                  name: 'mentorAuditDetail',
+                  component: MentorAuditDetail,
+                  meta: {
+                    title: '导师审核详情',
+                    goto: '/mentor/mentorAuditDetail'
+                  }
                 }
             ]
           },
@@ -460,7 +493,16 @@ export default new Router({
                   }
                 },
                 {
-                  path: 'anchorAuditDetail', //主播审核
+                  path: 'addAnchor', //申请主播
+                  name: 'addAnchor',
+                  component: AddAnchor,
+                  meta: {
+                    title: '申请主播',
+                    goto: '/anchor/addAnchor'
+                  }
+                },
+                {
+                  path: 'anchorAuditDetail', //主播审核详情
                   name: 'anchorAuditDetail',
                   component: AnchorAuditDetail,
                   meta: {

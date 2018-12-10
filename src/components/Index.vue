@@ -25,7 +25,7 @@ import LoginInfo from 'components/login/login-info'
 import NavMenu from 'components/nav-menu/nav-menu'
 
 export default {
-  name: 'index',
+  name: 'HelloWorld',
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'

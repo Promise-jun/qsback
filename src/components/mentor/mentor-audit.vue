@@ -41,7 +41,7 @@
 		    @selection-change="handleSelectionChange">
 		    <el-table-column type="selection"  width="50"> </el-table-column>
 		    <el-table-column label="用户ID">
-		      <template slot-scope="scope">{{ scope.row.userid }}</template>
+		      <template slot-scope="scope">{{ scope.row.userId }}</template>
 		    </el-table-column>
 		    <el-table-column prop="username" label="用户名"></el-table-column>
 		    <el-table-column prop="nickName" label="昵称"></el-table-column>
@@ -55,7 +55,7 @@
 		    <el-table-column label="操作">
 		    	<template slot-scope="scope">
 					<el-tooltip content="处理" placement="top">
-					  <el-button @click="editRole(scope.row)" type="text" icon="iconfont icon-wrench"></el-button>
+					  <el-button @click="handle(scope.row)" type="text" icon="iconfont icon-wrench"></el-button>
 					</el-tooltip>
 			    </template>
 		    </el-table-column>
@@ -106,7 +106,7 @@
 		          label: '审核不通过'
 		        }],
 		        tableList: [{
-		        	userid: 7541,
+		        	userId: 7541,
 		        	username: '大方点',
 		          	nickName: '俄方岁',
 		          	enterTime: '2018-11-15 11:15:15',
@@ -118,7 +118,7 @@
 		          	submitTime: '2018-11-15 11:15:15',
 		          	shStatus: ''
 		        }, {
-		        	userid: 7541,
+		        	userId: 7541,
 		        	username: '大方点',
 		          	nickName: '俄方岁',
 		          	enterTime: '2018-11-15 11:15:15',
@@ -143,6 +143,13 @@
 	      	handleSelectionChange(val) {
 	      		console.log(val)
 		        this.multipleSelection = val;
+		    },
+		    // 处理
+		    handle(row) {
+		    	let {href} = this.$router.resolve({
+		    		path: '/mentor/mentorAuditDetail?userId=' + row.userId
+		    	});
+				window.open(href, '_blank');
 		    }
 		},
 		components: {

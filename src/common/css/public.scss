@@ -135,9 +135,77 @@
 			color: #303030;
 		}
 	}
+	& .pic-box {
+		& .label,
+		& ul {
+			display: inline-block;
+			vertical-align: top;
+		}
+		& li {
+			float: left;
+			margin: 0 10px;
+			width: 80px;
+			height: 60px;
+			line-height: 60px;
+			text-align: center;
+			background: #D9D9D9;
+			cursor: pointer;
+			& img {
+				max-width: 100%;
+				max-height: 100%;
+			}
+		}
+	}
 }
 
 i.edit {
 	cursor: pointer;
 	color: #409EFF;
+}
+
+// 选择用户
+.user-list {
+	padding: 10px 0 0;
+	height: 300px;
+	overflow-y: auto;
+	background: #F2F6FC;
+	&>.el-col {
+		margin-bottom: 10px;
+	}
+	& .el-card__body {
+		padding: 12px;
+	}
+	& .user-head {
+		display: block;
+		margin: 0 auto;
+		width: 40px;
+		height: 40px;
+		max-width: 100%;
+		max-height: 100%;
+	}
+	& .user-name {
+		padding: 3px 0;
+		font-family: PingFangSC-Medium;
+		font-size: 14px;
+		color: #303030;
+	}
+	& p {
+		padding: 3px 0;
+		font-family: PingFangSC-Medium;
+		font-size: 12px;
+		color: #898989;
+	}
+	& .user-list-btn {
+		padding-top: 7px;
+		& .el-button {
+			width: 100%;
+		}
+	}
+}
+
+//入驻模块
+.enter-module {
+	& .el-col {
+		margin-bottom: 10px;
+	}
 }

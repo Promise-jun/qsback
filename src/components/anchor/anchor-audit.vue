@@ -140,9 +140,6 @@
 		    },
 		    // 处理
 		    handle(row) {
-		    	/*this.$router.push({
-		    		path: '/anchor/anchorAuditDetail?userId=' + row.userId
-		    	})*/
 		    	let {href} = this.$router.resolve({
 		    		path: '/anchor/anchorAuditDetail?userId=' + row.userId
 		    	});

@@ -77,7 +77,9 @@
 					  		</p>
 					  		<p>
 					  			<label>绑定：</label>
-					  			<span>--</span>
+					  			<span>
+					  				--
+					  			</span>
 					  		</p>
 					  	</el-col>
 					  	<el-col :span="12">
@@ -174,7 +176,7 @@
 		name: 'anchorAuditDetail',
 		data() {
 			return {
-				imageUrl: 'http://i10.hoopchina.com.cn/hupuapp/bbs/966/16313966/thread_16313966_20180726164538_s_65949_o_w1024_h1024_62044.jpg?x-oss-process=image/resize,w_800/format,jpg',
+				imageUrl: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3197537752,2095789724&fm=27&gp=0.jpg',
 			}
 		}
 	}

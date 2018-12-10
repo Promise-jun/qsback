@@ -6,6 +6,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import App from './App'
 import router from './router'
 import Velocity from 'velocity-animate' //animate动画
+import moment from 'moment' //时间格式化
 
 import 'common/css/index.css'
 import 'common/css/public.scss'
@@ -46,6 +47,11 @@ Vue.config.productionTip = false
 })*/
 
 Vue.use(ElementUI);
+
+//全局格式化过滤器
+Vue.filter('dateformat', function(dataStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
+    return moment(dataStr).format(pattern)
+})
 
 /* eslint-disable no-new */
 new Vue({

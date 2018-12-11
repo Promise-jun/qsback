@@ -1,5 +1,5 @@
 <template>
-	<div class="children-view user-detail">
+	<div class="children-view user-detail" v-loading="loading">
 		<el-row>
 		  	<el-col :span="24" class="title">导师审核</el-col>
 		</el-row>
@@ -346,6 +346,7 @@
 		name: 'mentorAuditDetail',
 		data() {
 			return {
+				loading: false,
 				imageUrl: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3197537752,2095789724&fm=27&gp=0.jpg',
 				picList: [
 					{
@@ -359,7 +360,32 @@
 				bigPicUrl: ''
 			}
 		},
+		created() {
+			this.getList()
+		},
 		methods: {
+			getList() {
+				this.loading = true
+				this.$axios({
+					method: 'post',
+					url: '/system/consultant/apply/findApplyDetail',
+					data: this.$qs.stringify({
+						consultantApplyId: this.$route.query.userId
+					})
+				}).then(res => {
+					this.loading = false
+					let result = res.data
+					console.log(result)
+					if (result.code == 200) {
+			        	// this.tableList = result.data.list
+					} else {
+						this.$message.error(result.msg);
+					}
+				}).catch(err => {
+			    	this.loading = false
+			        console.log(err)
+			    })
+			},
 			showBigPic(picUrl) {
 				this.bigPicUrl = picUrl
 				this.bigPicVisible = true

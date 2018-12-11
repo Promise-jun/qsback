@@ -75,9 +75,9 @@
       };
       return {
         loginForm: {
-          username: '',
-          password: '',
-          yzm: ''
+          username: 'pan',
+          password: '123456',
+          yzm: '1234'
         },
         loginRules: {
           username: [

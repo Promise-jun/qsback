@@ -23,15 +23,15 @@
 				    	<el-button type="primary" @click="searchForm('searchUserForm')">搜索</el-button>
 				  	</el-form-item>
 				</el-form>
-				<el-row class="user-list" :gutter="15">
+				<el-row class="user-list" :gutter="15" v-loading="loading">
 					<el-col :span="12" v-for="item in userList" :key="item.userId">
 						<el-card shadow="hover">
 							<el-row :gutter="10">
 								<el-col :span="5">
-									<img class="user-head" :src="item.userHead">
+									<img class="user-head" :src="item.userImage">
 								</el-col>
 								<el-col :span="19">
-									<div class="user-name">{{ item.userName }}</div>
+									<div class="user-name">{{ item.userNickname }}</div>
 									<p>
 										<label>ID：</label>
 										<span>{{ item.userId }}</span>
@@ -40,19 +40,19 @@
 								<el-col :span="24" style="padding-top: 7px;">
 									<p>
 										<label>手机号：</label>
-										<span>{{ item.phone }}</span>
+										<span>{{ item.userPhone }}</span>
 									</p>
 								</el-col>
 								<el-col :span="24">
 									<p>
 										<label>注册时间：</label>
-										<span>{{ item.registerTime | dateformat }}</span>
+										<span>{{ item.createTm | dateformat }}</span>
 									</p>
 								</el-col>
 								<el-col :span="24">
 									<p>
 										<label>归属客服：</label>
-										<span>{{ item.kefu }}</span>
+										<span>{{ item.userCustomerService }}</span>
 									</p>
 								</el-col>
 								<el-col :span="24" class="user-list-btn">
@@ -104,25 +104,13 @@
 				rules: {
 
 				},
-				searchUserForm: {},
-				userList: [
-					{
-						userId: 30193020,
-						userName: '背着吉他的蝙',
-						userHead: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3197537752,2095789724&fm=27&gp=0.jpg',
-						phone: 1493103932,
-						kefu: '小白兔',
-						registerTime: 1544423173000
-					},
-					{
-						userId: 30193021,
-						userName: '背着吉他的蝙',
-						userHead: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1497321668,2139379548&fm=27&gp=0.jpg',
-						phone: 1493103932,
-						kefu: '小白兔',
-						registerTime: 1544423173000
-					}
-				],
+				searchUserForm: {
+					userId: '',
+					phone: '',
+					userName: ''
+				},
+				loading: false,
+				userList: [], //用户列表
 				//注册用户
 				registerForm: {
 					send: false,
@@ -131,6 +119,33 @@
 			}
 		},
 		methods: {
+			getList() {
+				let uploadData = {
+					thisPage: 1,
+					limit: 50,
+					userType: 0,
+					userId: this.searchUserForm.userId,
+					userPhone: this.searchUserForm.phone,
+					userNickname: this.searchUserForm.userName
+				}
+				this.loading = true
+				this.$axios({
+					method: 'post',
+					url: '/system/user/queryForList',
+					data: this.$qs.stringify(uploadData)
+				}).then(res => {
+					this.loading = false
+					let result = res.data
+					if (result.code == 200) {
+			        	this.userList = result.data.list
+					} else {
+						this.$message.error(result.msg);
+					}
+				}).catch(err => {
+			    	this.loading = false
+			        console.log(err)
+			    })
+			},
 			hidePanel() {
 	          	this.$emit('update:visible', false)
 	      	},
@@ -138,7 +153,11 @@
 			searchForm(formName) {
 		        this.$refs[formName].validate((valid) => {
 		          	if (valid) {
-		            
+		            	if (this.searchUserForm.userId == '' && this.searchUserForm.phone == '' && this.searchUserForm.userName == '') {
+		            		this.$message.error('请输入用户ID、用户名或者手机号');
+		            		return
+		            	}
+		            	this.getList()
 		          	} else {
 		            	console.log('error submit!!');
 		            	return false;

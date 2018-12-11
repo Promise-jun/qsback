@@ -502,6 +502,15 @@ export default new Router({
                   }
                 },
                 {
+                  path: 'editAnchor', //编辑主播
+                  name: 'editAnchor',
+                  component: AddAnchor,
+                  meta: {
+                    title: '编辑主播',
+                    goto: '/anchor/editAnchor'
+                  }
+                },
+                {
                   path: 'anchorAuditDetail', //主播审核详情
                   name: 'anchorAuditDetail',
                   component: AnchorAuditDetail,

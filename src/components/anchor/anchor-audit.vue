@@ -1,6 +1,6 @@
 <template>
 	<div>
-    	<el-form :inline="true" :model="formObj" class="demo-form-inline">
+    	<el-form :inline="true" :model="formObj" class="demo-form-inline" size="small">
 		  <el-form-item label="用户ID">
 		    <el-input v-model="formObj.userid" placeholder="请输入用户ID"></el-input>
 		  </el-form-item>
@@ -12,13 +12,17 @@
 		  </el-form-item>
 		  <el-form-item label="主播审核状态">
 		    <el-select v-model="formObj.status" placeholder="请选择">
-			    <el-option v-for="item in statusArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
+			    <el-option label="待审核" value="0"></el-option>
+			    <el-option label="审核通过" value="1"></el-option>
+			    <el-option label="审核不通过" value="2"></el-option>
 			</el-select>
 		  </el-form-item>
 		  <el-form-item label="注册时间">
 		    <el-date-picker 
 		    	v-model="formObj.dateValue" 
 		    	type="daterange" 
+		    	:default-time="['00:00:00', '23:59:59']"
+		    	value-format="yyyy-MM-dd HH:mm:ss"
 		    	range-separator="-" 
 		    	start-placeholder="开始日期" 
 		    	end-placeholder="结束日期">
@@ -35,6 +39,7 @@
 		    ref="tableList"
 		    stripe
 		    border
+		    v-loading="loading"
 		    :data="tableList"
 		    tooltip-effect="dark"
 		    style="width: 100%; margin: 15px 0;"
@@ -53,13 +58,13 @@
 		    <el-table-column prop="name" label="姓名"></el-table-column>
 		    <el-table-column prop="ywss" label="业务所属"></el-table-column>
 		    <el-table-column prop="shStatus" label="审核状态"></el-table-column>
-		    <el-table-column label="操作">
+		    <!-- <el-table-column label="操作">
 		    	<template slot-scope="scope">
-					<el-tooltip content="处理" placement="top">
-					  <el-button @click="handle(scope.row)" type="text" icon="iconfont icon-wrench"></el-button>
-					</el-tooltip>
-			    </template>
-		    </el-table-column>
+		    					<el-tooltip content="处理" placement="top">
+		    					  <el-button @click="handle(scope.row)" type="text" icon="iconfont icon-wrench"></el-button>
+		    					</el-tooltip>
+		    			    </template>
+		    </el-table-column> -->
 		</el-table>
 
 		<el-row>
@@ -86,53 +91,72 @@
 			return {
 				pageTotal: { //分页数据
 			        total: 0,
-			        pageSize: 5,
+			        pageSize: 10,
 			        page: 1
 			    },
 				formObj: {
 					userid: '',
 					name: '',
 					nickName: '',
-					status: '',  //主播审核状态
+					status: '0',  //主播审核状态
 					dateValue: ''
 				},
-				statusArr: [{
-		          value: '1',
-		          label: '待审核'
-		        }, {
-		          value: '2',
-		          label: '审核不通过'
-		        }],
-		        tableList: [{
-		        	userId: 7541,
-		        	username: '大方点',
-		        	phone: '135****4523',
-		          	nickName: '俄方岁',
-		          	registerTime: '2018-11-15 11:15:15',
-		          	name: '高圆圆',
-		          	sex: "女",
-		          	ywss: '',
-		          	shStatus: '待审核'
-		        }, {
-		        	userId: 7541,
-		        	username: '大方点',
-		        	phone: '135****4523',
-		          	nickName: '俄方岁',
-		          	registerTime: '2018-11-15 11:15:15',
-		          	name: '高圆圆',
-		          	sex: "女",
-		          	ywss: '',
-		          	shStatus: '待审核'
-		        }],
-		        multipleSelection: []
+		        tableList: [],
+		        multipleSelection: [],
+		        loading: false
 			}
+		},
+		created() {
+			this.getList()
 		},
 		methods: {
 			getList() {
-
+				let beginTime, endTime
+				if (this.formObj.dateValue && this.formObj.dateValue.length) {
+					beginTime = this.formObj.dateValue[0]
+					endTime = this.formObj.dateValue[1]
+				} else {
+					beginTime = ''
+					endTime = ''
+				}
+				let uploadData = {
+					thisPage: this.pageTotal.page,
+					limit: this.pageTotal.pageSize,
+					userId: this.formObj.userid,
+					nickName: this.formObj.nickName,
+					realName: this.formObj.name,
+					beginTime: beginTime,
+					endTime: endTime,
+					status: this.formObj.status
+				}
+				this.loading = true
+				this.$axios({
+					method: 'post',
+					url: '/system/anchorApply/queryForList',
+					data: this.$qs.stringify(uploadData)
+				}).then(res => {
+					this.loading = false
+					let result = res.data
+					if (result.code == 200) {
+						if (result.data.list.length) {
+							this.pageTotal = {
+				              total: parseInt(result.data.total),
+				              pageSize: parseInt(result.data.pageSize),
+				              page: parseInt(result.data.pageNum)
+				            };
+						}
+			        	this.tableList = result.data.list
+					} else {
+						this.$message.error(result.msg);
+					}
+				}).catch(err => {
+			    	this.loading = false
+			        console.log(err)
+			    })
 			},
+			// 查询
 			onSubmit() {
-	        	console.log(this.formObj);
+	        	this.getList()
 	      	},
 	      	handleSelectionChange(val) {
 	      		console.log(val)

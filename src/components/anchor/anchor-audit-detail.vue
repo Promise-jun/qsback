@@ -178,6 +178,14 @@
 			return {
 				imageUrl: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3197537752,2095789724&fm=27&gp=0.jpg',
 			}
+		},
+		created() {
+			this.getList()
+		},
+		methods: {
+			getList() {
+				console.log(this.$route.query.userId)
+			}
 		}
 	}
 </script>

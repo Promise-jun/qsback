@@ -1,6 +1,6 @@
 <template>
 	<div>
-    	<el-form :inline="true" :model="formObj" class="demo-form-inline">
+    	<el-form :inline="true" :model="formObj" class="demo-form-inline" size="small">
 		  <el-form-item label="用户ID">
 		    <el-input v-model="formObj.userid" placeholder="请输入用户ID"></el-input>
 		  </el-form-item>
@@ -12,10 +12,12 @@
 		  </el-form-item>
 		  <el-form-item label="导师审核状态">
 		    <el-select v-model="formObj.status" placeholder="请选择">
-			    <el-option v-for="item in statusArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
+			    <el-option label="待审核" value="0"></el-option>
+			    <el-option label="审核通过" value="1"></el-option>
+			    <el-option label="审核不通过" value="2"></el-option>
 			</el-select>
 		  </el-form-item>
-		  <el-form-item label="注册时间">
+		  <!-- <el-form-item label="注册时间">
 		    <el-date-picker 
 		    	v-model="formObj.dateValue" 
 		    	type="daterange" 
@@ -23,7 +25,7 @@
 		    	start-placeholder="开始日期" 
 		    	end-placeholder="结束日期">
 		    </el-date-picker>
-		  </el-form-item>
+		  </el-form-item> -->
 		  <el-form-item>
 		    <el-button type="primary" @click="onSubmit" icon="el-icon-circle-plus">查询</el-button>
 		  </el-form-item>
@@ -35,6 +37,7 @@
 		    ref="tableList"
 		    stripe
 		    border
+		    v-loading="loading"
 		    :data="tableList"
 		    tooltip-effect="dark"
 		    style="width: 100%; margin: 15px 0;"
@@ -43,15 +46,28 @@
 		    <el-table-column label="用户ID">
 		      <template slot-scope="scope">{{ scope.row.userId }}</template>
 		    </el-table-column>
-		    <el-table-column prop="username" label="用户名"></el-table-column>
+		    <el-table-column label="在职类型">
+		      <template slot-scope="scope">
+		      		<span v-if="scope.row.workType == 0">兼职</span>
+		      		<span v-else-if="scope.row.workType == 1">全职</span>
+		      </template>
+		    </el-table-column>
 		    <el-table-column prop="nickName" label="昵称"></el-table-column>
-			<el-table-column prop="sex" label="性别"></el-table-column>
-			<el-table-column prop="registerTime" label="注册时间" width="150"></el-table-column>
-		    <el-table-column prop="name" label="姓名"></el-table-column>
+		    <el-table-column prop="realName" label="姓名"></el-table-column>
 		    <el-table-column prop="city" label="所在城市"></el-table-column>
-		    <el-table-column prop="workTime" label="从业时间" width="150"></el-table-column>
-		    <el-table-column prop="submitTime" label="提交时间" width="150"></el-table-column>
-		    <el-table-column prop="shStatus" label="审核状态"></el-table-column>
+		    <el-table-column label="从业时间" width="155">
+		    	<template slot-scope="scope">{{scope.row.workTm | dateformat}}</template>
+		    </el-table-column>
+		    <el-table-column label="提交时间" width="155">
+		    	<template slot-scope="scope">{{scope.row.createTm | dateformat}}</template>
+		    </el-table-column>
+		    <el-table-column label="审核状态">
+		    	<template slot-scope="scope">
+		      		<span v-if="scope.row.status == 0">待审核</span>
+		      		<span v-else-if="scope.row.status == 1">审核通过</span>
+		      		<span v-else-if="scope.row.status == 2">审核不通过</span>
+		      </template>
+		    </el-table-column>
 		    <el-table-column label="操作">
 		    	<template slot-scope="scope">
 					<el-tooltip content="处理" placement="top">
@@ -88,57 +104,68 @@
 			return {
 				pageTotal: { //分页数据
 			        total: 0,
-			        pageSize: 5,
+			        pageSize: 10,
 			        page: 1
 			    },
 				formObj: {
 					userid: '',
 					name: '',
 					nickName: '',
-					status: '',  //导师审核状态
-					dateValue: ''
+					status: '0',  //导师审核状态
 				},
-				statusArr: [{
-		          value: '1',
-		          label: '待审核'
-		        }, {
-		          value: '2',
-		          label: '审核不通过'
-		        }],
-		        tableList: [{
-		        	userId: 7541,
-		        	username: '大方点',
-		          	nickName: '俄方岁',
-		          	enterTime: '2018-11-15 11:15:15',
-		          	registerTime: '2018-11-15 11:15:15',
-		          	name: '高圆圆',
-		          	sex: "女",
-		          	city: '广东 韶关',
-		          	workTime: '2018-11-15 11:15:15',
-		          	submitTime: '2018-11-15 11:15:15',
-		          	shStatus: ''
-		        }, {
-		        	userId: 7541,
-		        	username: '大方点',
-		          	nickName: '俄方岁',
-		          	enterTime: '2018-11-15 11:15:15',
-		          	registerTime: '2018-11-15 11:15:15',
-		          	name: '高圆圆',
-		          	sex: "女",
-		          	city: '广东 韶关',
-		          	workTime: '2018-11-15 11:15:15',
-		          	submitTime: '2018-11-15 11:15:15',
-		          	shStatus: ''
-		        }],
-		        multipleSelection: []
+		        tableList: [],
+		        multipleSelection: [],
+		        loading: false
 			}
+		},
+		created() {
+			this.getList()
 		},
 		methods: {
 			getList() {
-				
+				/*let beginTime, endTime
+				if (this.formObj.dateValue && this.formObj.dateValue.length) {
+					beginTime = this.formObj.dateValue[0]
+					endTime = this.formObj.dateValue[1]
+				} else {
+					beginTime = ''
+					endTime = ''
+				}*/
+				let uploadData = {
+					thisPage: this.pageTotal.page,
+					limit: this.pageTotal.pageSize,
+					userId: this.formObj.userid,
+					nickName: this.formObj.nickName,
+					realName: this.formObj.name,
+					status: this.formObj.status
+				}
+				this.loading = true
+				this.$axios({
+					method: 'post',
+					url: '/system/consultant/apply/queryForList',
+					data: this.$qs.stringify(uploadData)
+				}).then(res => {
+					this.loading = false
+					let result = res.data
+					if (result.code == 200) {
+						if (result.data.list.length) {
+							this.pageTotal = {
+				              total: parseInt(result.data.total),
+				              pageSize: parseInt(result.data.pageSize),
+				              page: parseInt(result.data.pageNum)
+				            };
+						}
+			        	this.tableList = result.data.list
+					} else {
+						this.$message.error(result.msg);
+					}
+				}).catch(err => {
+			    	this.loading = false
+			        console.log(err)
+			    })
 			},
 			onSubmit() {
-	        	console.log(this.formObj);
+				this.getList()
 	      	},
 	      	handleSelectionChange(val) {
 	      		console.log(val)

@@ -1,6 +1,6 @@
 <template>
 	<div>
-    	<el-form :inline="true" :model="formObj" class="demo-form-inline">
+    	<el-form :inline="true" :model="formObj" class="demo-form-inline" size="small">
 		  <el-form-item label="用户ID">
 		    <el-input v-model="formObj.userid" placeholder="请输入用户ID"></el-input>
 		  </el-form-item>
@@ -10,15 +10,18 @@
 		  <el-form-item label="姓名">
 		    <el-input v-model="formObj.name" placeholder="请输入姓名"></el-input>
 		  </el-form-item>
-		  <el-form-item label="服务人员状态">
+		  <el-form-item label="主播状态">
 		    <el-select v-model="formObj.status" placeholder="请选择">
-			    <el-option v-for="item in statusArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
+			    <el-option label="可用" value="0"></el-option>
+			    <el-option label="禁用" value="1"></el-option>
 			</el-select>
 		  </el-form-item>
 		  <el-form-item label="注册时间">
 		    <el-date-picker 
 		    	v-model="formObj.dateValue" 
 		    	type="daterange" 
+		    	:default-time="['00:00:00', '23:59:59']"
+		    	value-format="yyyy-MM-dd HH:mm:ss"
 		    	range-separator="-" 
 		    	start-placeholder="开始日期" 
 		    	end-placeholder="结束日期">
@@ -35,6 +38,7 @@
 		    ref="tableList"
 		    stripe
 		    border
+		    v-loading="loading"
 		    :data="tableList"
 		    tooltip-effect="dark"
 		    style="width: 100%; margin: 15px 0;"
@@ -46,18 +50,25 @@
 		      </template>
 		    </el-table-column>
 		    <el-table-column prop="username" label="用户名"></el-table-column>
-		    <el-table-column prop="phone" label="手机号"></el-table-column>
+		    <el-table-column prop="anchorPhone" label="手机号"></el-table-column>
 			<el-table-column prop="nickName" label="昵称"></el-table-column>
-			<el-table-column prop="sex" label="性别"></el-table-column>
-			<el-table-column prop="registerTime" label="注册时间" width="150"></el-table-column>
-		    <el-table-column prop="name" label="姓名"></el-table-column>
-		    <el-table-column prop="followNum" label="关注他的人(个)"></el-table-column>
-		    <el-table-column prop="syjf" label="剩余积分"></el-table-column>
-		    <el-table-column prop="price" label="余额(元)"></el-table-column>
+			<el-table-column label="性别">
+				<template slot-scope="scope">
+		      		<span v-if="scope.row.sex == 0">未知</span>
+		      		<span v-else-if="scope.row.sex == 1">男</span>
+		      		<span v-else>女</span>
+		      	</template>
+			</el-table-column>
+			<el-table-column label="注册时间" width="155">
+				<template slot-scope="scope">{{scope.row.createTm | dateformat}}</template>
+			</el-table-column>
+		    <el-table-column prop="realName" label="姓名"></el-table-column>
+		    <el-table-column prop="diamondBalance" label="钻石余额"></el-table-column>
+		    <el-table-column prop="diamondFreeze" label="冻结钻石"></el-table-column>
 		    <el-table-column label="操作">
 		    	<template slot-scope="scope">
 					<el-tooltip content="编辑" placement="top">
-					  <el-button @click="editRole(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
+					  <el-button @click="edit(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
 					</el-tooltip>
 			    </template>
 		    </el-table-column>
@@ -91,58 +102,72 @@
 			return {
 				pageTotal: { //分页数据
 			        total: 0,
-			        pageSize: 5,
+			        pageSize: 10,
 			        page: 1
 			    },
 				formObj: {
 					userid: '',
 					name: '',
 					nickName: '',
-					status: '',  //服务人员状态
-					dateValue: ''
+					status: '0',  //状态
+					dateValue: []
 				},
-				statusArr: [{
-		          value: '1',
-		          label: '可用'
-		        }, {
-		          value: '2',
-		          label: '禁用'
-		        }, {
-		          value: '3',
-		          label: '注销'
-		        }],
-		        tableList: [{
-		        	userId: 7541,
-		        	username: "大方点",
-		        	phone: "135****4532",
-		          	nickName: '俄方岁',
-		          	sex: "女",
-		          	registerTime: '2018-11-15 11:15:15',
-		          	name: '高圆圆',
-		          	followNum: 5,
-		          	syjf: 100,
-		          	price: 200
-		        },{
-		        	userId: 7541,
-		        	username: "大方点",
-		        	phone: "135****4532",
-		          	nickName: '俄方岁',
-		          	sex: "女",
-		          	registerTime: '2018-11-15 11:15:15',
-		          	name: '高圆圆',
-		          	followNum: 5,
-		          	syjf: 100,
-		          	price: 200
-		        }],
+				loading: false,
+		        tableList: [],
 		        multipleSelection: []
 			}
 		},
+		created() {
+			this.getList()
+		},
 		methods: {
 			getList() {
-
+				let beginTime, endTime
+				if (this.formObj.dateValue && this.formObj.dateValue.length) {
+					beginTime = this.formObj.dateValue[0]
+					endTime = this.formObj.dateValue[1]
+				} else {
+					beginTime = ''
+					endTime = ''
+				}
+				let uploadData = {
+					thisPage: this.pageTotal.page,
+					limit: this.pageTotal.pageSize,
+					userId: this.formObj.userid,
+					nickName: this.formObj.nickName,
+					realName: this.formObj.name,
+					beginTime: beginTime,
+					endTime: endTime,
+					isDel: this.formObj.status
+				}
+				this.loading = true
+				this.$axios({
+					method: 'post',
+					url: '/system/anchor/queryForList',
+					data: this.$qs.stringify(uploadData)
+				}).then(res => {
+					this.loading = false
+					let result = res.data
+					if (result.code == 200) {
+						if (result.data.list.length) {
+							this.pageTotal = {
+				              total: parseInt(result.data.total),
+				              pageSize: parseInt(result.data.pageSize),
+				              page: parseInt(result.data.pageNum)
+				            };
+						}
+			        	this.tableList = result.data.list
+					} else {
+						this.$message.error(result.msg);
+					}
+				}).catch(err => {
+			    	this.loading = false
+			        console.log(err)
+			    })
 			},
+			// 查询
 			onSubmit() {
-	        	console.log(this.formObj);
+	        	this.getList()
 	      	},
 	      	handleSelectionChange(val) {
 	      		console.log(val)
@@ -152,6 +177,13 @@
 		    addAnchor() {
 		    	let {href} = this.$router.resolve({
 		    		path: '/anchor/addAnchor'
+		    	});
+				window.open(href, '_blank');
+		    },
+		    // 编辑主播
+		    edit(row) {
+		    	let {href} = this.$router.resolve({
+		    		path: '/anchor/editAnchor?userId=' + row.userId
 		    	});
 				window.open(href, '_blank');
 		    }

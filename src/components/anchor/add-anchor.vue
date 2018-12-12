@@ -313,6 +313,7 @@
 				}).then(res => {
 					this.loading = false
 					let result = res.data
+					console.log(result)
 					if (result.code == 200) {
 						this.$message({
 				         	message: '操作成功！',

@@ -32,7 +32,7 @@
 		  </el-form-item>
 		</el-form>
 
-		<el-alert title="总计416个用户" type="warning" :closable="false"></el-alert>
+		<el-alert :title="'总计' + pageTotal.total + '个主播'" type="warning" :closable="false"></el-alert>
 
 		<el-table
 		    ref="tableList"
@@ -97,7 +97,7 @@
 	import PageNum from 'base/page-num/page-num'
 
 	export default {
-		name: 'mentorlist',
+		name: 'anchorlist',
 		data() {
 			return {
 				pageTotal: { //分页数据

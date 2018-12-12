@@ -33,7 +33,7 @@
 		  </el-form-item>
 		</el-form>
 
-		<el-alert title="总计416个用户" type="warning" :closable="false"></el-alert>
+		<el-alert :title="'总计' + pageTotal.total + '个主播'" type="warning" :closable="false"></el-alert>
 
 		<el-table
 		    ref="tableList"
@@ -51,20 +51,33 @@
 		      </template>
 		    </el-table-column>
 		    <el-table-column prop="username" label="用户名"></el-table-column>
-		    <el-table-column prop="phone" label="手机号"></el-table-column>
+		    <el-table-column prop="anchorPhone" label="手机号"></el-table-column>
 		    <el-table-column prop="nickName" label="昵称"></el-table-column>
-			<el-table-column prop="sex" label="性别"></el-table-column>
-			<el-table-column prop="registerTime" label="注册时间" width="150"></el-table-column>
-		    <el-table-column prop="name" label="姓名"></el-table-column>
-		    <el-table-column prop="ywss" label="业务所属"></el-table-column>
-		    <el-table-column prop="shStatus" label="审核状态"></el-table-column>
-		    <!-- <el-table-column label="操作">
+			<el-table-column label="性别">
+				<template slot-scope="scope">
+		      		<span v-if="scope.row.sex == 0">未知</span>
+		      		<span v-else-if="scope.row.sex == 1">男</span>
+		      		<span v-else>女</span>
+		      	</template>
+			</el-table-column>
+			<el-table-column label="注册时间" width="155">
+				<template slot-scope="scope">{{scope.row.createTm | dateformat}}</template>
+			</el-table-column>
+		    <el-table-column prop="realName" label="姓名"></el-table-column>
+		    <el-table-column label="审核状态">
 		    	<template slot-scope="scope">
-		    					<el-tooltip content="处理" placement="top">
-		    					  <el-button @click="handle(scope.row)" type="text" icon="iconfont icon-wrench"></el-button>
-		    					</el-tooltip>
-		    			    </template>
-		    </el-table-column> -->
+		      		<span v-if="scope.row.status == 0">待审核</span>
+		      		<span v-else-if="scope.row.status == 1">审核通过</span>
+		      		<span v-else-if="scope.row.status == 2">审核不通过</span>
+		      	</template>
+		    </el-table-column>
+		    <el-table-column label="操作">
+		    	<template slot-scope="scope">
+					<el-tooltip content="处理" placement="top">
+					  	<el-button @click="handle(scope.row)" type="text" icon="iconfont icon-wrench"></el-button>
+					</el-tooltip>
+			    </template>
+		    </el-table-column>
 		</el-table>
 
 		<el-row>
@@ -86,7 +99,7 @@
 	import PageNum from 'base/page-num/page-num'
 
 	export default {
-		name: 'mentorlist',
+		name: 'anchorAudit',
 		data() {
 			return {
 				pageTotal: { //分页数据

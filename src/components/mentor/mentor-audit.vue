@@ -31,7 +31,7 @@
 		  </el-form-item>
 		</el-form>
 
-		<el-alert title="总计416个用户" type="warning" :closable="false"></el-alert>
+		<el-alert :title="'总计' + pageTotal.total + '个导师'" type="warning" :closable="false"></el-alert>
 
 		<el-table
 		    ref="tableList"
@@ -66,10 +66,13 @@
 		      		<span v-if="scope.row.status == 0">待审核</span>
 		      		<span v-else-if="scope.row.status == 1">审核通过</span>
 		      		<span v-else-if="scope.row.status == 2">审核不通过</span>
-		      </template>
+		      	</template>
 		    </el-table-column>
 		    <el-table-column label="操作">
 		    	<template slot-scope="scope">
+		    		<el-tooltip content="编辑" placement="top">
+					  <el-button @click="edit(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
+					</el-tooltip>
 					<el-tooltip content="处理" placement="top">
 					  <el-button @click="handle(scope.row)" type="text" icon="iconfont icon-wrench"></el-button>
 					</el-tooltip>
@@ -171,10 +174,17 @@
 	      		console.log(val)
 		        this.multipleSelection = val;
 		    },
+		    // 编辑
+		    edit(row) {
+		    	let {href} = this.$router.resolve({
+		    		path: '/mentor/addMentor?consultantApplyId=' + row.consultantApplyId
+		    	});
+				window.open(href, '_blank');
+		    },
 		    // 处理
 		    handle(row) {
 		    	let {href} = this.$router.resolve({
-		    		path: '/mentor/mentorAuditDetail?userId=' + row.userId
+		    		path: '/mentor/mentorAuditDetail?consultantApplyId=' + row.consultantApplyId
 		    	});
 				window.open(href, '_blank');
 		    }

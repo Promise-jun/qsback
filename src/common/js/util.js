@@ -53,3 +53,14 @@ function formatTree(items, parentId) {
     }
     return result;
 }
+
+// 将字符串转化为整型数组
+export function intArrFn(str) {
+  let dataStrArr = str.split(",");//分割成字符串数组  
+  let dataIntArr = [];//保存转换后的整型字符串 
+
+  dataIntArr = dataStrArr.map(function(data){  
+      return +data;  
+  });  
+  return dataIntArr
+}

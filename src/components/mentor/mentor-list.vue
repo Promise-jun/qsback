@@ -29,7 +29,7 @@
 		  </el-form-item>
 		</el-form>
 
-		<el-alert title="总计416个用户" type="warning" :closable="false"></el-alert>
+		<el-alert :title="'总计' + pageTotal.total + '个导师'" type="warning" :closable="false"></el-alert>
 
 		<el-table
 		    ref="tableList"

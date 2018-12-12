@@ -12,7 +12,7 @@ export default {
   props: ['dataPath'],
   data () {
     return {
-      levelList: null
+      levelList: []
     }
   },
   methods: {

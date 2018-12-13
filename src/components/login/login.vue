@@ -195,6 +195,10 @@
     left: 0;
     bottom: 0;
     right: 0;
-    background-color: #242645;
+    background-color: #F2F2F4;
+    background-image: url('../../assets/icon_login_bg.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
   }
 </style>

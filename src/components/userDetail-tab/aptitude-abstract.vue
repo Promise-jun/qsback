@@ -100,7 +100,7 @@
 		  			</el-tooltip>
 		  		</p>
 		  		<p>
-		  			<label>座右铭：</label>
+		  			<label>个性签名：</label>
 		  			<span>--</span>
 		  			<el-tooltip content="编辑" placement="top">
 		  				<i class="el-icon-edit edit" @click="motto"></i>

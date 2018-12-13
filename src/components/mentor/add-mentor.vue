@@ -121,9 +121,9 @@
 					  	<el-col :span="12">
 					  		<p>证件类型</p>
 					  		<el-select v-model="mentorForm.materialType" placeholder="请选择">
-							    <el-option label="大陆身份证" value="0"></el-option>
-							    <el-option label="台胞证" value="1"></el-option>
-							    <el-option label="护照" value="2"></el-option>
+							    <el-option label="大陆身份证" :value="0"></el-option>
+							    <el-option label="台胞证" :value="1"></el-option>
+							    <el-option label="护照" :value="2"></el-option>
 							</el-select>
 					  	</el-col>
 					  	<el-col :span="24">
@@ -183,8 +183,8 @@
 		  				<el-col :span="8">
 					  		<p>平台在职类型</p>
 					  		<el-select v-model="mentorForm.workType" placeholder="请选择">
-					  			<el-option label="兼职" value="0"></el-option>
-							    <el-option label="全职" value="1"></el-option>
+					  			<el-option label="兼职" :value="0"></el-option>
+							    <el-option label="全职" :value="1"></el-option>
 							</el-select>
 					  	</el-col>
 					  	<el-col :span="8">
@@ -244,13 +244,12 @@
 		  				<el-col :span="24">
 					  		<p>头像</p>
 					  		<div class="add-pic-box">
-					  			<el-upload
+								<el-upload
 								  	class="avatar-uploader"
 								  	accept="image/jpeg, image/gif, image/png"
-								  	action="https://jsonplaceholder.typicode.com/posts/"
+								  	:action="actionUrl"
 								  	:show-file-list="false"
-								  	:on-success="headSuccess"
-								  	:before-upload="headUpload">
+								  	:http-request="headRequest">
 								  	<img v-if="mentorForm.photoUrl" :src="mentorForm.photoUrl" class="avatar head-pic">
 								  	<i v-else class="el-icon-plus avatar-uploader-icon head-icon"></i>
 								</el-upload>
@@ -288,10 +287,10 @@
 							    <el-table-column label="操作">
 							      <template slot-scope="scope">
 							    		<el-tooltip content="编辑" placement="top">
-										  <el-button @click="editAptitude(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
+										  <el-button @click="editAptitude(scope.row, scope.$index)" type="text" icon="iconfont icon-edit"></el-button>
 										</el-tooltip>
 							    		<el-tooltip content="删除" placement="top">
-										  <el-button @click="delAptitude(scope.row)" type="text" icon="iconfont icon-delete" style="color: #F56C6C;"></el-button>
+										  <el-button @click="delAptitude(scope.row, scope.$index)" type="text" icon="iconfont icon-delete" style="color: #F56C6C;"></el-button>
 										</el-tooltip>
 								  </template>
 							    </el-table-column>
@@ -321,7 +320,7 @@
 							    style="width: 100%; margin: 15px 0;">
 							    <el-table-column prop="aptitudeName" label="受训时间">
 							    	<template slot-scope="scope">
-							    		{{scope.row.startDate}} - {{scope.row.endDate}}
+							    		{{scope.row.startDate | dateformat('YYYY-MM-DD')}} - {{scope.row.endDate | dateformat('YYYY-MM-DD')}}
 							    	</template>
 							    </el-table-column>
 							    <el-table-column prop="content" label="受训背景"></el-table-column>
@@ -333,10 +332,10 @@
 							    <el-table-column label="操作">
 							      <template slot-scope="scope">
 							    		<el-tooltip content="编辑" placement="top">
-										  <el-button @click="editAptitude(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
+										  <el-button @click="editTrain(scope.row, scope.$index)" type="text" icon="iconfont icon-edit"></el-button>
 										</el-tooltip>
 							    		<el-tooltip content="删除" placement="top">
-										  <el-button @click="delAptitude(scope.row)" type="text" icon="iconfont icon-delete" style="color: #F56C6C;"></el-button>
+										  <el-button @click="delTrain(scope.row, scope.$index)" type="text" icon="iconfont icon-delete" style="color: #F56C6C;"></el-button>
 										</el-tooltip>
 								  </template>
 							    </el-table-column>
@@ -427,11 +426,15 @@
 
 		<!-- 选择用户 -->
 		<choose-user :visible.sync="chooseUserVisible" @confirm="chooseUser" @register="registerUser"></choose-user>
+
+		<!-- 图片裁剪 -->
+		<cut-out-pic :picDialogVisible.sync="picDialogVisible" :picOption="picOption" @upload="uploadHead"></cut-out-pic>
 	</div>
 </template>
 
 <script type="text/javascript">
 	import ChooseUser from 'components/choose-user/choose-user'
+	import cutOutPic from 'base/cutOut-pic/cutOut-pic'
 	import { intArrFn } from 'common/js/util.js'
 
 	let moment = require("moment")
@@ -442,6 +445,21 @@
 		data() {
 			return {
 				loading: false,
+				picDialogVisible: false, //图片裁剪弹窗
+				picOption: {  //图片裁剪配置
+					img: '../../assets/a.jpg',
+					info: true,
+					outputSize: 1,
+					outputType: "png",
+					canScale: true,
+					autoCrop: true,
+					autoCropWidth: 250,
+        			autoCropHeight: 250,
+        			fixed: true,
+        			infoTrue: true,
+        			fixedNumber: [1, 1],
+        			centerBox: true
+				},
 				rules: {
 					name: [
 						{ required: true, message: '名称不能为空'}
@@ -493,7 +511,7 @@
 					education: '', //学历
 					educationUrl: '', //学历证书
 					materialNumberl: '', //证件号
-					materialType: '0', //证件类型
+					materialType: 0, //证件类型
 					frontView: '', //正面
 					backView: '', //反面
 					referee: '', //推荐人
@@ -536,7 +554,8 @@
         		actionUrl: '',
         		//请求地址
         		isAdd: true,
-        		uploadUrl: ''
+        		uploadUrl: '',
+        		currentIndex: null
 			}
 		},
 		created() {
@@ -561,7 +580,7 @@
 							realName: data.realName, //姓名
 							city: data.city, //所在地
 							phone: data.phone, //手机号
-							wechat: data.wechat, //微信号
+							wechat: data.weChat, //微信号
 							birthday: moment(data.birthday).format('YYYY-MM-DD'), //生日
 							graduateInstitutions: data.graduateInstitutions, //毕业学校
 							major: data.major, //专业
@@ -579,8 +598,13 @@
 							professionalBackground: data.professionalBackground, //专业背景用“，”号隔开
 							areasOfExpertise: intArrFn(data.areasOfExpertise), //擅长领域用“，”号隔开
 							consultingStyle: intArrFn(data.consultingStyle), //咨询风格用“，”号隔开
-							photoUrl: data.photoUrl //用户头像
+							photoUrl: data.photoUrl, //用户头像
+							consultantApplyId: this.$route.query.consultantApplyId
 		        		}
+		        		// 获取资质列表
+						this.getAptitude()
+						// 获取受训背景
+						this.getTrain()
 					} else {
 						this.$message.error(result.msg);
 					}
@@ -633,6 +657,11 @@
 
 		    	this.mentorForm.nickName = item.userNickname
 		    	this.chooseUserVisible = false
+
+		    	// 获取资质列表
+				this.getAptitude()
+				// 获取受训背景
+				this.getTrain()
 			},
 			// 注册用户
 			registerUser(item) {
@@ -722,20 +751,124 @@
 				}
 		    },
 		    // 头像
-		    headSuccess(res, file) {
-		        this.mentorForm.headPic = URL.createObjectURL(file.raw);
-		    },
-		    headUpload(file) {
-		        const isJPG = file.type === 'image/jpeg';
-		        const isLt2M = file.size / 1024 / 1024 < 2;
+		    headRequest(options) {
+		    	this.picDialogVisible = true
 
-		        if (!isJPG) {
-		          this.$message.error('上传头像图片只能是 JPG 格式!');
-		        }
-		        if (!isLt2M) {
-		          this.$message.error('上传头像图片大小不能超过 2MB!');
-		        }
-		        return isJPG && isLt2M;
+		    	let file = options.file
+		    	//判断图片类型
+    			let isJPG
+			    if (file.type == 'image/jpeg' || file.type == 'image/png' || file.type == 'image/gif') {
+			     	isJPG =  true
+			    } else {
+			     	isJPG =  false
+			    }
+			    // 判断图片大小
+			    const isLt2M = file.size / 1024 / 1024 < 10
+			    if (!isJPG) {
+			      	this.$message.error('上传图片只能是 JPG/PNG/GIF 格式!')
+			      	return
+			    }
+			    if (!isLt2M) {
+			      	this.$message.error('上传图片大小不能超过 10MB!')
+			      	return
+			    }
+			    var reader = new FileReader();
+		    	reader.onload = e => {
+			        let data;
+					
+			        if (typeof e.target.result === "object") {
+			          // 把Array Buffer转化为blob 如果是base64不需要
+			          data = window.URL.createObjectURL(new Blob([e.target.result]));
+			        } else {
+			          data = e.target.result;
+			        }
+			        this.picOption.img = data
+			    };
+			    reader.readAsArrayBuffer(file);
+		    },
+		    uploadHead(data) {
+		    	this.$axios({
+		    		method: 'post',
+		    		url: '/system/consultant/apply/uploadPicture',
+		    		data: this.$qs.stringify({
+		    			image: data
+		    		})
+		    	}).then(res => {
+		    		let result = res.data
+		    		if (result.code == 200) {
+		    			this.mentorForm.photoUrl = result.msg
+		    			this.picDialogVisible = false
+		    		} else {
+		    			this.$message.error(result.msg);
+		    		}
+		    	}).catch(err => {
+		    		console.log(err)
+		    	})
+		    },
+		    // 获取资质列表
+		    getAptitude() {
+		    	if (this.userInfo.userId != '') {
+		    		this.$axios({
+		    			method: 'post',
+		    			url: '/system/merchant/material/findByUserId',
+		    			data: this.$qs.stringify({
+		    				userId: this.userInfo.userId
+		    			})
+		    		}).then(res => {
+		    			let result = res.data
+		    			if (result.code == 200) {
+		    				this.aptitudeList = result.data
+		    			} else {
+		    				this.$message.error(result.msg);
+		    			}
+		    		}).catch(err => {
+		    			console.log(err)
+		    		})
+		    	}
+		    },
+		    // 编辑资质
+		    editAptitude(row, index) {
+		    	this.currentIndex = index
+		    	this.diplomaTool.name = '资质认证'
+	    		this.diplomaTool.card = '资质编号'
+	    		this.diplomaTool.pic = '资质照片'
+		    	this.diplomaType = 4 //上传图片时候使用
+		    	this.diplomaForm = {
+		    		id: row.materialId,
+		    		name: row.represent,
+		    		card: row.materialNumber,
+		    		pic: row.materialUrl
+		    	}
+		    	this.diplomaVisible = true
+		    },
+		    // 删除资质
+		    delAptitude(row, index) {
+		    	this.$confirm('确定要删除吗?', '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	this.$axios({
+		        		method: 'post',
+		        		url: '/system/merchant/material/delete',
+		        		data: this.$qs.stringify({
+		        			materialId: row.materialId
+		        		})
+		        	}).then(res => {
+		        		let result = res.data
+		        		if (result.code == 200) {
+		        			this.aptitudeList.splice(index, 1)
+		        			this.$message({
+				            	type: 'success',
+				            	message: '删除成功!'
+				          	});	
+		        		} else {
+		        			this.$message.error(result.msg)
+		        		}
+		        	})     
+		        }).catch(() => {
+		                
+		        });
 		    },
 		    // 证书弹窗
 		    openVisible(type) { //打开弹窗
@@ -749,6 +882,7 @@
 		    		this.diplomaTool.pic = '资质照片'
 
 		    		this.diplomaType = 4 //上传图片时候使用
+
 		    	} else if (type == 2) { //权威职称
 		    		this.diplomaTool.name = '权威职称'
 		    		this.diplomaTool.card = '权威编号'
@@ -756,6 +890,8 @@
 
 		    		this.diplomaType = 5 //上传图片时候使用
 		    	}
+
+		    	delete this.diplomaForm.id
 		    	this.diplomaForm = {
 		    		name: '',
 		    		card: '',
@@ -766,35 +902,67 @@
 		    submitDiploma(formName) {
 		        this.$refs[formName].validate((valid) => {
 		          if (valid) {
-		            this.submitLoading = true
-		          	let uploadInfo = {
-		          		materialType: 0,
-		          		userId: this.userInfo.userId,
-		          		materialNumber: this.diplomaForm.card,
-		          		materialUrl: this.diplomaForm.pic,
-		          		represent: this.diplomaForm.name
+		          	this.submitLoading = true
+		          	if (!this.diplomaForm.id) { //新增
+		          		let uploadInfo = {
+			          		materialType: 0,
+			          		userId: this.userInfo.userId,
+			          		materialNumber: this.diplomaForm.card,
+			          		materialUrl: this.diplomaForm.pic,
+			          		represent: this.diplomaForm.name
+			          	}
+			          	this.$axios({
+			          		method: 'post',
+			          		url: '/system/merchant/material/save',
+			          		data: this.$qs.stringify(uploadInfo)
+			          	}).then(res => {
+			          		this.diplomaVisible = false
+			          		this.submitLoading = false
+			          		let result = res.data
+			          		if (result.code == 200) {
+			          			this.aptitudeList.push({
+			          				materialId: result.msg,
+			          				materialNumber: this.diplomaForm.card,
+			          				materialUrl: this.diplomaForm.pic,
+			          				represent: this.diplomaForm.name
+			          			})
+			          		} else {
+			          			this.$message.error(result.msg);
+			          		}
+			          	}).catch(err => {
+			          		console.log(err)
+			          	})
+		          	} else { //编辑
+		          		let uploadInfo = {
+			          		materialType: 0,
+			          		userId: this.userInfo.userId,
+			          		materialId: this.diplomaForm.id,
+			          		materialNumber: this.diplomaForm.card,
+			          		materialUrl: this.diplomaForm.pic,
+			          		represent: this.diplomaForm.name
+			          	}
+			          	this.$axios({
+			          		method: 'post',
+			          		url: '/system/merchant/material/edit',
+			          		data: this.$qs.stringify(uploadInfo)
+			          	}).then(res => {
+			          		this.diplomaVisible = false
+			          		this.submitLoading = false
+			          		let result = res.data
+			          		if (result.code == 200) {
+			          			this.aptitudeList.splice(this.currentIndex, 1, {
+			          				materialId: this.diplomaForm.id,
+			          				materialNumber: this.diplomaForm.card,
+			          				materialUrl: this.diplomaForm.pic,
+			          				represent: this.diplomaForm.name
+			          			})
+			          		} else {
+			          			this.$message.error(result.msg);
+			          		}
+			          	}).catch(err => {
+			          		console.log(err)
+			          	})
 		          	}
-		          	this.$axios({
-		          		method: 'post',
-		          		url: '/system/merchant/material/save',
-		          		data: this.$qs.stringify(uploadInfo)
-		          	}).then(res => {
-		          		this.diplomaVisible = false
-		          		this.submitLoading = false
-		          		let result = res.data
-		          		if (result.code == 200) {
-		          			this.aptitudeList.push({
-		          				diplomaId: result.data,
-		          				materialNumber: this.diplomaForm.card,
-		          				materialUrl: this.diplomaForm.pic,
-		          				represent: this.diplomaForm.name
-		          			})
-		          		} else {
-		          			this.$message.error(result.msg);
-		          		}
-		          	}).catch(err => {
-		          		console.log(err)
-		          	})
 		          } else {
 		            console.log('error submit!!');
 		            return false;
@@ -806,11 +974,72 @@
 		    	this.uploadImg(file, this.diplomaType)
 		    },
 		    // 受训背景
+		    getTrain() { //获取受训背景列表
+		    	if (this.userInfo.userId != '') {
+		    		this.$axios({
+		    			method: 'post',
+		    			url: '/system/merchant/education/findByUserId',
+		    			data: this.$qs.stringify({
+		    				userId: this.userInfo.userId
+		    			})
+		    		}).then(res => {
+		    			let result = res.data 
+		    			if (result.code == 200) {
+		    				this.trainList = result.data
+		    			} else {
+		    				this.$message.error(result.msg);
+		    			}
+		    		}).catch(err => {
+		    			console.log(err)
+		    		})
+		    	}
+		    },
+		    // 编辑受训背景
+		    editTrain(row, index) {
+		    	this.currentIndex = index
+		    	this.trainForm = {
+		    		id: row.educationId,
+		    		time: [moment(row.startDate).format('YYYY-MM-DD'), moment(row.endDate).format('YYYY-MM-DD')],
+		    		trainCont: row.content,
+		    		pic: row.educationPictureUrl
+		    	}
+		    	this.trainVisible = true
+		    },
+		    // 删除受训背景
+		    delTrain(row, index) {
+		    	this.$confirm('确定要删除吗?', '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	this.$axios({
+		        		method: 'post',
+		        		url: '/system/merchant/education/delete',
+		        		data: this.$qs.stringify({
+		        			educationId: row.educationId
+		        		})
+		        	}).then(res => {
+		        		let result = res.data
+		        		if (result.code == 200) {
+		        			this.trainList.splice(index, 1)
+		        			this.$message({
+				            	type: 'success',
+				            	message: '删除成功!'
+				          	});	
+		        		} else {
+		        			this.$message.error(result.msg)
+		        		}
+		        	})     
+		        }).catch(() => {
+		                
+		        });
+		    },
 		    openTrain() { //打开受训背景弹窗
 		    	if (this.userInfo.userId == '') {
 		    		this.$message.error('用户ID不能为空！请先选择用户！');
 		    		return
 		    	}
+		    	delete this.trainForm.id
 		    	this.trainForm = {
 		    		time: '',
 		    		trainCont: '',
@@ -822,35 +1051,69 @@
 		    	this.$refs[formName].validate((valid) => {
 		          if (valid) {
 		            this.submitLoading = true
-		          	let uploadInfo = {
-		          		userId: this.userInfo.userId,
-		          		startDate: this.trainForm.time[0],
-		          		endDate: this.trainForm.time[1],
-		          		content: this.trainForm.trainCont,
-		          		educationPictureUrl: this.trainForm.pic
-		          	}
-		          	this.$axios({
-		          		method: 'post',
-		          		url: '/system/merchant/education/save',
-		          		data: this.$qs.stringify(uploadInfo)
-		          	}).then(res => {
-		          		this.trainVisible = false
-		          		this.submitLoading = false
-		          		let result = res.data
-		          		if (result.code == 200) {
-		          			this.trainList.push({
-		          				trainId: result.data,
-		          				startDate: this.trainForm.time[0],
-		          				endDate: this.trainForm.time[1],
-		          				content: this.trainForm.trainCont,
-		          				educationPictureUrl: this.trainForm.pic
-		          			})
-		          		} else {
-		          			this.$message.error(result.msg);
-		          		}
-		          	}).catch(err => {
-		          		console.log(err)
-		          	})
+		            if (!this.trainForm.id) { //新增
+		            	let uploadInfo = {
+			          		userId: this.userInfo.userId,
+			          		startDate: this.trainForm.time[0],
+			          		endDate: this.trainForm.time[1],
+			          		content: this.trainForm.trainCont,
+			          		educationPictureUrl: this.trainForm.pic
+			          	}
+			          	this.$axios({
+			          		method: 'post',
+			          		url: '/system/merchant/education/save',
+			          		data: this.$qs.stringify(uploadInfo)
+			          	}).then(res => {
+			          		this.trainVisible = false
+			          		this.submitLoading = false
+			          		let result = res.data
+			          		console.log(result)
+			          		if (result.code == 200) {
+			          			this.trainList.push({
+			          				educationId: result.msg,
+			          				startDate: this.trainForm.time[0],
+			          				endDate: this.trainForm.time[1],
+			          				content: this.trainForm.trainCont,
+			          				educationPictureUrl: this.trainForm.pic
+			          			})
+			          		} else {
+			          			this.$message.error(result.msg);
+			          		}
+			          	}).catch(err => {
+			          		console.log(err)
+			          	})
+		            } else { //编辑
+		            	let uploadInfo = {
+		            		userId: this.userInfo.userId,
+		            		educationId: this.trainForm.id,
+			          		startDate: this.trainForm.time[0],
+			          		endDate: this.trainForm.time[1],
+			          		content: this.trainForm.trainCont,
+			          		educationPictureUrl: this.trainForm.pic
+		            	}
+		            	this.$axios({
+			          		method: 'post',
+			          		url: '/system/merchant/education/edit',
+			          		data: this.$qs.stringify(uploadInfo)
+			          	}).then(res => {
+			          		this.trainVisible = false
+			          		this.submitLoading = false
+			          		let result = res.data
+			          		if (result.code == 200) {
+			          			this.trainList.splice(this.currentIndex, 1, {
+			          				educationId: result.data,
+			          				startDate: this.trainForm.time[0],
+			          				endDate: this.trainForm.time[1],
+			          				content: this.trainForm.trainCont,
+			          				educationPictureUrl: this.trainForm.pic
+			          			})
+			          		} else {
+			          			this.$message.error(result.msg);
+			          		}
+			          	}).catch(err => {
+			          		console.log(err)
+			          	})
+		            }	
 		          } else {
 		            console.log('error submit!!');
 		            return false;
@@ -874,34 +1137,42 @@
 		    	let uploadObj = JSON.parse(JSON.stringify(this.mentorForm))
 		    	uploadObj.areasOfExpertise = uploadObj.areasOfExpertise.join(',')
 		    	uploadObj.consultingStyle = uploadObj.consultingStyle.join(',')
-		    	this.loading = true
-		    	this.$axios({
-					method: 'post',
-					url: this.uploadUrl,
-					data: this.$qs.stringify(uploadObj)
-				}).then(res => {
-					this.loading = false
-					let result = res.data
-					console.log(result)
-					if (result.code == 200) {
-						this.$message({
-				         	message: '操作成功！',
-				          	type: 'success'
-				        });
-						this.$router.replace({
-							path: '/mentor/list'
-						})
-					} else {
-						this.$message.error(result.msg);
-					}
-				}).catch(err => {
-			    	this.loading = false
-			        console.log(err)
-			    })
+		    	this.$confirm('确定要提交审核吗?', '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	this.loading = true
+			    	this.$axios({
+						method: 'post',
+						url: this.uploadUrl,
+						data: this.$qs.stringify(uploadObj)
+					}).then(res => {
+						this.loading = false
+						let result = res.data
+						if (result.code == 200) {
+							this.$message({
+					         	message: '操作成功！',
+					          	type: 'success'
+					        });
+							this.$router.replace({
+								path: '/mentor/list'
+							})
+						} else {
+							this.$message.error(result.msg);
+						}
+					}).catch(err => {
+				    	this.loading = false
+				        console.log(err)
+				    })
+		        }).catch(() => {
+		                
+		        });
 		    },
 		},
 		components: {
-			ChooseUser
+			ChooseUser,
+			cutOutPic
 		}
 	}
 </script>
@@ -965,5 +1236,10 @@
   		width: 250px;
   		height: 250px;
   		line-height: 250px;
+  	}
+
+  	.pic {
+  		max-width: 100px;
+  		max-height: 100px;
   	}
 </style>

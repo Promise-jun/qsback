@@ -305,30 +305,38 @@
 		    		this.$message.error('真是姓名或证件号码不能为空!');
 		    		return
 		    	}
-		    	this.loading = true
-		    	this.$axios({
-					method: 'post',
-					url: this.uploadUrl,
-					data: this.$qs.stringify(this.anchorForm)
-				}).then(res => {
-					this.loading = false
-					let result = res.data
-					console.log(result)
-					if (result.code == 200) {
-						this.$message({
-				         	message: '操作成功！',
-				          	type: 'success'
-				        });
-						this.$router.replace({
-							path: '/anchor/list'
-						})
-					} else {
-						this.$message.error(result.msg);
-					}
-				}).catch(err => {
-			    	this.loading = false
-			        console.log(err)
-			    })
+		    	this.$confirm('确定要提交审核吗?', '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	this.loading = true
+			    	this.$axios({
+						method: 'post',
+						url: this.uploadUrl,
+						data: this.$qs.stringify(this.anchorForm)
+					}).then(res => {
+						this.loading = false
+						let result = res.data
+						console.log(result)
+						if (result.code == 200) {
+							this.$message({
+					         	message: '操作成功！',
+					          	type: 'success'
+					        });
+							this.$router.replace({
+								path: '/anchor/list'
+							})
+						} else {
+							this.$message.error(result.msg);
+						}
+					}).catch(err => {
+				    	this.loading = false
+				        console.log(err)
+				    })
+		        }).catch(() => {
+		             
+		        });
 		    },
 		    // 重置
 		    resetting() {

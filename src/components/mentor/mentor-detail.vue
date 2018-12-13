@@ -10,7 +10,7 @@
 		  			<el-row :gutter="20" class="module">
 					  	<el-col :span="8">
 					  		<div class="user-head">
-					  			<img :src="imageUrl">
+					  			<img :src="baseInfo.userImage">
 					  			<el-upload
 					  				ref="upload"
 								  	class="avatar-uploader change-pic"
@@ -25,45 +25,43 @@
 					  	<el-col :span="8">
 					  		<p>
 					  			<label>昵称：</label>
-					  			<span>情说12039026</span>
-					  		</p>
-					  		<p>
-					  			<label>用户名：</label>
-					  			<span>1039203029</span>
+					  			<span>{{baseInfo.userNickname}}</span>
 					  		</p>
 					  		<p>
 					  			<label>用户ID：</label>
-					  			<span>2019</span>
+					  			<span>{{baseInfo.userId}}</span>
 					  		</p>
 					  		<p>
 					  			<label>手机号：</label>
-					  			<span>12949020391</span>
+					  			<span>{{baseInfo.userPhone}}</span>
 					  		</p>
 					  		<p>
 					  			<label>性别：</label>
-					  			<span>-</span>
+					  			<span v-if="baseInfo.userSex == 0">未知</span>
+					  			<span v-else-if="baseInfo.userSex == 1">男</span>
+					  			<span v-else>女</span>
+					  		</p>
+					  		<p>
+					  			<label>类型：</label>
+					  			<span></span>
 					  		</p>
 					  	</el-col>
 					  	<el-col :span="8">
 					  		<p>
 					  			<label>姓名：</label>
-					  			<span>-</span>
+					  			<span>{{baseInfo.userName}}</span>
 					  		</p>
 					  		<p>
 					  			<label>身份证：</label>
-					  			<span>330721199206022414</span>
+					  			<span></span>
 					  		</p>
 					  		<p>
 					  			<label>身高：</label>
-					  			<span>168cm</span>
-					  		</p>
-					  		<p>
-					  			<label>类型：</label>
-					  			<span>国家一级咨询师</span>
+					  			<span>{{baseInfo.userHeight}}cm</span>
 					  		</p>
 					  		<p>
 					  			<label>状态：</label>
-					  			<span>忙碌</span>
+					  			<span>{{baseInfo.online}}</span>
 					  		</p>
 					  	</el-col>
 				  	</el-row>
@@ -74,7 +72,7 @@
 				  		</el-col>
 				  		<el-col :span="6">
 				  			<p class="label">评分</p>
-				  			<p class="num">5.0</p>
+				  			<p class="num">{{baseInfo.score}}</p>
 				  		</el-col>
 				  		<el-col :span="6">
 				  			<p class="label">30天咨询人数</p>
@@ -103,7 +101,7 @@
 					  		</p>
 					  		<p>
 					  			<label>单次价格：</label>
-					  			<span>100元/次</span>
+					  			<span>{{baseInfo.price}}元/次</span>
 					  			<el-tooltip content="编辑" placement="top">
 					  				<i class="el-icon-edit edit" @click="singlePrice"></i>
 					  			</el-tooltip>
@@ -122,8 +120,8 @@
 				  	</el-row>
 				  	<div class="btns">
 				  		<p>语音介绍：</p>
-				  		<audio class="mentor-audio" src="" controls=""></audio>
-					    <p>
+				  		<audio class="mentor-audio" v-if="baseInfo.audioIntroduceUrl" :src="baseInfo.audioIntroduceUrl" controls=""></audio>
+					    <p style="padding-top: 15px;">
 					    	<el-button type="primary" @click="audioDialogVisible = true">上传语音</el-button>
 					    </p>
 					</div>
@@ -328,6 +326,7 @@
         			fixedNumber: [1, 1],
         			centerBox: true
 				},
+				baseInfo: {}, //基本信息
 				imageUrl: 'http://i10.hoopchina.com.cn/hupuapp/bbs/966/16313966/thread_16313966_20180726164538_s_65949_o_w1024_h1024_62044.jpg?x-oss-process=image/resize,w_800/format,jpg', //头像
 				// 导师音频
 				audioDialogVisible: false,
@@ -352,7 +351,33 @@
 				}
 			}
 		},
+		created() {
+			this.getDetail()
+		},
 		methods: {
+			getDetail() {
+				this.$axios({
+					method: 'post',
+					url: '/system/consultant/findDetail',
+					data: this.$qs.stringify({
+						ID: this.$route.query.consultantId
+					})
+				}).then(res => {
+					let result = res.data
+					if (result.code == 200) {
+						this.baseInfo = result.data
+						this.queryAuthority(result.data.userId)
+					} else {
+						this.$message.error(result.msg)
+					}
+				}).catch(err => {
+					console.log(err)
+				})
+			},
+			// 查询导师权限
+			queryAuthority(userId) {
+				console.log(userId)
+			},
 		    beforeAvatarUpload(file) {
 		        const isJPG = file.type === 'image/jpeg';
 		        const isLt2M = file.size / 1024 / 1024 < 2;

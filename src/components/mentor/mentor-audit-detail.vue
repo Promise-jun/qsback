@@ -10,55 +10,53 @@
 		  			<el-row :gutter="20" class="module">
 					  	<el-col :span="8">
 					  		<div class="user-head">
-					  			<img :src="imageUrl">
+					  			<img :src="baseInfo.photoUrl">
 					  		</div>
 					  	</el-col>
 					  	<el-col :span="8">
 					  		<p>
 					  			<label>昵称：</label>
-					  			<span>情说12039026</span>
-					  		</p>
-					  		<p>
-					  			<label>用户名：</label>
-					  			<span>1039203029</span>
+					  			<span>{{baseInfo.nickName}}</span>
 					  		</p>
 					  		<p>
 					  			<label>用户ID：</label>
-					  			<span>2019</span>
+					  			<span>{{baseInfo.userId}}</span>
 					  		</p>
 					  		<p>
 					  			<label>手机号：</label>
-					  			<span>12949020391</span>
+					  			<span>{{baseInfo.phone}}</span>
 					  		</p>
 					  		<p>
 					  			<label>性别：</label>
-					  			<span>-</span>
+					  			<span v-if="baseInfo.userSex == 0">未知</span>
+					  			<span v-if="baseInfo.userSex == 1">男</span>
+					  			<span v-if="baseInfo.userSex == 2">女</span>
 					  		</p>
 					  		<p>
 					  			<label>身高：</label>
-					  			<span>180cm</span>
+					  			<span>{{baseInfo.userHeight}}cm</span>
 					  		</p>
 					  	</el-col>
 					  	<el-col :span="8">
 					  		<p>
 					  			<label>姓名：</label>
-					  			<span>-</span>
+					  			<span>{{baseInfo.realName}}</span>
 					  		</p>
 					  		<p>
 					  			<label>身份证：</label>
-					  			<span>330721199206022414</span>
+					  			<span>{{baseInfo.materialNumberl}}</span>
 					  		</p>
 					  		<p>
 					  			<label>所在地：</label>
-					  			<span>浙江-杭州</span>
+					  			<span>{{baseInfo.city}}</span>
 					  		</p>
 					  		<p>
 					  			<label>年龄：</label>
-					  			<span>26岁</span>
+					  			<span>{{baseInfo.userAge}}</span>
 					  		</p>
 					  		<p>
 					  			<label>生日：</label>
-					  			<span>2018-01-26</span>
+					  			<span>{{baseInfo.birthday | dateformat('YYYY-MM-DD')}}</span>
 					  		</p>
 					  	</el-col>
 				  	</el-row>
@@ -73,33 +71,31 @@
 					  	<el-col :span="12">
 					  		<p>
 					  			<label>相册：</label>
-					  			<span>8</span>
+					  			<span></span>
 					  		</p>
 					  		<p>
 					  			<label>微信号：</label>
-					  			<span>wolegejun</span>
+					  			<span>{{baseInfo.wechat}}</span>
 					  		</p>
 					  	</el-col>
 					  	<el-col :span="12">
 					  		<p>
 					  			<label>类型：</label>
-					  			<span>注册用户</span>
+					  			<span></span>
 					  		</p>
 					  		<p>
 					  			<label>推荐人：</label>
-					  			<span>周一林</span>
+					  			<span>{{baseInfo.referee}}</span>
 					  		</p>
 					  	</el-col>
 					  	<el-col :span="24">
 					  		<p>
 					  			<label>如何了解到我们：</label>
-					  			<span>微信朋友圈</span>
+					  			<span>{{baseInfo.knowChannel}}</span>
 					  		</p>
 					  		<p>
 					  			<label>绑定：</label>
-					  			<span>
-					  				--
-					  			</span>
+					  			<span></span>
 					  		</p>
 					  	</el-col>
 				  	</el-row>
@@ -156,25 +152,25 @@
 					  	<el-col :span="12">
 					  		<p>
 					  			<label>毕业学校：</label>
-					  			<span>浙江大学</span>
+					  			<span>{{baseInfo.graduateInstitutions}}</span>
 					  		</p>
 					  		<p>
 					  			<label>学历：</label>
-					  			<span>博士</span>
+					  			<span>{{baseInfo.education}}</span>
 					  		</p>
 					  	</el-col>
 					  	<el-col :span="12">
 					  		<p>
 					  			<label>专业：</label>
-					  			<span>心理学</span>
+					  			<span>{{baseInfo.major}}}</span>
 					  		</p>
 					  	</el-col>
 					  	<el-col :span="24">
 					  		<p class="pic-box">
 					  			<label>学历证书：</label>
 					  			<ul>
-					  				<li v-for="item in picList" @click="showBigPic(item.url)">
-					  					<img :src="item.url" alt="">
+					  				<li @click="showBigPic(baseInfo.educationUrl)">
+					  					<img :src="baseInfo.educationUrl" alt="">
 					  				</li>
 					  			</ul>
 					  		</p>
@@ -190,31 +186,31 @@
 		  			<div slot="header" class="clearfix">
 					    <span>培训经历</span>
 					</div>
-					<el-row>
+					<el-row v-for="item in trainList" :key="item.educationId">
 						<el-col :span="12">
 							<p>
 					  			<label>开始时间：</label>
-					  			<span>2010-10-10</span>
+					  			<span>{{item.startDate | dateformat('YYYY-MM-DD')}}</span>
 					  		</p>
 						</el-col>
 						<el-col :span="12">
 							<p>
 					  			<label>结束时间：</label>
-					  			<span>2011-05-01</span>
+					  			<span>{{item.endDate | dateformat('YYYY-MM-DD')}}</span>
 					  		</p>
 						</el-col>
 						<el-col :span="24">
 							<p>
 					  			<label>受训内容：</label>
-					  			<span>就是开始懒风哈啊我们下面走走期间傲娇去洪洞哦啊减肥</span>
+					  			<span>{{item.content}}</span>
 					  		</p>
 						</el-col>
 						<el-col :span="24">
 							<p class="pic-box">
 					  			<label>学历证书：</label>
 					  			<ul>
-					  				<li v-for="item in picList" @click="showBigPic(item.url)">
-					  					<img :src="item.url" alt="">
+					  				<li @click="showBigPic(item.educationPictureUrl)">
+					  					<img :src="item.educationPictureUrl" alt="">
 					  				</li>
 					  			</ul>
 					  		</p>
@@ -234,61 +230,38 @@
 						<el-col :span="6">
 							<p>
 					  			<label>职业背景：</label>
-					  			<span>全职</span>
+					  			<span v-if="baseInfo.workType == 0">兼职</span>
+					  			<span v-else-if="baseInfo.workType == 1">全职</span>
 					  		</p>
 						</el-col>
 						<el-col :span="6">
 							<p>
 					  			<label>从业时间：</label>
-					  			<span>2010-10-01</span>
+					  			<span>{{baseInfo.workTm | dateformat('YYYY-MM-DD')}}</span>
 					  		</p>
 						</el-col>
 						<el-col :span="6">
 							<p>
 					  			<label>咨询风格：</label>
-					  			<span>耐心，和谐，热诚</span>
+					  			<span></span>
 					  		</p>
 						</el-col>
 						<el-col :span="6">
 							<p>
 					  			<label>累计个案（小时）：</label>
-					  			<span>300</span>
+					  			<span>{{baseInfo.cumulativeLength}}</span>
 					  		</p>
 						</el-col>
 						<el-col :span="24">
 							<p>
 					  			<label>擅长类型：</label>
-					  			<el-tag>亲子关系</el-tag>
-					  			<el-tag>职场关系</el-tag>
-					  			<el-tag>婚姻恋爱</el-tag>
+					  			<!-- <el-tag>亲子关系</el-tag> -->
 					  		</p>
 						</el-col>
 						<el-col :span="24">
 							<p>
 					  			<label>专业背景：</label>
-					  			<span>国家心理咨询师培训师，企业EAP咨询师</span>
-					  		</p>
-						</el-col>
-						<el-col :span="24">
-							<p>
-					  			<label>个人简介：</label>
-					  			<span>你好，我是你风里来雨里去的守护者，很高兴帮助您</span>
-					  		</p>
-						</el-col>
-						<el-col :span="24">
-							<p>
-					  			<label>经验介绍：</label>
-					  			<span>国家二级咨询师，2010年从事班学习</span>
-					  		</p>
-						</el-col>
-						<el-col :span="24">
-							<p class="pic-box">
-					  			<label>资质证书：</label>
-					  			<ul>
-					  				<li v-for="item in picList" @click="showBigPic(item.url)">
-					  					<img :src="item.url" alt="">
-					  				</li>
-					  			</ul>
+					  			<span>{{baseInfo.professionalBackground}}</span>
 					  		</p>
 						</el-col>
 					</el-row>
@@ -300,27 +273,27 @@
 		  	<el-col :span="24">
 		  		<el-card class="box-card">
 		  			<div slot="header" class="clearfix">
-					    <span>资质信息列表（共2条）</span>
+					    <span>资质信息列表</span>
 					</div>
-					<el-row>
+					<el-row v-for="item in aptitudeList" :key="item.materialId">
 						<el-col :span="12">
 							<p>
 					  			<label>资质认证：</label>
-					  			<span>国家二级心理咨询师</span>
+					  			<span>{{item.represent}}</span>
 					  		</p>
 						</el-col>
 						<el-col :span="12">
 							<p>
 					  			<label>资质编号：</label>
-					  			<span>203929939001093901</span>
+					  			<span>{{item.materialNumber}}</span>
 					  		</p>
 						</el-col>
 						<el-col :span="24">
 							<p class="pic-box">
 					  			<label>资质证书：</label>
 					  			<ul>
-					  				<li v-for="item in picList" @click="showBigPic(item.url)">
-					  					<img :src="item.url" alt="">
+					  				<li @click="showBigPic(item.materialUrl)">
+					  					<img :src="item.materialUrl" alt="">
 					  				</li>
 					  			</ul>
 					  		</p>
@@ -330,9 +303,9 @@
 			</el-col>
 		</el-row>
 
-		<div>
-			<el-button type="primary">审核通过</el-button>
-			<el-button type="danger">拒绝审核</el-button>
+		<div v-if="auditingInfo.status == 0">
+			<el-button type="primary" @click="auditingSuccess">审核通过</el-button>
+			<el-button type="danger" @click="auditingRefuse">拒绝审核</el-button>
 		</div>
 			
 		<big-pic :visible.sync="bigPicVisible" :picurl="bigPicUrl"></big-pic>
@@ -356,6 +329,14 @@
 						url: 'https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=377934783,1794723300&fm=27&gp=0.jpg'
 					}
 				],
+				baseInfo: {}, //基本信息
+				aptitudeList: [], //资质列表
+				trainList: [], //受训背景
+				auditingInfo: {
+					consultantApplyId: '',
+					status: '0', //1:审核通过, 2:审核不通过
+					reason: ''
+				},
 				bigPicVisible: false,
 				bigPicUrl: ''
 			}
@@ -370,14 +351,15 @@
 					method: 'post',
 					url: '/system/consultant/apply/findApplyDetail',
 					data: this.$qs.stringify({
-						consultantApplyId: this.$route.query.userId
+						consultantApplyId: this.$route.query.consultantApplyId
 					})
 				}).then(res => {
 					this.loading = false
 					let result = res.data
-					console.log(result)
 					if (result.code == 200) {
-			        	// this.tableList = result.data.list
+			        	this.baseInfo = result.data
+			        	this.getAptitude(result.data.userId)
+			        	this.getTrain(result.data.userId)
 					} else {
 						this.$message.error(result.msg);
 					}
@@ -385,6 +367,98 @@
 			    	this.loading = false
 			        console.log(err)
 			    })
+			},
+			// 获取资质列表
+		    getAptitude(userId) {
+	    		this.$axios({
+	    			method: 'post',
+	    			url: '/system/merchant/material/findByUserId',
+	    			data: this.$qs.stringify({
+	    				userId: userId
+	    			})
+	    		}).then(res => {
+	    			let result = res.data
+	    			if (result.code == 200) {
+	    				this.aptitudeList = result.data
+	    			} else {
+	    				this.$message.error(result.msg);
+	    			}
+	    		}).catch(err => {
+	    			console.log(err)
+	    		})
+		    },
+		    //获取受训背景列表
+		    getTrain(userId) { 
+	    		this.$axios({
+	    			method: 'post',
+	    			url: '/system/merchant/education/findByUserId',
+	    			data: this.$qs.stringify({
+	    				userId: userId
+	    			})
+	    		}).then(res => {
+	    			let result = res.data 
+	    			if (result.code == 200) {
+	    				this.trainList = result.data
+	    			} else {
+	    				this.$message.error(result.msg);
+	    			}
+	    		}).catch(err => {
+	    			console.log(err)
+	    		})
+		    },
+		    //审核通过
+			auditingSuccess() {
+				this.$confirm('是否确定通过审核？', '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning'
+		        }).then(() => {
+		        	this.auditingInfo.consultantApplyId = this.$route.query.consultantApplyId
+					this.auditingInfo.status = '1'
+					this.auditingInfo.reason = ''
+		          	this.submitInfo()
+		        }).catch(() => {
+		        	    
+		        });
+			},
+			//拒绝审核
+			auditingRefuse() {
+				this.$prompt('请输入拒绝理由', '提示', {
+		          confirmButtonText: '确定',
+		          cancelButtonText: '取消',
+		        }).then(({ value }) => {
+		          	if (!value || value == '') {
+		          		this.$message.error('拒绝理由不能为空哦');
+		          		return
+		          	}
+		          	this.auditingInfo.consultantApplyId = this.$route.query.consultantApplyId
+					this.auditingInfo.status = '2'
+					this.auditingInfo.reason = value
+	          		this.submitInfo()
+		        }).catch(() => {
+		              
+		        });
+			},
+			// 提交信息
+			submitInfo() {
+				this.$axios({
+					method: 'post',
+					url: '/system/consultant/apply/examine',
+					data: this.$qs.stringify(this.auditingInfo)
+				}).then(res => {
+					let result = res.data
+					if (result.code == 200) {
+						this.$message({
+				            type: 'success',
+				            message: '操作成功!'
+				        });
+				        this.$router.replace({
+				        	path: '/mentor/audit'
+				        })
+					} else {
+						this.$message.error(result.msg);
+					}
+				})
 			},
 			showBigPic(picUrl) {
 				this.bigPicUrl = picUrl

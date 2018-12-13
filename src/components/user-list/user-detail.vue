@@ -10,7 +10,7 @@
 		  			<el-row :gutter="20" class="module">
 					  	<el-col :span="8">
 					  		<div class="user-head">
-					  			<img :src="imageUrl">
+					  			<img :src="baseInfo.userImage">
 					  			<el-upload
 					  				ref="upload"
 								  	class="avatar-uploader change-pic"
@@ -25,27 +25,25 @@
 					  	<el-col :span="8">
 					  		<p>
 					  			<label>昵称：</label>
-					  			<span>情说12039026</span>
-					  		</p>
-					  		<p>
-					  			<label>用户名：</label>
-					  			<span>1039203029</span>
+					  			<span>{{baseInfo.userNickname}}</span>
 					  		</p>
 					  		<p>
 					  			<label>用户ID：</label>
-					  			<span>2019</span>
+					  			<span>{{baseInfo.userId}}</span>
 					  		</p>
 					  		<p>
 					  			<label>手机号：</label>
-					  			<span>12949020391</span>
+					  			<span>{{baseInfo.userPhone}}</span>
 					  		</p>
 					  		<p>
 					  			<label>性别：</label>
-					  			<span>-</span>
+					  			<span v-if="baseInfo.userSex == 0">未知</span>
+					  			<span v-else-if="baseInfo.userSex == 1">男</span>
+					  			<span v-else>女</span>
 					  		</p>
 					  		<p>
 					  			<label>淘宝号：</label>
-					  			<span>1294902039</span>
+					  			<span>{{baseInfo.userPayAccount}}</span>
 					  			<el-tooltip content="编辑" placement="top">
 					  				<i class="el-icon-edit edit" @click="changeTaobaoId"></i>
 					  			</el-tooltip>
@@ -54,11 +52,11 @@
 					  	<el-col :span="8">
 					  		<p>
 					  			<label>姓名：</label>
-					  			<span>-</span>
+					  			<span>{{baseInfo.userName}}</span>
 					  		</p>
 					  		<p>
 					  			<label>身份证：</label>
-					  			<span>330721199206022414</span>
+					  			<span>{{baseInfo.identityNo}}</span>
 					  		</p>
 					  		<p>
 					  			<label>相册：</label>
@@ -180,12 +178,32 @@
         			fixedNumber: [1, 1],
         			centerBox: true
 				},
+				baseInfo: {}, //用户基本信息
 				imageUrl: 'http://i10.hoopchina.com.cn/hupuapp/bbs/966/16313966/thread_16313966_20180726164538_s_65949_o_w1024_h1024_62044.jpg?x-oss-process=image/resize,w_800/format,jpg',
 				kefu: '1', //分配的客服
 				kefuVisible: false
 			}
 		},
+		created() {
+			this.getDetail()
+		},
 		methods: {
+			getDetail() {
+				this.$axios({
+					method: 'post',
+					url: '/system/user/findDetails',
+					data: this.$qs.stringify({
+						ID: this.$route.query.userId
+					})
+				}).then(res => {
+					let result = res.data
+					if (result.code == 200) {
+						this.baseInfo = result.data
+					} else {
+						this.$message.error(result.msg)
+					}
+				})
+			},
 		    beforeAvatarUpload(file) {
 		        const isJPG = file.type === 'image/jpeg';
 		        const isLt2M = file.size / 1024 / 1024 < 2;
@@ -227,10 +245,25 @@
 		        		this.$message.error('淘宝账号不能为空');
 		        		return
 		        	}
-		          	this.$message({
-		           		type: 'success',
-		            	message: '你的淘宝账号是: ' + value
-		          	});
+		        	this.$axios({
+		        		method: 'post',
+		        		url: '/system/user/editForUserPayAccount',
+		        		data: this.$qs.stringify({
+		        			userId: this.$route.query.userId,
+		        			userPayAccount: value
+		        		})
+		        	}).then(res => {
+		        		let result = res.data
+		        		if (result.code == 200) {
+							this.$message({
+				           		type: 'success',
+				            	message: '淘宝账号修改成功'
+				          	});
+				          	this.baseInfo.userPayAccount = value
+		        		} else {
+		        			this.$message.error(result.msg)
+		        		}
+		        	})
 		        }).catch(() => {
 		          	 
 		        });

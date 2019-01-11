@@ -4,6 +4,7 @@
 		    :data="tableData"
 		    stripe
 		    border
+		    size="mini"
 		    v-loading="loading"
 		    style="width: 100%"
 		>	
@@ -21,11 +22,11 @@
 
 		    <el-table-column label="操作">
 		    	<template slot-scope="scope">
-		    		<el-tooltip content="编辑" placement="top">
-					  <el-button @click="editRole(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
+		    		<el-tooltip content="编辑" placement="top" v-hasPermission="50">
+					  <el-button @click="editRole(scope.row)" size="mini" type="text" icon="iconfont icon-edit"></el-button>
 					</el-tooltip>
-		    		<el-tooltip content="删除" placement="top">
-					  <el-button @click="delRole(scope.row)" type="text" icon="iconfont icon-delete" style="color: #F56C6C;"></el-button>
+		    		<el-tooltip content="删除" placement="top" v-hasPermission="51">
+					  <el-button @click="delRole(scope.row)" size="mini" type="text" icon="iconfont icon-delete" style="color: #F56C6C;"></el-button>
 					</el-tooltip>
 			    </template>
 		    </el-table-column>
@@ -33,7 +34,7 @@
 		
 		<el-row>
 		  <el-col :span="12">
-		  	<el-button type="primary" icon="el-icon-circle-plus" @click="addRole">添加角色</el-button>
+		  	<el-button v-hasPermission="49" type="primary" size="small" icon="el-icon-circle-plus" @click="addRole">添加角色</el-button>
 		  </el-col>
 		  <el-col :span="12">
 		  	<page-num

@@ -66,7 +66,13 @@
 					  	</el-col>
 					  	<el-col :span="8">
 					  		<p>手机号</p>
-					  		<el-input v-model="mentorForm.phone" placeholder="请输入手机号"></el-input>
+					  		<!-- <el-input v-model="mentorForm.phone" placeholder="请输入手机号"></el-input> -->
+					  		<phone 
+					  			:code="mentorForm.phoneCode" 
+					  			:phone="mentorForm.phone" 
+					  			@changeCode="changeCode" 
+					  			@changeNum="changeNum">
+					  		</phone>
 					  	</el-col>
 					  	<el-col :span="8">
 					  		<p>微信号</p>
@@ -428,7 +434,7 @@
 		<choose-user :visible.sync="chooseUserVisible" @confirm="chooseUser" @register="registerUser"></choose-user>
 
 		<!-- 图片裁剪 -->
-		<cut-out-pic :picDialogVisible.sync="picDialogVisible" :picOption="picOption" @upload="uploadHead"></cut-out-pic>
+		<cut-out-pic :picDialogVisible.sync="picDialogVisible" :picLoading="picLoading" :picOption="picOption" @upload="uploadHead"></cut-out-pic>
 	</div>
 </template>
 
@@ -436,6 +442,7 @@
 	import ChooseUser from 'components/choose-user/choose-user'
 	import cutOutPic from 'base/cutOut-pic/cutOut-pic'
 	import { intArrFn } from 'common/js/util.js'
+	import Phone from 'base/form-box/phone'
 
 	let moment = require("moment")
 
@@ -446,6 +453,7 @@
 			return {
 				loading: false,
 				picDialogVisible: false, //图片裁剪弹窗
+				picLoading: false,
 				picOption: {  //图片裁剪配置
 					img: '../../assets/a.jpg',
 					info: true,
@@ -503,6 +511,7 @@
         			nickName: '', //昵称
 					realName: '', //姓名
 					city: '', //所在地
+					phoneCode: '86',
 					phone: '', //手机号
 					wechat: '', //微信号
 					birthday: '', //生日
@@ -552,6 +561,7 @@
         		trainForm: {},
         		//图片上传
         		actionUrl: '',
+        		fileType: '',
         		//请求地址
         		isAdd: true,
         		uploadUrl: '',
@@ -579,7 +589,8 @@
 		        			nickName: data.nickName, //昵称
 							realName: data.realName, //姓名
 							city: data.city, //所在地
-							phone: data.phone, //手机号
+							phoneCode: data.phone && data.phone.indexOf('+') != -1 ? data.phone.split('+')[0] : '86',
+							phone: data.phone && data.phone.indexOf('+') != -1 ? data.phone.split('+')[1] : data.phone, //手机号
 							wechat: data.weChat, //微信号
 							birthday: moment(data.birthday).format('YYYY-MM-DD'), //生日
 							graduateInstitutions: data.graduateInstitutions, //毕业学校
@@ -616,33 +627,39 @@
 				this.isAdd = true
 				this.uploadUrl = '/system/consultant/apply/save'
 			}
-			this.getOption('学历')
-			this.getOption('了解渠道')
-			this.getOption('咨询风格')
-			this.getOption('心理分类')
-			this.getOption('权威职称')
+			this.getOption(19) //学历
+			this.getOption(52) //了解渠道
+			this.getOption(13) //咨询风格
+			this.getOption(16) //心理分类
+			this.getOption(42) //权威职称
 		},
 		methods: {
 			// 获取选项
 			getOption(type) {
 				this.$axios({
 					method: 'post',
-					url: '/sys/dic/findByName',
+					url: '/sys/dic/queryForList',
 					data: this.$qs.stringify({
-						parentName: type
+						dicPid: type,
+						thisPage: 1,
+						limit: 50
 					})
 				}).then(res => {
 					let result = res.data
-					if (type == '学历') {
-						this.studyList = result
-					} else if (type == '了解渠道') {
-						this.ditchList = result
-					} else if (type == '咨询风格') {
-						this.styleList = result
-					} else if (type == '心理分类') { //擅长领域
-						this.bgList = result
-					} else if (type == '权威职称') {
-						this.nameList = result
+					if (result.code == 200) {
+						if (type == 19) { //学历
+							this.studyList = result.data.list
+						} else if (type == 52) { //了解渠道
+							this.ditchList = result.data.list
+						} else if (type == 13) { //咨询风格
+							this.styleList = result.data.list
+						} else if (type == 16) { //心理分类 (擅长领域)
+							this.bgList = result.data.list
+						} else if (type == 42) { //权威职称
+							this.nameList = result.data.list
+						}
+					} else {
+						this.$message.error(result.msg)
 					}
 				}).catch(err => {
 					console.log(err)
@@ -723,9 +740,10 @@
 				    	let base64Str = e.target.result.split(',')[1]
 				    	this.$axios({
 				    		method: 'post',
-				    		url: '/system/consultant/apply/uploadPicture',
+				    		url: '/system/consultant/apply/savePicture',
 				    		data: this.$qs.stringify({
-				    			image: base64Str
+				    			image: base64Str,
+				    			fileType: file.type.split('/')[1]
 				    		})
 				    	}).then(res => {
 				    		let result = res.data
@@ -772,6 +790,7 @@
 			      	this.$message.error('上传图片大小不能超过 10MB!')
 			      	return
 			    }
+			    this.fileType = file.type.split('/')[1]
 			    var reader = new FileReader();
 		    	reader.onload = e => {
 			        let data;
@@ -787,13 +806,16 @@
 			    reader.readAsArrayBuffer(file);
 		    },
 		    uploadHead(data) {
+		    	this.picLoading = true
 		    	this.$axios({
 		    		method: 'post',
-		    		url: '/system/consultant/apply/uploadPicture',
+		    		url: '/system/consultant/apply/savePicture',
 		    		data: this.$qs.stringify({
-		    			image: data
+		    			image: data.split(',')[1],
+		    			fileType: this.fileType
 		    		})
 		    	}).then(res => {
+		    		this.picLoading = false
 		    		let result = res.data
 		    		if (result.code == 200) {
 		    			this.mentorForm.photoUrl = result.msg
@@ -812,7 +834,8 @@
 		    			method: 'post',
 		    			url: '/system/merchant/material/findByUserId',
 		    			data: this.$qs.stringify({
-		    				userId: this.userInfo.userId
+		    				userId: this.userInfo.userId,
+		    				materialType: 0
 		    			})
 		    		}).then(res => {
 		    			let result = res.data
@@ -1067,7 +1090,6 @@
 			          		this.trainVisible = false
 			          		this.submitLoading = false
 			          		let result = res.data
-			          		console.log(result)
 			          		if (result.code == 200) {
 			          			this.trainList.push({
 			          				educationId: result.msg,
@@ -1123,6 +1145,14 @@
 		    trainRequest(file) { //培训证书上传
 		    	this.uploadImg(file, 6)
 		    },
+		    // 改变code
+		    changeCode(val) {
+		      this.mentorForm.phoneCode = val
+		    },
+		    // 改变num
+		    changeNum(val) {
+		      this.mentorForm.phone = val
+		    },
 		    // 提交审核
 		    submitAuditing() {
 		    	this.mentorForm.userId = this.userInfo.userId
@@ -1137,6 +1167,8 @@
 		    	let uploadObj = JSON.parse(JSON.stringify(this.mentorForm))
 		    	uploadObj.areasOfExpertise = uploadObj.areasOfExpertise.join(',')
 		    	uploadObj.consultingStyle = uploadObj.consultingStyle.join(',')
+		    	uploadObj.phone = uploadObj.phoneCode + '+' + uploadObj.phone
+		    	delete uploadObj.phoneCode
 		    	this.$confirm('确定要提交审核吗?', '提示', {
 		          	confirmButtonText: '确定',
 		          	cancelButtonText: '取消',
@@ -1172,7 +1204,8 @@
 		},
 		components: {
 			ChooseUser,
-			cutOutPic
+			cutOutPic,
+			Phone
 		}
 	}
 </script>

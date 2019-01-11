@@ -1,8 +1,8 @@
 <template>
 	<div>
     	<el-form :inline="true" :model="formObj" class="demo-form-inline" size="small">
-		  <el-form-item label="用户ID">
-		    <el-input v-model="formObj.userid" placeholder="请输入用户ID"></el-input>
+		  <el-form-item label="情说号">
+		    <el-input v-model="formObj.userCode" placeholder="请输入情说号"></el-input>
 		  </el-form-item>
 		  <el-form-item label="用户名">
 		    <el-input v-model="formObj.nickName" placeholder="请输入用户名"></el-input>
@@ -37,14 +37,15 @@
 		    ref="tableList"
 		    stripe
 		    border
+		    size="mini"
 		    v-loading="loading"
 		    :data="tableList"
 		    tooltip-effect="dark"
 		    style="width: 100%; margin: 15px 0;"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column type="selection"  width="50"> </el-table-column>
-		    <el-table-column label="用户ID">
-		      <template slot-scope="scope">{{ scope.row.userId }}</template>
+		    <el-table-column label="情说号">
+		      <template slot-scope="scope">{{ scope.row.userCode }}</template>
 		    </el-table-column>
 		    <el-table-column label="在职类型">
 		      <template slot-scope="scope">
@@ -70,11 +71,11 @@
 		    </el-table-column>
 		    <el-table-column label="操作">
 		    	<template slot-scope="scope">
-		    		<el-tooltip content="编辑" placement="top">
-					  <el-button @click="edit(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
+		    		<el-tooltip content="编辑" placement="top" v-hasPermission="61">
+					  <el-button @click="edit(scope.row)" size="mini" type="text" icon="iconfont icon-edit"></el-button>
 					</el-tooltip>
-					<el-tooltip content="处理" placement="top">
-					  <el-button @click="handle(scope.row)" type="text" icon="iconfont icon-wrench"></el-button>
+					<el-tooltip content="处理" placement="top" v-hasPermission="34">
+					  <el-button @click="handle(scope.row)" size="mini" type="text" icon="iconfont icon-wrench" style="color: #E6A23C;"></el-button>
 					</el-tooltip>
 			    </template>
 		    </el-table-column>
@@ -82,7 +83,7 @@
 
 		<el-row>
 		  <el-col :span="12">
-		  	<el-button type="primary" icon="el-icon-refresh">更新IM账号</el-button>
+		  	<!-- <el-button type="primary" size="small" icon="el-icon-refresh">更新IM账号</el-button> -->
 		  </el-col>
 		  <el-col :span="12">
 		  	<page-num
@@ -107,11 +108,12 @@
 			return {
 				pageTotal: { //分页数据
 			        total: 0,
-			        pageSize: 10,
+			        pageSize: 15,
 			        page: 1
 			    },
 				formObj: {
 					userid: '',
+					userCode: '',
 					name: '',
 					nickName: '',
 					status: '0',  //导师审核状态
@@ -137,7 +139,7 @@
 				let uploadData = {
 					thisPage: this.pageTotal.page,
 					limit: this.pageTotal.pageSize,
-					userId: this.formObj.userid,
+					userCode: this.formObj.userCode,
 					nickName: this.formObj.nickName,
 					realName: this.formObj.name,
 					status: this.formObj.status

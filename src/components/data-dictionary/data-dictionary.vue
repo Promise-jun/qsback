@@ -5,7 +5,7 @@
 		 		<el-card class="box-card">
 				  	<div slot="header" class="clearfix">
 				    	<span>数据字典</span>
-				    	<el-button style="float: right; padding: 3px 0" type="text" @click="add">添加分类</el-button>
+				    	<el-button v-hasPermission="97" style="float: right; padding: 3px 0" type="text" @click="add">添加分类</el-button>
 				  	</div>
 				  	<el-tree
 			            ref="tree"
@@ -22,13 +22,13 @@
 				        <span class="custom-tree-node" slot-scope="{ node, data }">
 				            <span>{{ node.label }}</span>
 				            <span class="custom__tree__icons">
-				                <el-tooltip class="item" effect="dark" content="新增" placement="top">
+				                <el-tooltip class="item" effect="dark" content="新增" placement="top" v-hasPermission="97">
 				                    <i class="tree-icon el-icon-plus" @click.stop="append(data)"></i>
 				                </el-tooltip>
-				                <el-tooltip class="item" effect="dark" content="编辑" placement="top">
+				                <el-tooltip class="item" effect="dark" content="编辑" placement="top" v-hasPermission="98">
 				                    <i class="tree-icon el-icon-edit" @click.stop="edit(node, data)"></i>
 				                </el-tooltip>
-				                <el-tooltip class="item" effect="dark" content="删除" placement="top">
+				                <el-tooltip class="item" effect="dark" content="删除" placement="top" v-hasPermission="99">
 				                    <i class="tree-icon el-icon-close" @click.stop="remove(node, data)"></i>
 				                </el-tooltip>
 				            </span>

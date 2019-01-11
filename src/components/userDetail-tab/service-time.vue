@@ -1,6 +1,11 @@
 <template>
-	<div>
-		选择日期：<el-date-picker v-model="dateTime" type="date" placeholder="选择日期" @change="chooseTime"></el-date-picker>
+	<div v-loading="loading">
+		选择日期：<el-date-picker v-model="dateTime" 
+								type="date" 
+								value-format="yyyy-MM-dd" 
+								placeholder="选择日期" 
+								@change="chooseTime">
+				</el-date-picker>
 		<el-card class="service-time">
 			<div class="service-time-item" v-for="item in dataList">
 				<div class="service-title">
@@ -9,7 +14,7 @@
 				</div>
 				<ul>
 					<li v-for="(val, key) in initTimeList">
-						<div v-if="findTime(key, item.timeList)" @click="reducible(item.timeList[key])">{{key | addZeroFilter}}:00 可预约</div>
+						<div v-if="findTime(key, item.timeMap)" @click="reducible(item.timeMap[key])">{{key | addZeroFilter}}:00 可预约</div>
 						<div v-else class="irreducible" @click="irreducible(key, item.date)">{{key | addZeroFilter}}:00 不可约</div>
 					</li>
 				</ul>
@@ -22,79 +27,17 @@
 	
 	export default {
 		name: 'serviceTime',
+		props: {
+			userId: {
+				type: String,
+				default: ''
+			}
+		},
 		data() {
 			return {
+				loading: false,
 				dateTime: '',
-				dataList: [
-					{
-						date: '2018-12-08',
-						week: '星期六',
-						timeList: {
-							"1": 1001,
-							"3": 1005
-						}
-					},
-					{
-						date: '2018-12-09',
-						week: '星期日',
-						timeList: {
-							"5": 100516,
-							"10": 100517,
-							"15": 100518,
-							"1": 100112,
-							"2": 100515,
-						}
-					},
-					{
-						date: '2018-12-10',
-						week: '星期一',
-						timeList: {
-							"1": 1001,
-							"3": 1005
-						}
-					},
-					{
-						date: '2018-12-11',
-						week: '星期二',
-						timeList: {
-							"1": 100112,
-							"2": 100515,
-							"5": 100516,
-							"10": 100517,
-							"15": 100518
-						}
-					},
-					{
-						date: '2018-12-12',
-						week: '星期三',
-						timeList: {
-							"1": 100112,
-							"2": 100515,
-							"5": 100516,
-							"10": 100517,
-							"15": 100518
-						}
-					},
-					{
-						date: '2018-12-13',
-						week: '星期四',
-						timeList: {
-							"1": 1001,
-							"3": 1005
-						}
-					},
-					{
-						date: '2018-12-14',
-						week: '星期五',
-						timeList: {
-							"1": 100112,
-							"2": 100515,
-							"5": 100516,
-							"10": 100517,
-							"15": 100518
-						}
-					}
-				],
+				dataList: [],
 				initTimeList: {
 					"0": 0,
 					"1": 0,
@@ -132,10 +75,35 @@
 				}
 			}
 		},
+		created() {
+			this.getTime()
+		},
 		methods: {
+			// 获取服务时间
+			getTime() {
+				this.loading = true
+				this.$axios({
+					method: 'post',
+					url: '/system/consultant/time/queryForTimeList',
+					data: this.$qs.stringify({
+						queryDate: this.dateTime,
+						userId: this.userId
+					})
+				}).then(res => {
+					this.loading = false
+					let result = res.data
+					if (result.code == 200) {
+						this.dataList = result.data
+					} else {
+						this.$message.error(result.msg)
+					}
+				}).catch(err => {
+					this.$message.error(err)
+				})
+			},
 			// 选择时间
 			chooseTime(val) {
-				console.log(val)
+				this.getTime()
 			},
 			findTime(key, obj) {
 				if( obj.hasOwnProperty(key) ){
@@ -146,12 +114,55 @@
 			},
 			//点击可预约
 			reducible(id) {
-				console.log(id)
+				this.loading = true
+				this.$axios({
+					method: 'post',
+					url: '/system/consultant/time/delete',
+					data: this.$qs.stringify({
+						consultantTimeId: id
+					})
+				}).then(res => {
+					this.loading = false
+					let result = res.data
+					if (result.code == 200) {
+						this.getTime()
+						this.$message({
+							type: 'success',
+							message: '取消预约成功'
+						})
+					} else {
+						this.$message.error(result.msg)
+					}
+				}).catch(err => {
+					this.$message.error(err)
+				})
 			},
 			//点击不可约
 			irreducible(time, date) {
 				let uploadTime = date + ' ' + this.addZero(time) + ':00:00'
-				console.log(uploadTime)
+				this.loading = true
+				this.$axios({
+					method: 'post',
+					url: '/system/consultant/time/save',
+					data: this.$qs.stringify({
+						userId: this.userId,
+						freeTime: uploadTime
+					})
+				}).then(res => {
+					this.loading = false
+					let result = res.data
+					if (result.code == 200) {
+						this.getTime()
+						this.$message({
+							type: 'success',
+							message: '预约成功'
+						})
+					} else {
+						this.$message.error(result.msg)
+					}
+				}).catch(err => {
+					this.$message.error(err)
+				})
 			},
 			addZero(key) {
 				if (key < 10) {

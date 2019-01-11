@@ -11,7 +11,7 @@
 			<el-col :span="14">
 				<el-form :inline="true" :model="searchUserForm" status-icon :rules="rules" size="small" ref="searchUserForm" class="demo-form-inline">
 				  	<el-form-item>
-				    	<el-input v-model="searchUserForm.userId" placeholder="用户ID" autocomplete="off"></el-input>
+				    	<el-input v-model="searchUserForm.userCode" placeholder="情说号" autocomplete="off"></el-input>
 				  	</el-form-item>
 				  	<el-form-item>
 				    	<el-input v-model="searchUserForm.phone" placeholder="用户手机" autocomplete="off"></el-input>
@@ -33,8 +33,8 @@
 								<el-col :span="19">
 									<div class="user-name">{{ item.userNickname }}</div>
 									<p>
-										<label>ID：</label>
-										<span>{{ item.userId }}</span>
+										<label>情说号：</label>
+										<span>{{ item.userCode }}</span>
 									</p>
 								</el-col>
 								<el-col :span="24" style="padding-top: 7px;">
@@ -69,15 +69,18 @@
 				    	<span>注册用户</span>
 				  	</div>
 					<el-form :model="registerForm" status-icon :rules="rules" size="small" ref="registerForm">
-					  	<el-form-item label="用户手机：">
+					  	<el-form-item label="用户手机：" prop="phone">
 					    	<el-input v-model="registerForm.phone" placeholder="请输入用户手机" autocomplete="off"></el-input>
 					  	</el-form-item>
-					  	<el-form-item label="用户密码：">
+					  	<el-form-item label="淘宝账号：" prop="taobao">
+					    	<el-input v-model="registerForm.taobao" placeholder="请输入淘宝账号" autocomplete="off"></el-input>
+					  	</el-form-item>
+					  	<el-form-item label="用户密码：" prop="pass">
 					    	<el-input v-model="registerForm.pass" placeholder="请输入用户密码" autocomplete="off"></el-input>
 					  	</el-form-item>
 					  	<el-form-item>
 							<el-checkbox v-model="registerForm.createPass" @change="createPass">自动生成密码</el-checkbox>
-							<el-checkbox v-model="registerForm.send">发送短信告知用户</el-checkbox>
+							<!-- <el-checkbox v-model="registerForm.send">发送短信告知用户</el-checkbox> -->
 					  	</el-form-item>
 					  	<el-form-item>
 					    	<el-button type="primary" size="medium" @click="registerFun('registerForm')">注册</el-button>
@@ -102,10 +105,18 @@
 		data() {
 			return {
 				rules: {
-
+					phone: [
+						{ required: true, message: '手机号不能为空' }
+					],
+					taobao: [
+						{ required: true, message: '淘宝账号不能为空' }
+					],
+					pass: [
+						{ required: true, message: '用户密码不能为空' }
+					]
 				},
 				searchUserForm: {
-					userId: '',
+					userCode: '',
 					phone: '',
 					userName: ''
 				},
@@ -113,6 +124,9 @@
 				userList: [], //用户列表
 				//注册用户
 				registerForm: {
+					phone: '',
+					taobao: '',
+					pass: '',
 					send: false,
 					createPass: false
 				}
@@ -124,7 +138,7 @@
 					thisPage: 1,
 					limit: 50,
 					userType: 0,
-					userId: this.searchUserForm.userId,
+					userCode: this.searchUserForm.userCode,
 					userPhone: this.searchUserForm.phone,
 					userNickname: this.searchUserForm.userName
 				}
@@ -153,8 +167,8 @@
 			searchForm(formName) {
 		        this.$refs[formName].validate((valid) => {
 		          	if (valid) {
-		            	if (this.searchUserForm.userId == '' && this.searchUserForm.phone == '' && this.searchUserForm.userName == '') {
-		            		this.$message.error('请输入用户ID、用户名或者手机号');
+		            	if (this.searchUserForm.userCode == '' && this.searchUserForm.phone == '' && this.searchUserForm.userName == '') {
+		            		this.$message.error('请输入情说号、用户名或者手机号');
 		            		return
 		            	}
 		            	this.getList()
@@ -178,7 +192,29 @@
 		    registerFun(formName) {
 		    	this.$refs[formName].validate((valid) => {
 		          	if (valid) {
-		            	this.$emit('register', this.registerForm)
+		          		this.$axios({
+		          			method: 'post',
+		          			url: '/system/user/saveUser',
+		          			data: this.$qs.stringify({
+		          				userType: 0,
+		          				userAccount: this.registerForm.phone,
+		          				userPassword: this.registerForm.pass,
+		          				userPayAccount: this.registerForm.taobao
+		          			})
+		          		}).then(res => {
+		          			let result = res.data
+		          			if (result.code == 200) {
+		          				this.$message({
+		          					type: 'success',
+		          					message: '注册成功'
+		          				})
+		          				this.$emit('register', result.data)
+		          			} else {
+		          				this.$message.error(result.msg)
+		          			}
+		          		}).catch(err => {
+		          			console.log(err)
+		          		})
 		          	} else {
 		            	console.log('error submit!!');
 		            	return false;

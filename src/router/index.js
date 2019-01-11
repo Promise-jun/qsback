@@ -53,6 +53,11 @@ const AnchorAuditDetail = resolve => { // 主播审核详情
 }
 import GroupList from 'components/group/group-list'
 import OperatorList from 'components/operator/operator-list'
+const OperatorHandle = resolve => { //后台用户添加和编辑
+  import('components/operator/operator-handle').then(comp => {
+    resolve(comp)
+  })
+}
 import ServiceGroup from 'components/service-group/service-group'
 const BusinessGroup = resolve => { //业务组管理
   import('components/business-group/business-group').then(comp => {
@@ -85,6 +90,37 @@ const UnderLineOrder = resolve => { //线下订单
     resolve(comp)
   })
 }
+const OrderDetail = resolve => { //订单详情
+  import('components/consult-order/order-detail').then(comp => {
+    resolve(comp)
+  })
+}
+const AddFormal = resolve => { //创建正式订单
+  import('components/consult-order/add-formal').then(comp => {
+    resolve(comp)
+  })
+}
+const AddExperience = resolve => { //创建体验订单
+  import('components/consult-order/add-experience').then(comp => {
+    resolve(comp)
+  })
+}
+const IntentionOrder = resolve => { //意向订单
+  import('components/consult-order/intention-order').then(comp => {
+    resolve(comp)
+  })
+}
+const AddIntention = resolve => { //创建意向订单
+  import('components/consult-order/add-intention').then(comp => {
+    resolve(comp)
+  })
+}
+const IntentionDetail = resolve => { //意向订单详情
+  import('components/consult-order/intention-detail').then(comp => {
+    resolve(comp)
+  })
+}
+
 // 课程订单
 const CourseOrderList = resolve => { //订单列表
   import('components/course-order/courseOrder-list').then(comp => {
@@ -256,6 +292,10 @@ export default new Router({
   routes: [
     {
       path: '/',
+      redirect: '/login'
+    },
+    {
+      path: '/',
       name: 'index',
       component: Index
     },
@@ -388,12 +428,12 @@ export default new Router({
                   }
                 },
                 {
-                  path: 'editUser/:id',
+                  path: 'editUser',
                   name: 'editUser', //编辑用户
                   component: UserOperate,
                   meta: {
                     title: '编辑用户',
-                    goto: '/userlist/editUser/:id'
+                    goto: '/userlist/editUser'
                   }
                 }
             ]
@@ -537,7 +577,27 @@ export default new Router({
             meta: {
               title: '后台用户管理',
               goto: '/operator/list'
-            }
+            },
+            children: [
+                {
+                  path: 'addOperator',
+                  name: 'addOperator', //新增用户
+                  component: OperatorHandle,
+                  meta: {
+                    title: '新增用户',
+                    goto: '/operator/list/addOperator'
+                  }
+                },
+                {
+                  path: 'editOperator',
+                  name: 'editOperator', //编辑用户
+                  component: OperatorHandle,
+                  meta: {
+                    title: '编辑用户',
+                    goto: '/operator/list/editOperator'
+                  }
+                }
+            ]
           },
           {
             path: '/servicegroup', //客服组管理
@@ -593,6 +653,15 @@ export default new Router({
                   title: '客服介入订单',
                   goto: '/applicationConsultation/kefuIntervene'
                 }
+              },
+              {
+                path: 'orderDetail', //订单详情
+                name: 'orderDetail',
+                component: OrderDetail,
+                meta: {
+                  title: '订单详情',
+                  goto: '/applicationConsultation/orderDetail'
+                }
               }
           ]
         },
@@ -612,7 +681,18 @@ export default new Router({
                   type: 'dreamCube',
                   title: '正式订单',
                   goto: '/dreamCube/formalOrder'
-                }
+                },
+                children: [
+                  {
+                    path: 'addFormal', //创建订单
+                    name: 'addFormal',
+                    component: AddFormal,
+                    meta: {
+                      title: '创建订单',
+                      goto: '/dreamCube/formalOrder/addFormal'
+                    }
+                  }
+                ]
               },
               {
                 path: 'experienceOrder', //体验订单
@@ -622,7 +702,50 @@ export default new Router({
                   type: 'dreamCube',
                   title: '体验订单',
                   goto: '/dreamCube/experienceOrder'
-                }
+                },
+                children: [
+                  {
+                    path: 'addExperience', //创建订单
+                    name: 'addExperience',
+                    component: AddExperience,
+                    meta: {
+                      title: '创建订单',
+                      goto: '/dreamCube/experienceOrder/addExperience'
+                    }
+                  }
+                ]
+              },
+              {
+                path: 'intentionOrder', //意向订单
+                name: 'dreamCubeIntentionOrder',
+                component: IntentionOrder,
+                meta: {
+                  type: 'dreamCube',
+                  title: '意向订单',
+                  goto: '/dreamCube/intentionOrder'
+                },
+                children: [
+                  {
+                    path: 'addIntention', //创建订单
+                    name: 'dreamCubeAddIntention',
+                    component: AddIntention,
+                    meta: {
+                      type: 'dreamCube',
+                      title: '创建订单',
+                      goto: '/dreamCube/intentionOrder/addIntention'
+                    }
+                  },
+                  {
+                    path: 'intentionDetail', //意向订单详情
+                    name: 'dreamCubeIntentionDetail',
+                    component: IntentionDetail,
+                    meta: {
+                      type: 'dreamCube',
+                      title: '订单详情',
+                      goto: '/dreamCube/intentionOrder/intentionDetail'
+                    }
+                  }
+                ]
               }
           ]
         },
@@ -653,6 +776,38 @@ export default new Router({
                   title: '体验订单',
                   goto: '/pleasantHeart/experienceOrder'
                 }
+              },
+              {
+                path: 'intentionOrder', //意向订单
+                name: 'pleasantHeartIntentionOrder',
+                component: IntentionOrder,
+                meta: {
+                  type: 'pleasantHeart',
+                  title: '意向订单',
+                  goto: '/pleasantHeart/intentionOrder'
+                },
+                children: [
+                  {
+                    path: 'addIntention', //创建订单
+                    name: 'pleasantHeartAddIntention',
+                    component: AddIntention,
+                    meta: {
+                      type: 'pleasantHeart',
+                      title: '创建订单',
+                      goto: '/pleasantHeart/intentionOrder/addIntention'
+                    }
+                  },
+                  {
+                    path: 'intentionDetail', //意向订单详情
+                    name: 'pleasantHeartIntentionDetail',
+                    component: IntentionDetail,
+                    meta: {
+                      type: 'pleasantHeart',
+                      title: '订单详情',
+                      goto: '/pleasantHeart/intentionOrder/intentionDetail'
+                    }
+                  }
+                ]
               }
           ]
         },

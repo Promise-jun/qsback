@@ -1,8 +1,8 @@
 <template>
 	<div>
     	<el-form :inline="true" :model="formObj" class="demo-form-inline" size="small">
-		  <el-form-item label="用户ID">
-		    <el-input v-model="formObj.userid" placeholder="请输入用户ID"></el-input>
+		  <el-form-item label="情说号">
+		    <el-input v-model="formObj.userCode" placeholder="请输入情说号"></el-input>
 		  </el-form-item>
 		  <el-form-item label="昵称">
 		    <el-input v-model="formObj.nickName" placeholder="请输入昵称"></el-input>
@@ -18,6 +18,7 @@
 		  </el-form-item>
 		  <el-form-item>
 		    <el-button type="primary" @click="onSubmit" icon="el-icon-circle-plus">查询</el-button>
+		    <el-button type="success" @click="synchro" icon="el-icon-circle-plus">同步</el-button>
 		  </el-form-item>
 		</el-form>
 
@@ -27,16 +28,18 @@
 		    ref="tableList"
 		    stripe
 		    border
+		    size="mini"
 		    v-loading="loading"
 		    :data="tableList"
 		    tooltip-effect="dark"
 		    style="width: 100%; margin: 15px 0;"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column type="selection"  width="50"> </el-table-column>
-		    <el-table-column prop="userId" label="用户ID"></el-table-column>
+		    <el-table-column prop="userCode" label="情说号"></el-table-column>
 		    <el-table-column label="姓名">
 		    	<template slot-scope="scope">
-		      		<router-link target="_blank" :to="{path:'/mentor/mentorDetail', query:{consultantId: scope.row.consultantId}}">{{ scope.row.userName }}</router-link>
+		      		<router-link v-if="findPermission(33)" target="_blank" :to="{path:'/mentor/mentorDetail', query:{consultantId: scope.row.consultantId}}">{{ scope.row.userName }}</router-link>
+		      		<span v-else>{{ scope.row.userName }}</span>
 		      	</template>
 		    </el-table-column>
 		    <el-table-column prop="userAge" label="年龄"></el-table-column>
@@ -59,32 +62,26 @@
 		    <!-- <el-table-column prop="ywss" label="业务所属"></el-table-column> -->
 		    <el-table-column label="是否推荐">
 		    	<template slot-scope="scope">
-		    		<span v-if="scope.row.recommend == 0">推荐</span>
-					<span v-else-if="scope.row.recommend == 1">不推荐</span>
+		    		<span v-if="scope.row.recommend == 0">不推荐</span>
+					<span v-else-if="scope.row.recommend == 1">推荐</span>
 		    	</template>
 		    </el-table-column>
 		    <el-table-column label="操作" width="90">
-		    	<template slot-scope="scope">
-					<el-tooltip content="上调" placement="top">
-					  <el-button type="text" icon="iconfont icon-arrowup" style="color: #67C23A;"></el-button>
-					</el-tooltip>
-					<el-tooltip content="下调" placement="top">
-					  <el-button type="text" icon="iconfont icon-arrowdown" style="color: #F56C6C;"></el-button>
-					</el-tooltip>
-					<el-tooltip content="推荐" placement="top">
-					  <el-button type="text" icon="iconfont icon-like"></el-button>
-					</el-tooltip>
-					<!-- <el-tooltip content="不推荐" placement="top">
-					  <el-button type="text" icon="iconfont icon-unlike"></el-button>
-					</el-tooltip> -->
-			    </template>
+		    	<!-- <template slot-scope="scope">
+						<el-tooltip content="推荐" placement="top" v-if="scope.row.recommend == 0">
+						  <el-button @click="isRecommend(scope.row, scope.$index)" type="text" icon="iconfont icon-like"></el-button>
+						</el-tooltip>
+						<el-tooltip content="不推荐" placement="top" v-else>
+						  <el-button @click="isRecommend(scope.row, scope.$index)" type="text" icon="iconfont icon-unlike" style="color: #909399;"></el-button>
+						</el-tooltip>
+				    </template> -->
 		    </el-table-column>
 		</el-table>
 
 		<el-row>
 		  <el-col :span="12">
-		  	<el-button type="primary" icon="el-icon-circle-plus" @click="addMentor">申请导师</el-button>
-		  	<el-button type="primary" icon="el-icon-refresh">更新IM账号</el-button>
+		  	<el-button v-hasPermission="32" type="primary" size="small" icon="el-icon-circle-plus" @click="addMentor">申请导师</el-button>
+		  	<!-- <el-button type="primary" size="small" icon="el-icon-refresh">更新IM账号</el-button> -->
 		  </el-col>
 		  <el-col :span="12">
 		  	<page-num
@@ -97,11 +94,15 @@
 			</page-num>
 		  </el-col>
 		</el-row>
+
+		<!-- 选择用户 -->
+		<synchro-tutor :visible.sync="synchroVisible" @confirm="confirmSynchro"></synchro-tutor>
 	</div>
 </template>
 
 <script type="text/javascript">
 	import PageNum from 'base/page-num/page-num'
+	import SynchroTutor from 'components/choose-user/synchro-tutor'
 
 	export default {
 		name: 'mentorlist',
@@ -110,28 +111,47 @@
 				loading: false,
 				pageTotal: { //分页数据
 			        total: 0,
-			        pageSize: 10,
+			        pageSize: 15,
 			        page: 1
 			    },
 				formObj: {
 					userid: '',
+					userCode: '',
 					name: '',
 					nickName: '',
 					status: '0',  //服务人员状态
 				},
 		        tableList: [],
-		        multipleSelection: []
+		        multipleSelection: [],
+		        // 同步导师
+		        synchroVisible: false
 			}
 		},
 		created() {
 			this.getList()
 		},
 		methods: {
+			// 权限控制
+		    findPermission(val) {
+			    let permissionList = this.$route.meta.permission
+			    if(permissionList && permissionList.length){
+			        let isShow = permissionList.findIndex(item => {
+			            return item.id == val
+			        })
+			        if (isShow == -1) {
+			            return false
+			        } else {
+			            return true
+			        }
+			    } else {
+			        return false
+			    }
+		    },
 			getList() {
 				let uploadData = {
 					thisPage: this.pageTotal.page,
 					limit: this.pageTotal.pageSize,
-					userId: this.formObj.userid,
+					userCode: this.formObj.userCode,
 					nickName: this.formObj.nickName,
 					realName: this.formObj.name,
 					status: this.formObj.status
@@ -174,10 +194,19 @@
 		    		path: '/mentor/addMentor'
 		    	});
 				window.open(href, '_blank');
+		    },
+		    // 同步
+		    synchro() {
+		    	this.synchroVisible = true
+		    },
+		    // 确认同步
+		    confirmSynchro() {
+		    	this.synchroVisible = false
 		    }
 		},
 		components: {
-			PageNum
+			PageNum,
+			SynchroTutor
 		}
 	}
 </script>
@@ -185,5 +214,8 @@
 <style type="text/css" lang="scss" scoped>
 	.el-pagination {
 		float: right;
+	}
+	.el-dialog__wrapper {
+		background-color: rgba(0, 0, 0, .5);
 	}
 </style>

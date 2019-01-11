@@ -1,5 +1,5 @@
 <template>
-	<div class="children-view user-detail">
+	<div class="children-view user-detail" v-loading="loading">
 		<el-row>
 		  	<el-col :span="24" class="title">导师详情</el-col>
 		</el-row>
@@ -11,13 +11,12 @@
 					  	<el-col :span="8">
 					  		<div class="user-head">
 					  			<img :src="baseInfo.userImage">
-					  			<el-upload
-					  				ref="upload"
+								<el-upload
 								  	class="avatar-uploader change-pic"
-								  	action="https://jsonplaceholder.typicode.com/posts/"
+								  	accept="image/jpeg, image/gif, image/png"
+								  	action=""
 								  	:show-file-list="false"
-								  	:before-upload="beforeAvatarUpload"
-								>
+								  	:http-request="headRequest">
 								  	<i class="el-icon-edit edit"></i>更改
 								</el-upload>
 					  		</div>
@@ -28,8 +27,8 @@
 					  			<span>{{baseInfo.userNickname}}</span>
 					  		</p>
 					  		<p>
-					  			<label>用户ID：</label>
-					  			<span>{{baseInfo.userId}}</span>
+					  			<label>情说号：</label>
+					  			<span>{{baseInfo.userCode}}</span>
 					  		</p>
 					  		<p>
 					  			<label>手机号：</label>
@@ -135,84 +134,16 @@
 			    <span>更多操作</span>
   			</div>
   			<el-row :gutter="20">
-  				<el-col :span="6">
+  				<el-col :span="6" v-for="item in authorityList" :key="item.dicId">
   					<p>
-			  			<label>咨询服务：</label>
-			  			<span>开启</span>
+			  			<label>{{item.dicName}}：</label>
+			  			<span v-if="findAuthority(item.dicId)">开启</span>
+			  			<span v-else>关闭</span>
 			  			<el-tooltip content="编辑" placement="top">
-			  				<i class="el-icon-edit edit" @click="changeCounseling(1)"></i>
+			  				<i class="el-icon-edit edit" @click="changeAuthority(item)"></i>
 			  			</el-tooltip>
 			  		</p>
-			  		<p>
-			  			<label>音频识别：</label>
-			  			<span>开启</span>
-			  			<el-tooltip content="编辑" placement="top">
-			  				<i class="el-icon-edit edit" @click="changeAudioDistinguish(2)"></i>
-			  			</el-tooltip>
-			  		</p>
-			  		<p>
-			  			<label>成长杂志：</label>
-			  			<span>开启</span>
-			  			<el-tooltip content="编辑" placement="top">
-			  				<i class="el-icon-edit edit" @click="changeMagazine(3)"></i>
-			  			</el-tooltip>
-			  		</p>
-  				</el-col>
-  				<el-col :span="6">
-  					<p>
-			  			<label>互动直播：</label>
-			  			<span>开启</span>
-			  			<el-tooltip content="编辑" placement="top">
-			  				<i class="el-icon-edit edit" @click="changeLiveTelecast(4)"></i>
-			  			</el-tooltip>
-			  		</p>
-			  		<p>
-			  			<label>新用户派单：</label>
-			  			<span>关闭</span>
-			  			<el-tooltip content="编辑" placement="top">
-			  				<i class="el-icon-edit edit" @click="changeDistribution(5)"></i>
-			  			</el-tooltip>
-			  		</p>
-			  		<p>
-			  			<label>签约导师：</label>
-			  			<span>关闭</span>
-			  			<el-tooltip content="编辑" placement="top">
-			  				<i class="el-icon-edit edit" @click="changeSigning(6)"></i>
-			  			</el-tooltip>
-			  		</p>
-  				</el-col>
-  				<el-col :span="6">
-  					<p>
-			  			<label>服务派单：</label>
-			  			<span>关闭</span>
-			  			<el-tooltip content="编辑" placement="top">
-			  				<i class="el-icon-edit edit" @click="changeService(7)"></i>
-			  			</el-tooltip>
-			  		</p>
-			  		<p>
-			  			<label>系统推荐：</label>
-			  			<span>关闭</span>
-			  			<el-tooltip content="编辑" placement="top">
-			  				<i class="el-icon-edit edit" @click="changeGroom(8)"></i>
-			  			</el-tooltip>
-			  		</p>
-  				</el-col>
-  				<el-col :span="6">
-  					<p>
-			  			<label>业务所属：</label>
-			  			<span>--</span>
-			  			<el-tooltip content="编辑" placement="top">
-			  				<i class="el-icon-edit edit" @click="changeBusiness(10)"></i>
-			  			</el-tooltip>
-			  		</p>
-			  		<p>
-			  			<label>咨询列表：</label>
-			  			<span>开启</span>
-			  			<el-tooltip content="编辑" placement="top">
-			  				<i class="el-icon-edit edit" @click="changeConsult(9)"></i>
-			  			</el-tooltip>
-			  		</p>
-  				</el-col>
+			  	</el-col>
   			</el-row>
 		</el-card>
 
@@ -221,13 +152,13 @@
 		  		<fund-info></fund-info>
 		  	</el-tab-pane>
 		  	<el-tab-pane label="服务时间" lazy>
-		  		<service-time></service-time> 
+		  		<service-time :userId="baseInfo.userId"></service-time> 
 		  	</el-tab-pane>
 		  	<el-tab-pane label="服务定价" lazy>
-		  		<service-pricing></service-pricing>
+		  		<service-pricing :userId="baseInfo.userId" :category="baseInfo.methodDic"></service-pricing>
 		  	</el-tab-pane>
 		  	<el-tab-pane label="资质简介" lazy>
-		  		<aptitude-abstract></aptitude-abstract>
+		  		<aptitude-abstract :userId="baseInfo.userId"></aptitude-abstract>
 		  	</el-tab-pane>
 		  	<el-tab-pane label="操作日志" lazy>
 		  		<operation-log></operation-log>
@@ -235,7 +166,7 @@
 		</el-tabs>
 
 		<!-- 图片裁剪 -->
-		<cut-out-pic :picDialogVisible.sync="picDialogVisible" :picOption="picOption" @upload="uploadImg"></cut-out-pic>
+		<cut-out-pic :picDialogVisible.sync="picDialogVisible" :picLoading="picLoading" :picOption="picOption" @upload="uploadImg"></cut-out-pic>
 
 		<!-- 音频上传 -->
 		<el-dialog
@@ -247,13 +178,13 @@
 		>	
   			<!-- action必选参数, 上传的地址 -->
     		<el-upload 
-    			class="avatar-uploader el-upload--text" 
-    			:action="uploadUrl" 
+    			ref="uploadAudio"
+    			class="avatar-uploader el-upload--text"
+    			style="text-align: center;"
+    			action="" 
     			:show-file-list="false" 
-    			:on-success="handleAudioSuccess" 
     			:before-upload="beforeUploadAudio" 
-    			:on-progress="uploadAudioProcess"
-    		>
+    			:http-request="uploadAudioRequest">
         		<audio v-if="audioForm.audio != '' && audioFlag == false" :src="audioForm.audio" class="avatar" controls="controls">
         			您的浏览器不支持音频播放
         		</audio>
@@ -271,8 +202,8 @@
 		  	width="30%">
 		  	{{dialogToolTitle}}：
 		  	<el-select v-model="operationObj.operationValue" placeholder="请选择">
-			    <el-option label="开启" value="1"></el-option>
-			    <el-option label="关闭" value="2"></el-option>
+			    <el-option label="开启" :value="1"></el-option>
+			    <el-option label="关闭" :value="0"></el-option>
 			</el-select>
 		  	<span slot="footer" class="dialog-footer">
 		    	<el-button @click="dialogVisible = false">取 消</el-button>
@@ -311,6 +242,8 @@
 		name: 'mentorDetail',
 		data() {
 			return {
+				loading: false,
+				picLoading: false,
 				picDialogVisible: false, //图片裁剪弹窗
 				picOption: {  //图片裁剪配置
 					img: '../../assets/a.jpg',
@@ -327,28 +260,32 @@
         			centerBox: true
 				},
 				baseInfo: {}, //基本信息
-				imageUrl: 'http://i10.hoopchina.com.cn/hupuapp/bbs/966/16313966/thread_16313966_20180726164538_s_65949_o_w1024_h1024_62044.jpg?x-oss-process=image/resize,w_800/format,jpg', //头像
+				authorityList: [], //商户权限列表
+				openMap: {}, //商户已有的权限
+				//更多操作公用弹窗
+				dialogVisible: false,
+				dialogToolTitle: '',
+				operationObj: {
+					operationId: null,
+					operationValue: 1
+				},
+
 				// 导师音频
 				audioDialogVisible: false,
 				audioForm: {
 					audio: ''
 				},
 				audioFlag: false, //是否正在上传
-				uploadUrl: 'https://jsonplaceholder.typicode.com/posts/', //上传地址
+				uploadUrl: '/api/system/consultant/saveIntroduce', //上传地址
 				audioUploadPercent: 0, //上传进度
-				//更多操作公用弹窗
-				dialogVisible: false,
-				dialogToolTitle: '',
-				operationObj: {
-					operationId: 0,
-					operationValue: '1'
-				},
 				//业务所属
 				businessVisible: false,
 				businessObj: {
 					businessId: 0,
 					businessValue: '1'
-				}
+				},
+				// 文件类型
+				fileType: ''
 			}
 		},
 		created() {
@@ -356,6 +293,7 @@
 		},
 		methods: {
 			getDetail() {
+				this.loading = true
 				this.$axios({
 					method: 'post',
 					url: '/system/consultant/findDetail',
@@ -363,35 +301,91 @@
 						ID: this.$route.query.consultantId
 					})
 				}).then(res => {
+					this.loading = false
 					let result = res.data
 					if (result.code == 200) {
 						this.baseInfo = result.data
-						this.queryAuthority(result.data.userId)
+						this.openAuthority(result.data.userId) //开启的权限
+						this.queryAuthority() //所有权限
 					} else {
 						this.$message.error(result.msg)
 					}
 				}).catch(err => {
-					console.log(err)
+					this.$message.error(err)
 				})
 			},
-			// 查询导师权限
-			queryAuthority(userId) {
-				console.log(userId)
+			// 查询商户已有权限列表
+			openAuthority(userId) {
+				this.$axios({
+					method: 'post',
+					url: '/system/merchantPermission/queryForListByUserId',
+					data: this.$qs.stringify({
+						merchantUserId: userId
+					})
+				}).then(res => {
+					let result = res.data
+					if (result.code == 200) {
+						this.openMap = result.data
+					} else {
+						this.$message.error(result.msg)
+					}
+				}).catch(err => {
+					this.$message.error(err)
+				})
 			},
-		    beforeAvatarUpload(file) {
-		        const isJPG = file.type === 'image/jpeg';
-		        const isLt2M = file.size / 1024 / 1024 < 2;
+			// 查询商户权限列表
+			queryAuthority() {
+				this.$axios({
+					method: 'post',
+					url: '/sys/dic/queryForList',
+					data: this.$qs.stringify({
+						dicPid: 82,
+						thisPage: 1,
+						limit: 50
+					})
+				}).then(res => {
+					let result = res.data
+					if (result.code == 200) {
+						this.authorityList = result.data.list
+					} else {
+						this.$message.error(result.msg)
+					}
+				}).catch(err => {
+					this.$message.error(err)
+				})
+			},
+			findAuthority(key) {
+				if( this.openMap.hasOwnProperty(key) ){
+					return true
+				} else {
+					return false
+				}
+			},
+			// 头像上传
+		    headRequest(options) {
+		    	this.picDialogVisible = true
 
-		        if (!isJPG) {
-		          this.$message.error('上传头像图片只能是 JPG 格式!');
-		        }
-		        if (!isLt2M) {
-		          this.$message.error('上传头像图片大小不能超过 2MB!');
-		        }
-
-		        this.picDialogVisible = true
-		    	var reader = new FileReader();
-		        reader.onload = e => {
+		    	let file = options.file
+		    	//判断图片类型
+    			let isJPG
+			    if (file.type == 'image/jpeg' || file.type == 'image/png' || file.type == 'image/gif') {
+			     	isJPG =  true
+			    } else {
+			     	isJPG =  false
+			    }
+			    // 判断图片大小
+			    const isLt2M = file.size / 1024 / 1024 < 10
+			    if (!isJPG) {
+			      	this.$message.error('上传图片只能是 JPG/PNG/GIF 格式!')
+			      	return
+			    }
+			    if (!isLt2M) {
+			      	this.$message.error('上传图片大小不能超过 10MB!')
+			      	return
+			    }
+			    this.fileType = file.type.split('/')[1]
+			    var reader = new FileReader();
+		    	reader.onload = e => {
 			        let data;
 					
 			        if (typeof e.target.result === "object") {
@@ -403,12 +397,33 @@
 			        this.picOption.img = data
 			    };
 			    reader.readAsArrayBuffer(file);
-
-		        return isJPG && isLt2M;
 		    },
 		    uploadImg(data) {
-		        // this.$refs.upload.submit();
-		        this.picDialogVisible = false
+		    	this.picLoading = true
+		    	this.$axios({
+		    		method: 'post',
+		    		url: '/system/user/editForUserImageAsync',
+		    		data: this.$qs.stringify({
+		    			base64Str: data.split(',')[1],
+		    			fileType: this.fileType,
+		    			userId: this.baseInfo.userId
+		    		})
+		    	}).then(res => {
+		    		this.picDialogVisible = false
+		    		this.picLoading = false
+		    		let result = res.data
+		    		if (result.code == 200) {
+		    			this.baseInfo.userImage = data
+		    			this.$message({
+				          	message: '头像上传成功！',
+				          	type: 'success'
+				        });
+		    		} else {
+		    			this.$message.error(result.msg);
+		    		}
+		    	}).catch(err => {
+		    		this.$message.error(err);
+		    	})
 		    },
 		    singlePrice() {
 		    	this.$prompt('单次价格（元/次）', '提示', {
@@ -419,16 +434,38 @@
 		        		this.$message.error('单次价格不能为空');
 		        		return
 		        	}
-		          	this.$message({
-		           		type: 'success',
-		            	message: '你的单次价格是: ' + value
-		          	});
+		        	if (isNaN(value)) {
+		        		this.$message.error('价格必须是数字');
+		        		return
+		        	}
+		        	this.$axios({
+		        		method: 'post',
+		        		url: '/system/consultant/edit',
+		        		data: this.$qs.stringify({
+		        			consultantId: this.$route.query.consultantId,
+		        			price: value
+		        		})
+		        	}).then(res => {
+		        		let result = res.data
+		        		if (result.code == 200) {
+		        			this.baseInfo.price = value
+		        			this.$message({
+				           		type: 'success',
+				            	message: '单次价格修改成功'
+				          	});
+		        		} else {
+		        			this.$message.error(result.msg)
+		        		}
+		        	}).catch(err => {
+		        		console.log(err)
+		        	})  	
 		        }).catch(() => {
 		          	 
 		        });
 		    },
 
-			beforeUploadAudio(file) { //音频上传前
+			//音频上传前
+			beforeUploadAudio(file) { 
 			    const isLt10M = file.size / 1024 / 1024  < 10;
 			    if (['audio/mp3'].indexOf(file.type) == -1) {
 			        this.$message.error('请上传正确的音频格式');
@@ -439,70 +476,93 @@
 			        return false;
 			    }
 			},
-			uploadAudioProcess(event, file, fileList){ //音频上传中...
-				console.log(file)
-			    this.audioFlag = true;
-			    this.audioUploadPercent = parseInt(file.percentage)
-			},
-			handleAudioSuccess(res, file) { //获取上传音频地址
-			    this.audioFlag = false;
-			    this.audioUploadPercent = 0;
-			    if(res.status == 200){
-			        this.audioForm.audioUploadId = res.data.uploadId;
-			        this.audioForm.audio = res.data.uploadUrl;
-			    }else{
-			        this.$message.error('音频上传失败，请重新上传！');
-			    }
+			uploadAudioRequest(options) {
+				let param = new FormData();
+				param.append('consultantId', this.$route.query.consultantId);
+				//通过append向form对象添加数据
+				param.append("file", options.file);
+
+				this.$axios({
+					method: 'post',
+					url: '/system/consultant/saveIntroduce',
+					headers: { "Content-Type": "multipart/form-data" },
+					onUploadProgress: progressEvent => {
+						this.audioFlag = true;
+						let complete = (progressEvent.loaded / progressEvent.total * 100 | 0)
+				  		this.audioUploadPercent = complete
+				  	},
+					data: param
+				}).then(res => {
+					this.audioDialogVisible = false
+					this.audioFlag = false;
+					this.audioUploadPercent = 0;
+					let result = res.data
+					if (result.code == 200) {
+						this.baseInfo.audioIntroduceUrl = result.msg
+						this.$message({
+							type: 'success',
+							message: '音频上传成功'
+						})
+					} else {
+						this.$message.error(result.msg)
+					}
+				}).catch(err => {
+					console.log(err)
+				})
 			},
 
 			// 更多操作
-			changeCounseling(changeId) { //咨询服务
-				this.dialogToolTitle = '选择咨询服务'
+			changeAuthority(item) {
+				this.dialogToolTitle = '选择' + item.dicName
 				this.dialogVisible = true
-				this.operationObj.operationId = changeId
-			},
-			changeAudioDistinguish(changeId) { //音频识别
-				this.dialogToolTitle = '选择音频识别'
-				this.dialogVisible = true
-				this.operationObj.operationId = changeId
-			},
-			changeMagazine(changeId) { //成长杂志
-				this.dialogToolTitle = "选择成长杂志"
-				this.dialogVisible = true
-				this.operationObj.operationId = changeId
-			},
-			changeLiveTelecast(changeId) { //互动直播
-				this.dialogToolTitle = "选择互动直播"
-				this.dialogVisible = true
-				this.operationObj.operationId = changeId
-			},
-			changeDistribution(changeId) { //新用户派单
-				this.dialogToolTitle = "选择新用户派单"
-				this.dialogVisible = true
-				this.operationObj.operationId = changeId
-			},
-			changeSigning(changeId) { //签约导师
-				this.dialogToolTitle = "选择签约导师"
-				this.dialogVisible = true
-				this.operationObj.operationId = changeId
-			},
-			changeService(changeId) { //服务派单
-				this.dialogToolTitle = "选择服务派单"
-				this.dialogVisible = true
-				this.operationObj.operationId = changeId
-			},
-			changeGroom(changeId) { //系统推荐
-				this.dialogToolTitle = "选择系统推荐"
-				this.dialogVisible = true
-				this.operationObj.operationId = changeId
-			},
-			changeConsult(changeId) { //咨询列表
-				this.dialogToolTitle = "选择咨询列表"
-				this.dialogVisible = true
-				this.operationObj.operationId = changeId
+				this.operationObj.operationId = item.dicId
 			},
 			submitChange() { //提交修改
-				console.log(this.operationObj)
+				if (this.operationObj.operationValue) { //开启
+					this.$axios({
+						method: 'post',
+						url: '/system/merchantPermission/saveForMerchantPermission',
+						data: this.$qs.stringify({
+							dicId: this.operationObj.operationId,
+							userId: this.baseInfo.userId
+						})
+					}).then(res => {
+						let result = res.data
+						if (result.code == 200) {
+							this.openAuthority(this.baseInfo.userId)
+							this.$message({
+					          	message: '开启成功！',
+					          	type: 'success'
+					        });
+						} else {
+							this.$message.error(result.msg)
+						}
+					}).catch(err => {
+						this.$message.error(err)
+					})
+				} else { //关闭
+					let deleteId = this.openMap[this.operationObj.operationId]
+					this.$axios({
+						method: 'post',
+						url: '/system/merchantPermission/delete',
+						data: this.$qs.stringify({
+							ID: deleteId
+						})
+					}).then(res => {
+						let result = res.data
+						if (result.code == 200) {
+							this.openAuthority(this.baseInfo.userId)
+							this.$message({
+					          	message: '关闭成功！',
+					          	type: 'success'
+					        });
+						} else {
+							this.$message.error(result.msg)
+						}
+					}).catch(err => {
+						this.$message.error(err)
+					})
+				}
 				this.dialogVisible = false
 			},
 

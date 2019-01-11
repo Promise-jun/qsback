@@ -35,14 +35,14 @@ export default {
     changeWidth(fold) {
       if (fold) {
           Velocity(this.$refs.menu.$refs.menulist, {
-            width: 65
+            width: 50
           }, {
             easing: 'easeOutQuint',
             duration: 200,
             queue: false
           })
           Velocity(this.$refs.main, {
-            left: 65
+            left: 50
           }, {
             easing: 'easeOutQuint',
             duration: 200,
@@ -94,7 +94,6 @@ export default {
     position: absolute;
     top: 60px;
     left: 0;
-    bottom: 0;
   }
   .el-menu {
     border-right: 0;
@@ -103,7 +102,6 @@ export default {
     position: absolute;
     top: 60px;
     left: 200px;
-    bottom: 0;
     right: 0;
     background-color: #fff;
     padding: 20px;

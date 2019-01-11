@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+  	<head>
+    	<meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+    	<title>后台系统用户登录</title>
+    	<!-- 生产环境版本，优化了尺寸和速度 -->
+		<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+		<!-- 引入样式 -->
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+		<!-- 引入组件库 -->
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+		<link rel="stylesheet" type="text/css" href="./loginFiles/styles.css">
+		<link rel="stylesheet" type="text/css" href="./loginFiles/loaders.css">
+
+		<style type="text/css">
+			.login-box {
+			    position: fixed;
+			    top: 0;
+			    left: 0;
+			    bottom: 0;
+			    right: 0;
+			    background-color: #F2F2F4;
+			    background-image: url('./loginFiles/icon_login_bg.png');
+			    background-position: center;
+			    background-repeat: no-repeat;
+			    background-size: contain;
+			}
+		</style>
+  	</head>
+  	<body>
+    	<div id="login" class="login-box">
+    		<div class="login" :class="{test: isTest, testtwo: isTesttwo}">
+		        <!-- <img class="MyLogo" src="loginSpecial/images/logo01.png" alt="LOGO"> -->
+		        <div class="login_title">
+		            <span>用户登录</span>
+		        </div>
+		        <div class="login_fields">
+		            <el-form :model="loginForm" status-icon :rules="loginRules" ref="loginForm" class="demo-ruleForm">
+		              <el-form-item label="" prop="username">
+		                <el-input prefix-icon="el-icon-tickets" v-model="loginForm.username" autocomplete="off" placeholder="用户名"></el-input>
+		              </el-form-item>
+		              <el-form-item label="" prop="password">
+		                <el-input prefix-icon="el-icon-view" type="password" v-model="loginForm.password" autocomplete="off" placeholder="密码"></el-input>
+		              </el-form-item>
+		              <el-form-item label="" prop="code">
+		                <el-col :span="12">
+		                  <el-input prefix-icon="el-icon-mobile-phone" v-model.number="loginForm.code" placeholder="短信验证码"></el-input>
+		                </el-col>
+		                <el-col :span="10">
+		                  <el-button :disabled="isSend" v-on:click="sendYzm">{{sendBtnCont}}</el-button>
+		                </el-col>
+		              </el-form-item>
+		              <el-form-item>
+		                <el-button round type="primary" v-on:click="submitForm('loginForm')" :loading="submitLoading">登录</el-button>
+		              </el-form-item>
+		            </el-form>
+		        </div>
+		        <div class="disclaimer">
+		            <p>欢迎登陆情说后台管理平台</p>
+		        </div>
+		    </div>
+		    <div class="authent" :class="{visible: isVisible}" ref="authent">
+		        <div class="loader" style="height: 60px;width: 60px;margin-left: 28px;margin-top: 40px">
+		            <div class="loader-inner ball-clip-rotate-multiple">
+		                <div></div>
+		                <div></div>
+		                <div></div>
+		            </div>
+		        </div>
+		        <p>认证中...</p>
+		    </div>
+    	</div>
+
+    	<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    	<script type="text/javascript" src="./loginFiles/jquery.qrcode.min.js"></script>
+    	<!-- built files will be auto injected -->
+    	<script type="text/javascript">
+	  		new Vue({
+			  	el: '#login',
+			  	data() {
+			    	var validateName = (rule, value, callback) => {
+				        if (value === '') {
+				          callback(new Error('请输入用户名'));
+				        } else {
+				          if (this.loginForm.password !== '') {
+				            this.$refs.loginForm.validateField('password');
+				          }
+				          callback();
+				        }
+				    };
+				    var validatePass = (rule, value, callback) => {
+				        if (value === '') {
+				          callback(new Error('请输入密码'));
+				        } else {
+				          callback();
+				        }
+				    };
+				    var checkYzm = (rule, value, callback) => {
+				        if (!value) {
+				          return callback(new Error('验证码不能为空'));
+				        } else {
+				          callback();
+				        }
+				    };
+				    return {
+				    	submitLoading: false,
+				        loginForm: {
+				          username: 'lijia',
+				          password: '123456',
+				          code: '1234'
+				        },
+				        isSend: false,
+				        sendBtnCont: '获取短信验证码',
+				        loginRules: {
+				          username: [
+				            { validator: validateName, trigger: 'blur' }
+				          ],
+				          password: [
+				            { validator: validatePass, trigger: 'blur' }
+				          ],
+				          code: [
+				            { validator: checkYzm, trigger: 'blur' }
+				          ]
+				        },
+				        isTest: false,
+				        isTesttwo: false,
+				        isVisible: false,
+				        baseUrl: '.'
+				    };
+			  	},
+			  	methods: {
+			      // 发送验证码
+			      sendYzm() {
+			      	let that = this
+			        if (this.loginForm.username && this.loginForm.password) {
+			        	$.ajax({
+					        type: "post",
+					        url: this.baseUrl + '/authc/getMSG',
+					        data: {
+					        	"username": this.loginForm.username,
+					        	"password": this.loginForm.password
+					        },
+					        cache: false,
+					        async : false,
+					        dataType: "json",
+					        success: function (res ,textStatus, jqXHR) {
+					            let result = res
+					            if (result.code == 200) {
+					              	that.countDown()
+						            that.$message({
+						                type: 'success',
+						                message: '验证码发送成功'
+						            })
+					            } else {
+					              	that.$message.error(result.msg)
+					            }
+					        },
+					        error:function (XMLHttpRequest, textStatus, errorThrown) {
+					            console.log(err)
+					        }
+					    });   
+			        } else {
+			          	this.$message.error('请先输入用户名和密码')
+			        }
+			      },
+			      // 验证码倒计时
+			      countDown() {
+			        let num = 60
+			        this.isSend = true
+			        this.sendBtnCont = num + 's后可重发'
+			        clearInterval(this.timer)
+			        this.timer = setInterval(() => {
+			          this.sendBtnCont = --num + 's后可重发'
+			          if (num <= 0) {
+			            clearInterval(this.timer)
+			            this.isSend = false
+			            this.sendBtnCont = '获取短信验证码'
+			          }
+			        }, 1000)
+			      },
+			      submitForm(formName) {
+			        this.$refs[formName].validate((valid) => {
+			          if (valid) {
+			            this.showLoading();
+			            let data = {
+			            	"username": this.loginForm.username,
+							"password": this.loginForm.password,
+							"code": this.loginForm.code,
+			            }
+			            // 请求登录
+			            let that = this
+			            $.ajax({
+					        type: "post",
+					        url: this.baseUrl + '/authc/login',
+					        data: data,
+					        cache: false,
+					        async : false,
+					        dataType: "json",
+					        success: function (res ,textStatus, jqXHR) {
+					            let result = res
+					            if (result.code == 200) {
+					              	that.hideLoading(result);
+					            } else {
+					              	that.$message.error(result.msg)
+					            }
+					        },
+					        error:function (XMLHttpRequest, textStatus, errorThrown) {
+					            console.log(err)
+					        }
+					    });
+			          } else {
+			            console.log('error submit!');
+			            return false;
+			          }
+			        });
+			      },
+			      resetForm(formName) {
+			        this.$refs[formName].resetFields();
+			      },
+			      showLoading() {
+			      	console.log(123)
+			      		this.submitLoading = true
+			          	this.isTest = true; //倾斜特效
+			          	// $('.login').addClass('test'); //倾斜特效
+			          	setTimeout(() => {
+			            	this.isTesttwo = true;
+			            	// $('.login').addClass('testtwo'); //平移特效
+			          	}, 100);
+			          	setTimeout(() => {
+			                $('.authent').show().animate({ right: -320 }, {
+			                    duration: 600,
+			                    queue: false
+			                });
+			                $('.authent').animate({ opacity: 1 }, {
+			                    duration: 200,
+			                    queue: false
+			                })
+			                // .addClass('visible');
+			                this.isVisible = true
+			            }, 300);
+			      },
+			      hideLoading(data) {
+			      	this.submitLoading = false
+			        setTimeout(() => {
+                        $('.authent').show().animate({ right: 90 }, {
+                            duration: 600,
+                            queue: false
+                        });
+                        $('.authent').animate({ opacity: 0 }, {
+                            duration: 200,
+                            queue: false
+                        })
+                        // .addClass('visible');
+                        // $('.login').removeClass('testtwo'); //平移特效
+                        this.isVisible = true
+			            this.isTesttwo = false; //平移特效
+                    }, 800);
+			        setTimeout(() => {
+                        $('.authent').hide();
+                        this.isTest = false; //倾斜特效
+                        // $('.login').removeClass('test');
+                        if (data.code == 200) {
+
+                            //登录成功
+                            this.$message({
+				                message: '恭喜你，登录成功',
+				                type: 'success'
+				            });
+                            window.location.href = './index.html'
+                        } else {
+                            this.$message.error(data.msg);
+                        }
+                    }, 1200);
+			        // return false;
+			      }
+			    }
+			})
+  		</script>
+  	</body>
+</html>

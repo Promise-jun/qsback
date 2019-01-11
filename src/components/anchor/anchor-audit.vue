@@ -1,8 +1,8 @@
 <template>
 	<div>
     	<el-form :inline="true" :model="formObj" class="demo-form-inline" size="small">
-		  <el-form-item label="用户ID">
-		    <el-input v-model="formObj.userid" placeholder="请输入用户ID"></el-input>
+		  <el-form-item label="情说号">
+		    <el-input v-model="formObj.userCode" placeholder="请输入情说号"></el-input>
 		  </el-form-item>
 		  <el-form-item label="昵称">
 		    <el-input v-model="formObj.nickName" placeholder="请输入用户名"></el-input>
@@ -39,18 +39,19 @@
 		    ref="tableList"
 		    stripe
 		    border
+		    size="mini"
 		    v-loading="loading"
 		    :data="tableList"
 		    tooltip-effect="dark"
 		    style="width: 100%; margin: 15px 0;"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column type="selection"  width="50"> </el-table-column>
-		    <el-table-column label="用户ID">
+		    <el-table-column label="情说号">
 		      <template slot-scope="scope">
-		      	{{ scope.row.userId }}
+		      	{{ scope.row.userCode }}
 		      </template>
 		    </el-table-column>
-		    <el-table-column prop="username" label="用户名"></el-table-column>
+		    <!-- <el-table-column prop="username" label="用户名"></el-table-column> -->
 		    <el-table-column prop="anchorPhone" label="手机号"></el-table-column>
 		    <el-table-column prop="nickName" label="昵称"></el-table-column>
 			<el-table-column label="性别">
@@ -73,8 +74,8 @@
 		    </el-table-column>
 		    <el-table-column label="操作">
 		    	<template slot-scope="scope">
-					<el-tooltip content="处理" placement="top">
-					  	<el-button @click="handle(scope.row)" type="text" icon="iconfont icon-wrench"></el-button>
+					<el-tooltip content="处理" placement="top" v-hasPermission="38">
+					  	<el-button @click="handle(scope.row)" size="mini" type="text" icon="iconfont icon-wrench"></el-button>
 					</el-tooltip>
 			    </template>
 		    </el-table-column>
@@ -104,11 +105,11 @@
 			return {
 				pageTotal: { //分页数据
 			        total: 0,
-			        pageSize: 10,
+			        pageSize: 15,
 			        page: 1
 			    },
 				formObj: {
-					userid: '',
+					userCode: '',
 					name: '',
 					nickName: '',
 					status: '0',  //主播审核状态
@@ -135,7 +136,7 @@
 				let uploadData = {
 					thisPage: this.pageTotal.page,
 					limit: this.pageTotal.pageSize,
-					userId: this.formObj.userid,
+					userCode: this.formObj.userCode,
 					nickName: this.formObj.nickName,
 					realName: this.formObj.name,
 					beginTime: beginTime,

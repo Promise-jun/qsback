@@ -28,11 +28,11 @@ let data = [
     		{
     			name: '角色权限管理',
     			path: '/authority/role'
-    		},
-    		{
+    		}
+    		/*{
     			name: '用户权限管理',
     			path: '/authority/user'
-    		}
+    		}*/
     	]
     },
     {
@@ -114,6 +114,10 @@ let data = [
     				{
     					name: '体验订单',
     					path: '/dreamCube/experienceOrder'
+    				},
+    				{
+    					name: '意向订单',
+    					path: '/dreamCube/intentionOrder'
     				}
     			]
     		},
@@ -127,6 +131,10 @@ let data = [
     				{
     					name: '体验订单',
     					path: '/pleasantHeart/experienceOrder'
+    				},
+    				{
+    					name: '意向订单',
+    					path: '/pleasantHeart/intentionOrder'
     				}
     			]
     		},
@@ -407,21 +415,45 @@ let data = [
     }
 ]
 
+import { mapState } from 'vuex'
+
 export default {
   name: 'navMenu',
   data() {
     return {
-    	navList: data,
+    	// navList: [],
     	isFold: false  //是否折叠
     }
   },
   computed: {
+  	...mapState({
+        navList: state => state.navList
+    }),
     // 首次进入页面时展开当前页面所属的菜单
     onRoutes(){
         return this.$route.path
     }
   },
+  created() {
+  	// this.getMenu()
+  },
   methods: {
+  	getMenu() {
+  		this.$axios({
+  			method: 'post',
+  			url: '/sys/public/getRoleAuth',
+  		}).then(res => {
+  			let result = res.data
+  			// console.log(result)
+  			if (result.code == 200) {
+  				this.navList = result.data
+  			} else {
+  				this.$message.error(result.msg)
+  			}
+  		}).catch(err => {
+  			console.log(err)
+  		})
+  	},
   	fold() {
   		this.isFold = !this.isFold
   		this.$emit('clickme', this.isFold);

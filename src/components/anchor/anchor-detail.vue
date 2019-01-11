@@ -1,23 +1,22 @@
 <template>
-	<div class="children-view user-detail">
+	<div class="children-view user-detail" v-loading="loading">
 		<el-row>
 		  	<el-col :span="24" class="title">主播详情</el-col>
 		</el-row>
 
 		<el-row class="basic-info" :gutter="20">
-		  	<el-col :span="16">
+		  	<el-col :span="15">
 		  		<el-card>
-		  			<el-row :gutter="20" class="module">
+		  			<el-row :gutter="10" class="module">
 					  	<el-col :span="8">
 					  		<div class="user-head">
-					  			<img :src="imageUrl">
-					  			<el-upload
-					  				ref="upload"
+					  			<img :src="baseInfo.userImage">
+								<el-upload
 								  	class="avatar-uploader change-pic"
-								  	action="https://jsonplaceholder.typicode.com/posts/"
+								  	accept="image/jpeg, image/gif, image/png"
+								  	action=""
 								  	:show-file-list="false"
-								  	:before-upload="beforeAvatarUpload"
-								>
+								  	:http-request="headRequest">
 								  	<i class="el-icon-edit edit"></i>更改
 								</el-upload>
 					  		</div>
@@ -25,58 +24,56 @@
 					  	<el-col :span="8">
 					  		<p>
 					  			<label>昵称：</label>
-					  			<span>情说12039026</span>
+					  			<span>{{baseInfo.nickName}}</span>
 					  		</p>
 					  		<p>
-					  			<label>用户名：</label>
-					  			<span>1039203029</span>
-					  		</p>
-					  		<p>
-					  			<label>用户ID：</label>
-					  			<span>2019</span>
+					  			<label>用户号：</label>
+					  			<span>{{baseInfo.userCode}}</span>
 					  		</p>
 					  		<p>
 					  			<label>手机号：</label>
-					  			<span>12949020391</span>
+					  			<span>{{baseInfo.userPhone}}</span>
 					  		</p>
 					  		<p>
 					  			<label>性别：</label>
-					  			<span>-</span>
+					  			<span v-if="baseInfo.userSex == 0">未知</span>
+					  			<span v-else-if="baseInfo.userSex == 1">男</span>
+					  			<span v-else>女</span>
 					  		</p>
 					  		<p>
 					  			<label>淘宝号：</label>
-					  			<span>1294902039</span>
+					  			<span>{{baseInfo.userPayAccount}}</span>
 					  			<el-tooltip content="编辑" placement="top">
 					  				<i class="el-icon-edit edit" @click="changeTaobaoId"></i>
 					  			</el-tooltip>
+					  		</p>
+					  		<p>
+					  			<label>绑定：</label>
+					  			<span></span>
 					  		</p>
 					  	</el-col>
 					  	<el-col :span="8">
 					  		<p>
 					  			<label>姓名：</label>
-					  			<span>-</span>
+					  			<span>{{baseInfo.userName}}</span>
 					  		</p>
 					  		<p>
 					  			<label>身份证：</label>
-					  			<span>330721199206022414</span>
+					  			<span>{{baseInfo.identityNo}}</span>
 					  		</p>
 					  		<p>
 					  			<label>相册：</label>
-					  			<span>12</span>
+					  			<span>{{baseInfo.photoCount}}</span>
 					  		</p>
 					  		<p>
 					  			<label>类型：</label>
-					  			<span>注册用户</span>
-					  		</p>
-					  		<p>
-					  			<label>绑定：</label>
-					  			<span>手机</span>
+					  			<span></span>
 					  		</p>
 					  	</el-col>
 				  	</el-row>
 				</el-card>
 		  	</el-col>
-		  	<el-col :span="8">
+		  	<el-col :span="9">
 		  		<el-card>
 				  	<div slot="header" class="clearfix">
 					    <span>其他信息</span>
@@ -87,33 +84,33 @@
 					  			<label>用户等级：</label>
 					  			<span>
 					  				<i class="left">LV</i>
-					  				<i class="right">99</i>
+					  				<i class="right">{{baseInfo.userCredit}}</i>
 					  			</span>
 					  		</p>
 					  		<p>
 					  			<label>业务所属：</label>
-					  			<span>杭州分公司</span>
+					  			<span>{{baseInfo.memberBusinessGroup}}</span>
 					  		</p>
 					  		<p>
 					  			<label>接手客服：</label>
-					  			<span>小兔子</span>
-					  			<el-tooltip content="编辑" placement="top">
+					  			<span>{{baseInfo.serviceName}}</span>
+					  			<!-- <el-tooltip content="编辑" placement="top">
 					  				<i class="el-icon-edit edit" @click="kefuVisible = true"></i>
-					  			</el-tooltip>
+					  			</el-tooltip> -->
 					  		</p>
 					  	</el-col>
 					  	<el-col :span="12">
 					  		<p>
 					  			<label>会员权限：</label>
-					  			<span>暂无</span>
+					  			<span></span>
 					  		</p>
 					  		<p>
 					  			<label>业务推广：</label>
-					  			<span>暂无</span>
+					  			<span></span>
 					  		</p>
 					  		<p>
 					  			<label>APP版本：</label>
-					  			<span>2.0</span>
+					  			<span></span>
 					  		</p>
 					  	</el-col>
 				  	</el-row>
@@ -133,15 +130,15 @@
 		  		<ditch-info></ditch-info>
 		  	</el-tab-pane>
 		  	<el-tab-pane label="互动信息" lazy>
-		  		<interact-info></interact-info>
+		  		<interact-info :userId="baseInfo.userId"></interact-info>
 		  	</el-tab-pane>
-		  	<el-tab-pane label="主播信息" lazy>
+		  	<!-- <el-tab-pane label="主播信息" lazy>
 		  		<anchor-info></anchor-info>
-		  	</el-tab-pane>
+		  	</el-tab-pane> -->
 		</el-tabs>
 
 		<!-- 图片裁剪 -->
-		<cut-out-pic :picDialogVisible.sync="picDialogVisible" :picOption="picOption" @upload="uploadImg"></cut-out-pic>
+		<cut-out-pic :picDialogVisible.sync="picDialogVisible" :picLoading="picLoading" :picOption="picOption" @upload="uploadImg"></cut-out-pic>
 
 		<!-- 分配客服 -->
 		<el-dialog title="提示" :visible.sync="kefuVisible" width="30%" :modal="false">
@@ -169,7 +166,9 @@
 		name: 'anchorDetail',
 		data() {
 			return {
+				loading: false,
 				picDialogVisible: false, //图片裁剪弹窗
+				picLoading: false,
 				picOption: {  //图片裁剪配置
 					img: '../../assets/a.jpg',
 					info: true,
@@ -184,26 +183,61 @@
         			fixedNumber: [1, 1],
         			centerBox: true
 				},
-				imageUrl: 'http://i10.hoopchina.com.cn/hupuapp/bbs/966/16313966/thread_16313966_20180726164538_s_65949_o_w1024_h1024_62044.jpg?x-oss-process=image/resize,w_800/format,jpg',
+				baseInfo: {}, //基本信息
 				kefu: '1', //分配的客服
-				kefuVisible: false
+				kefuVisible: false,
+				fileType: ''
 			}
 		},
+		created() {
+			this.getDetail()
+		},
 		methods: {
-		    beforeAvatarUpload(file) {
-		        const isJPG = file.type === 'image/jpeg';
-		        const isLt2M = file.size / 1024 / 1024 < 2;
+			getDetail() {
+				this.loading = true
+				this.$axios({
+					method: 'post',
+					url: '/system/anchor/getAnchorInfo',
+					data: this.$qs.stringify({
+						userId: this.$route.query.userId
+					})
+				}).then(res => {
+					this.loading = false
+					let result = res.data
+					if (result.code == 200) {
+						this.baseInfo = result.data
+					} else {
+						this.$message.error(result.msg)
+					}
+				}).catch(err => {
+					this.$message.error(err)
+				})
+			},
+		    // 头像上传
+		    headRequest(options) {
+		    	this.picDialogVisible = true
 
-		        if (!isJPG) {
-		          this.$message.error('上传头像图片只能是 JPG 格式!');
-		        }
-		        if (!isLt2M) {
-		          this.$message.error('上传头像图片大小不能超过 2MB!');
-		        }
-
-		        this.picDialogVisible = true
-		    	var reader = new FileReader();
-		        reader.onload = e => {
+		    	let file = options.file
+		    	//判断图片类型
+    			let isJPG
+			    if (file.type == 'image/jpeg' || file.type == 'image/png' || file.type == 'image/gif') {
+			     	isJPG =  true
+			    } else {
+			     	isJPG =  false
+			    }
+			    // 判断图片大小
+			    const isLt2M = file.size / 1024 / 1024 < 10
+			    if (!isJPG) {
+			      	this.$message.error('上传图片只能是 JPG/PNG/GIF 格式!')
+			      	return
+			    }
+			    if (!isLt2M) {
+			      	this.$message.error('上传图片大小不能超过 10MB!')
+			      	return
+			    }
+			    this.fileType = file.type.split('/')[1]
+			    var reader = new FileReader();
+		    	reader.onload = e => {
 			        let data;
 					
 			        if (typeof e.target.result === "object") {
@@ -215,12 +249,33 @@
 			        this.picOption.img = data
 			    };
 			    reader.readAsArrayBuffer(file);
-
-		        return isJPG && isLt2M;
 		    },
 		    uploadImg(data) {
-		        // this.$refs.upload.submit();
-		        this.picDialogVisible = false
+		        this.picLoading = true
+		    	this.$axios({
+		    		method: 'post',
+		    		url: '/system/user/editForUserImageAsync',
+		    		data: this.$qs.stringify({
+		    			base64Str: data.split(',')[1],
+		    			fileType: this.fileType,
+		    			userId: this.baseInfo.userId
+		    		})
+		    	}).then(res => {
+		    		this.picDialogVisible = false
+		    		this.picLoading = false
+		    		let result = res.data
+		    		if (result.code == 200) {
+		    			this.baseInfo.userImage = data
+		    			this.$message({
+				          	message: '头像上传成功！',
+				          	type: 'success'
+				        });
+		    		} else {
+		    			this.$message.error(result.msg);
+		    		}
+		    	}).catch(err => {
+		    		this.$message.error(err);
+		    	})
 		    },
 		    changeTaobaoId() {
 		    	this.$prompt('请输入淘宝账号', '提示', {
@@ -231,10 +286,28 @@
 		        		this.$message.error('淘宝账号不能为空');
 		        		return
 		        	}
-		          	this.$message({
-		           		type: 'success',
-		            	message: '你的淘宝账号是: ' + value
-		          	});
+		        	this.$axios({
+		        		method: 'post',
+		        		url: '/system/user/editForUserPayAccount',
+		        		data: this.$qs.stringify({
+		        			userId: this.$route.query.userId,
+		        			userPayAccount: value
+		        		})
+		        	}).then(res => {
+		        		let result = res.data
+		        		if (result.code == 200) {
+		        			this.baseInfo.userPayAccount = value
+							this.$message({
+				           		type: 'success',
+				            	message: '淘宝账号修改成功'
+				          	});
+		        		} else {
+		        			this.$message.error(result.msg)
+		        		}
+		        	}).catch(err => {
+		        		console.log(err)
+		        	})
+				          	
 		        }).catch(() => {
 		          	 
 		        });

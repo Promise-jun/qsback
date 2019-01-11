@@ -19,8 +19,8 @@
 					  			<span>{{baseInfo.nickName}}</span>
 					  		</p>
 					  		<p>
-					  			<label>用户ID：</label>
-					  			<span>{{baseInfo.userId}}</span>
+					  			<label>用户号：</label>
+					  			<span>{{baseInfo.userCode}}</span>
 					  		</p>
 					  		<p>
 					  			<label>手机号：</label>
@@ -374,7 +374,8 @@
 	    			method: 'post',
 	    			url: '/system/merchant/material/findByUserId',
 	    			data: this.$qs.stringify({
-	    				userId: userId
+	    				userId: userId,
+	    				materialType: 0
 	    			})
 	    		}).then(res => {
 	    			let result = res.data

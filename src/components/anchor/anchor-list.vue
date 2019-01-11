@@ -1,11 +1,11 @@
 <template>
 	<div>
     	<el-form :inline="true" :model="formObj" class="demo-form-inline" size="small">
-		  <el-form-item label="用户ID">
-		    <el-input v-model="formObj.userid" placeholder="请输入用户ID"></el-input>
+		  <el-form-item label="情说号">
+		    <el-input v-model="formObj.userCode" placeholder="请输入情说号"></el-input>
 		  </el-form-item>
 		  <el-form-item label="昵称">
-		    <el-input v-model="formObj.nickName" placeholder="请输入用户名"></el-input>
+		    <el-input v-model="formObj.nickName" placeholder="请输入用户昵称"></el-input>
 		  </el-form-item>
 		  <el-form-item label="姓名">
 		    <el-input v-model="formObj.name" placeholder="请输入姓名"></el-input>
@@ -38,18 +38,20 @@
 		    ref="tableList"
 		    stripe
 		    border
+		    size="mini"
 		    v-loading="loading"
 		    :data="tableList"
 		    tooltip-effect="dark"
 		    style="width: 100%; margin: 15px 0;"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column type="selection"  width="50"> </el-table-column>
-		    <el-table-column label="用户ID">
+		    <el-table-column label="情说号">
 		      <template slot-scope="scope">
-		      	<router-link target="_blank" :to="{path:'/anchor/anchorDetail', query:{userId: scope.row.userId}}">{{ scope.row.userId }}</router-link>
+		      	<router-link v-if="findPermission(36)" target="_blank" :to="{path:'/anchor/anchorDetail', query:{userId: scope.row.userId}}">{{ scope.row.userCode }}</router-link>
+		      	<span v-else>{{ scope.row.userCode }}</span>
 		      </template>
 		    </el-table-column>
-		    <el-table-column prop="username" label="用户名"></el-table-column>
+		    <!-- <el-table-column prop="username" label="用户名"></el-table-column> -->
 		    <el-table-column prop="anchorPhone" label="手机号"></el-table-column>
 			<el-table-column prop="nickName" label="昵称"></el-table-column>
 			<el-table-column label="性别">
@@ -67,8 +69,14 @@
 		    <el-table-column prop="diamondFreeze" label="冻结钻石"></el-table-column>
 		    <el-table-column label="操作">
 		    	<template slot-scope="scope">
-					<el-tooltip content="编辑" placement="top">
-					  <el-button @click="edit(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
+					<el-tooltip content="编辑" placement="top" v-hasPermission="63">
+					  <el-button @click="edit(scope.row)" size="mini" type="text" icon="iconfont icon-edit"></el-button>
+					</el-tooltip>
+					<el-tooltip content="推荐" placement="top" v-hasPermission="64" v-if="scope.row.anchorRecommend == 0">
+					  <el-button @click="recommend(scope.row, scope.$index)" size="mini" type="text" icon="iconfont icon-like" style="color: #67C23A;"></el-button>
+					</el-tooltip>
+					<el-tooltip content="不推荐" placement="top" v-hasPermission="64" v-else>
+					  <el-button @click="recommend(scope.row, scope.$index)" size="mini" type="text" icon="iconfont icon-unlike" style="color: #909399;"></el-button>
 					</el-tooltip>
 			    </template>
 		    </el-table-column>
@@ -76,8 +84,8 @@
 
 		<el-row>
 		  <el-col :span="12">
-		  	<el-button type="primary" icon="el-icon-circle-plus" @click="addAnchor">申请主播</el-button>
-		  	<el-button type="primary" icon="el-icon-refresh">更新IM账号</el-button>
+		  	<el-button v-hasPermission="35" type="primary" size="small" icon="el-icon-circle-plus" @click="addAnchor">申请主播</el-button>
+		  	<!-- <el-button type="primary" size="small" icon="el-icon-refresh">更新IM账号</el-button> -->
 		  </el-col>
 		  <el-col :span="12">
 		  	<page-num
@@ -102,11 +110,11 @@
 			return {
 				pageTotal: { //分页数据
 			        total: 0,
-			        pageSize: 10,
+			        pageSize: 15,
 			        page: 1
 			    },
 				formObj: {
-					userid: '',
+					userCode: '',
 					name: '',
 					nickName: '',
 					status: '0',  //状态
@@ -121,6 +129,22 @@
 			this.getList()
 		},
 		methods: {
+			// 权限控制
+		    findPermission(val) {
+			    let permissionList = this.$route.meta.permission
+			    if(permissionList && permissionList.length){
+			        let isShow = permissionList.findIndex(item => {
+			            return item.id == val
+			        })
+			        if (isShow == -1) {
+			            return false
+			        } else {
+			            return true
+			        }
+			    } else {
+			        return false
+			    }
+		    },
 			getList() {
 				let beginTime, endTime
 				if (this.formObj.dateValue && this.formObj.dateValue.length) {
@@ -133,7 +157,7 @@
 				let uploadData = {
 					thisPage: this.pageTotal.page,
 					limit: this.pageTotal.pageSize,
-					userId: this.formObj.userid,
+					userCode: this.formObj.userCode,
 					nickName: this.formObj.nickName,
 					realName: this.formObj.name,
 					beginTime: beginTime,
@@ -173,6 +197,36 @@
 	      		console.log(val)
 		        this.multipleSelection = val;
 		    },
+		    // 是否推荐
+		    recommend(row, index) {
+		    	let recommendNum
+		    	if (row.anchorRecommend == 0) {
+		    		recommendNum = 1
+		    	} else {
+		    		recommendNum = 0
+		    	}
+		    	this.$axios({
+		    		method: 'post',
+		    		url: '/system/anchor/isRecommend',
+		    		data: this.$qs.stringify({
+		    			userId: row.userId,
+		    			anchorRecommend: recommendNum
+		    		})
+		    	}).then(res => {
+		    		let result = res.data
+		    		if (result.code == 200) {
+		    			this.$message({
+		    				type: 'success',
+		    				message: '操作成功！'
+		    			})
+		    			this.tableList[index].anchorRecommend = recommendNum
+		    		} else {
+		    			this.$message.error(result.msg)
+		    		}
+		    	}).catch(err => {
+		    		this.$message.error(err)
+		    	})
+		    },
 		    // 申请主播
 		    addAnchor() {
 		    	let {href} = this.$router.resolve({
@@ -197,5 +251,11 @@
 <style type="text/css" lang="scss" scoped>
 	.el-pagination {
 		float: right;
+	}
+</style>
+
+<style type="text/css">
+	.el-table .el-loading-mask {
+		z-index: 50;
 	}
 </style>

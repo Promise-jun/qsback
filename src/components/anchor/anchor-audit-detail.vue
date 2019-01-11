@@ -10,17 +10,17 @@
 		  			<el-row :gutter="20" class="module">
 					  	<el-col :span="8">
 					  		<div class="user-head">
-					  			<img :src="baseInfo.userImage">
+					  			<img :src="anchorInfo.userImage">
 					  		</div>
 					  	</el-col>
 					  	<el-col :span="8">
 					  		<p>
 					  			<label>昵称：</label>
-					  			<span>{{baseInfo.userNickname}}</span>
+					  			<span>{{anchorInfo.nickName}}</span>
 					  		</p>
 					  		<p>
-					  			<label>用户ID：</label>
-					  			<span>{{baseInfo.userId}}</span>
+					  			<label>用户号：</label>
+					  			<span>{{anchorInfo.userCode}}</span>
 					  		</p>
 					  		<p>
 					  			<label>手机号：</label>
@@ -28,21 +28,23 @@
 					  		</p>
 					  		<p>
 					  			<label>性别：</label>
-					  			<span>{{baseInfo.userSex}}</span>
+					  			<span v-if="anchorInfo.userSex == 0">未知</span>
+					  			<span v-else-if="anchorInfo.userSex == 1">男</span>
+					  			<span v-else>女</span>
 					  		</p>
 					  		<p>
 					  			<label>身高：</label>
-					  			<span>{{baseInfo.userHeight}}cm</span>
+					  			<span>{{anchorInfo.userHeight}}cm</span>
 					  		</p>
 					  	</el-col>
 					  	<el-col :span="8">
 					  		<p>
 					  			<label>姓名：</label>
-					  			<span>{{identityInfo.name}}</span>
+					  			<span>{{anchorInfo.userName}}</span>
 					  		</p>
 					  		<p>
 					  			<label>身份证：</label>
-					  			<span>{{identityInfo.identityNo}}</span>
+					  			<span>{{anchorInfo.identityNo}}</span>
 					  		</p>
 					  		<p>
 					  			<label>所在地：</label>
@@ -50,7 +52,7 @@
 					  		</p>
 					  		<p>
 					  			<label>年龄：</label>
-					  			<span>{{baseInfo.userAge}}</span>
+					  			<span>{{anchorInfo.userAge}}</span>
 					  		</p>
 					  	</el-col>
 				  	</el-row>
@@ -65,7 +67,7 @@
 					  	<el-col :span="12">
 					  		<p>
 					  			<label>相册：</label>
-					  			<span></span>
+					  			<span>{{anchorInfo.photoCount}}</span>
 					  		</p>
 					  		<p>
 					  			<label>绑定：</label>
@@ -75,7 +77,7 @@
 					  	<el-col :span="12">
 					  		<p>
 					  			<label>类型：</label>
-					  			<span>注册用户</span>
+					  			<span>注册主播</span>
 					  		</p>
 					  	</el-col>
 				  	</el-row>
@@ -95,7 +97,7 @@
 			  		</p>
 			  		<p>
 			  			<label>节目数量：</label>
-			  			<span></span>
+			  			<span>0</span>
 			  		</p>
 		  		</el-col>
 		  		<el-col :span="8">
@@ -105,17 +107,13 @@
 			  		</p>
 			  		<p>
 			  			<label>收到喜欢：</label>
-			  			<span></span>
+			  			<span>0</span>
 			  		</p>
 		  		</el-col>
 		  		<el-col :span="8">
 		  			<p>
 			  			<label>情感状态：</label>
 			  			<span></span>
-			  		</p>
-			  		<p>
-			  			<label>是否推荐：</label>
-			  			<span>不推荐</span>
 			  		</p>
 		  		</el-col>
 		  		<el-col :span="24">
@@ -135,19 +133,19 @@
 		  		<el-col :span="8">
 		  			<p>
 			  			<label>姓名：</label>
-			  			<span>{{identityInfo.name}}</span>
+			  			<span>{{anchorInfo.userName}}</span>
 			  		</p>
 		  		</el-col>
 		  		<el-col :span="8">
 		  			<p>
 			  			<label>身份证：</label>
-			  			<span>{{identityInfo.identityNo}}</span>
+			  			<span>{{anchorInfo.identityNo}}</span>
 			  		</p>
 		  		</el-col>
 		  		<el-col :span="8">
 		  			<p>
 			  			<label>提交时间：</label>
-			  			<span>{{identityInfo.createTm | dateformat}}</span>
+			  			<span>{{anchorInfo.createTm | dateformat}}</span>
 			  		</p>
 		  		</el-col>
 		  	</el-row>
@@ -167,9 +165,7 @@
 		data() {
 			return {
 				loading: false,
-				baseInfo: {},
 				anchorInfo: {},
-				identityInfo: {},
 				auditingInfo: {
 					userId: '',
 					status: '0', //1:审核通过, 2:审核不通过
@@ -192,18 +188,18 @@
 				}).then(res => {
 					this.loading = false
 					let result = res.data
+					console.log(result)
 					if (result.code == 200) {
-						this.baseInfo = result.data.sysUserVo
-						this.anchorInfo = result.data.sysAnchorApply
-						this.identityInfo = result.data.identityCheckVo
+						//主播审核信息
+						this.anchorInfo = result.data
 						//审核状态
-						this.auditingInfo.status = this.anchorInfo.status
+						this.auditingInfo.status = this.anchorInfo.anchorStatus
 					} else {
 						this.$message.error(result.msg);
 					}
 				}).catch(err => {
 			    	this.loading = false
-			        console.log(err)
+			       	this.$message.error(err);
 			    })
 			},
 			//审核通过

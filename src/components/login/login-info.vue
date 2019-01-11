@@ -2,12 +2,12 @@
   <div>
     <el-dropdown trigger="click" class="dropdown" @command="handleCommand">
       <div class="el-dropdown-link">
-        <img src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3859421672,511986628&fm=200&gp=0.jpg">
-        <span>admin</span>
+        <img :src="$store.state.userInfo.userImage">
+        <span>{{$store.state.userInfo.userNickname}}</span>
         <i class="el-icon-arrow-down el-icon--right"></i>
       </div>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item command="changePass"><i class="el-icon-setting list-icon"></i>修改密码</el-dropdown-item>
+        <!-- <el-dropdown-item command="changePass"><i class="el-icon-setting list-icon"></i>修改密码</el-dropdown-item> -->
         <el-dropdown-item><i class="el-icon-message list-icon"></i>进入聊天室</el-dropdown-item>
         <el-dropdown-item command="logout" divided><i class="el-icon-circle-close-outline list-icon"></i>退出</el-dropdown-item>
       </el-dropdown-menu>
@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import store from '../../store'
+
 export default {
   name: 'loginInfo',
   data () {
@@ -48,9 +50,9 @@ export default {
     color: #fff;
     cursor: pointer;
     padding: 0 5px;
-    background: #6EB4FC;
+    background: rgba(255, 255, 255, .4);
     &:hover {
-      background: #8CC2FA;
+      background: rgba(255, 255, 255, .5);
     }
     & img {
       display: inline-block;

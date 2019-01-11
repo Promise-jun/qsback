@@ -14,12 +14,12 @@
               <el-form-item label="" prop="password">
                 <el-input prefix-icon="el-icon-view" type="password" v-model="loginForm.password" autocomplete="off" placeholder="密码"></el-input>
               </el-form-item>
-              <el-form-item label="" prop="yzm">
+              <el-form-item label="" prop="code">
                 <el-col :span="12">
-                  <el-input prefix-icon="el-icon-mobile-phone" v-model.number="loginForm.yzm" placeholder="短信验证码"></el-input>
+                  <el-input prefix-icon="el-icon-mobile-phone" v-model.number="loginForm.code" placeholder="短信验证码" @keyup.enter.native="submitForm('loginForm')"></el-input>
                 </el-col>
                 <el-col :span="10">
-                  <el-button :disabled="true">获取短信验证码</el-button>
+                  <el-button :disabled="isSend" @click="sendYzm">{{sendBtnCont}}</el-button>
                 </el-col>
               </el-form-item>
               <el-form-item>
@@ -46,6 +46,7 @@
 </template>
 <script>
   import {setCookie} from 'common/js/util'
+  import store from '../../store'
 
   export default {
     data() {
@@ -75,10 +76,12 @@
       };
       return {
         loginForm: {
-          username: 'pan',
-          password: '123456',
-          yzm: '1234'
+          username: '',
+          password: '',
+          code: ''
         },
+        isSend: false,
+        sendBtnCont: '获取短信验证码',
         loginRules: {
           username: [
             { validator: validateName, trigger: 'blur' }
@@ -86,7 +89,7 @@
           password: [
             { validator: validatePass, trigger: 'blur' }
           ],
-          yzm: [
+          code: [
             { validator: checkYzm, trigger: 'blur' }
           ]
         },
@@ -96,6 +99,49 @@
       };
     },
     methods: {
+      // 发送验证码
+      sendYzm() {
+        if (this.loginForm.username && this.loginForm.password) {
+          this.$axios({
+            method: 'post',
+            url: '/authc/getMSG',
+            data: this.$qs.stringify({
+              username: this.loginForm.username,
+              password: this.loginForm.password
+            })
+          }).then(res => {
+            let result = res.data
+            if (result.code == 200) {
+              this.countDown()
+              this.$message({
+                type: 'success',
+                message: '验证码发送成功'
+              })
+            } else {
+              this.$message.error(result.msg)
+            }
+          }).catch(err => {
+            console.log(err)
+          })
+        } else {
+          this.$message.error('请先输入用户名和密码')
+        }
+      },
+      // 验证码倒计时
+      countDown() {
+        let num = 60
+        this.isSend = true
+        this.sendBtnCont = num + 's后可重发'
+        clearInterval(this.timer)
+        this.timer = setInterval(() => {
+          this.sendBtnCont = --num + 's后可重发'
+          if (num <= 0) {
+            clearInterval(this.timer)
+            this.isSend = false
+            this.sendBtnCont = '获取短信验证码'
+          }
+        }, 1000)
+      },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -169,9 +215,20 @@
 
             //登录成功
             if (data.code == 200) {
-              console.log(data)
               // setCookie('admin_token', 'admin');
-              this.$router.push({path: '/'});
+              // 获取用户信息
+              store.dispatch('getUserInfo').then(() => {})
+              
+              store.dispatch('getNavList').then(() => {
+                  store.dispatch('getPermissionList').then((res) => {
+                      for (var i = 0; i < res.length; i++) {
+                        if (res[i].path != '' && res[i].type == 1) {
+                          this.$router.replace({path: res[i].path});
+                          break;
+                        }
+                      }
+                  })
+              })
               this.$message({
                 message: '恭喜你，登录成功',
                 type: 'success'

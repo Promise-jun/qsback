@@ -24,6 +24,7 @@
 			}
 			& .user-head {
 				width: 236px;
+				height: 236px;
 				max-width: 100%;
 				margin: 0 auto;
 				position: relative;
@@ -208,4 +209,9 @@ i.edit {
 	& .el-col {
 		margin-bottom: 10px;
 	}
+}
+
+.must {
+	color: #F56C6C;
+	padding-right: 5px;
 }

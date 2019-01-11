@@ -79,7 +79,7 @@
 		    <el-table-column prop="price" label="接受价格"></el-table-column>
 		    <el-table-column label="创建时间">
 		    	<template slot-scope="scope">
-					{{scope.row.createTm | formatDate}}
+					{{scope.row.createTm | dateformat}}
 		    	</template>
 		    </el-table-column>
 		    <el-table-column prop="kefu" label="客服"></el-table-column>
@@ -112,12 +112,15 @@
 			</page-num>
 		  </el-col>
 		</el-row>
+
+		<transition name="fade" mode="out-in">
+	      <router-view></router-view>
+	    </transition>
 	</div>
 </template>
 
 <script type="text/javascript">
 	import PageNum from 'base/page-num/page-num'
-	import { formatDate } from 'common/js/format'
 	
 	export default {
 		name: 'experienceOrder',
@@ -144,12 +147,6 @@
 			    }]
 			}
 		},
-		filters: {
-		    formatDate(time) {
-		    	var date = new Date(time);
-		    	return formatDate(date, 'yyyy-MM-dd hh:mm:ss');
-		   	}
-		},
 		created() {
 			this.getList()
 		},
@@ -161,7 +158,13 @@
 	        	this.getList();
 	      	},
 	      	add() { //新增咨询
-
+	      		let urls = ''
+	      		if (this.$route.meta.type == 'dreamCube') { //梦立方
+	      			urls = '/dreamCube/experienceOrder/addExperience'
+	      		}
+	      		this.$router.push({
+	      			path: urls
+	      		})
 	      	}
 		},
 		components: {
@@ -173,5 +176,12 @@
 <style type="text/css" lang="scss" scoped>
 	.el-pagination {
 		float: right;
+	}
+	.fade-enter-active,
+	.fade-leave-active {
+  		transition: opacity 0.3s;
+	}
+	.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  		opacity: 0;
 	}
 </style>

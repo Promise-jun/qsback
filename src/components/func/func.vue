@@ -6,6 +6,7 @@
 		    :data="tableData"
 		    stripe
 		    border
+		    size="mini"
 		    v-loading="loading"
 		    style="width: 100%"
 		>	
@@ -18,18 +19,19 @@
 		    <el-table-column prop="menuType" label="菜单类型">
 		    	<template slot-scope="scope">
 		    		<span v-if="scope.row.menuType == 1">导航菜单</span>
-		    		<span v-else>按钮权限</span>
+		    		<span v-else-if="scope.row.menuType == 2">按钮权限</span>
+		    		<span v-else>列表权限</span>
 		    	</template>
 		    </el-table-column>
 		    <el-table-column prop="sequence" label="排序"></el-table-column>
 		    <el-table-column prop="dataUrl" label="访问路径"></el-table-column>
 		    <el-table-column label="操作">
 		    	<template slot-scope="scope">
-		    		<el-tooltip content="编辑" placement="top">
-					  <el-button @click="edit(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
+		    		<el-tooltip content="编辑" placement="top" v-hasPermission="53">
+					  <el-button @click="edit(scope.row)" size="mini" type="text" icon="iconfont icon-edit"></el-button>
 					</el-tooltip>
-		    		<el-tooltip content="删除" placement="top">
-					  <el-button @click="del(scope.row)" type="text" icon="iconfont icon-delete" style="color: #F56C6C;"></el-button>
+		    		<el-tooltip content="删除" placement="top" v-hasPermission="54">
+					  <el-button @click="del(scope.row)" size="mini" type="text" icon="iconfont icon-delete" style="color: #F56C6C;"></el-button>
 					</el-tooltip>
 			    </template>
 		    </el-table-column>
@@ -37,7 +39,7 @@
 
 		<el-row>
 		  <el-col :span="12">
-		  	<el-button type="primary" icon="el-icon-circle-plus" @click="add">添加新纪录</el-button>
+		  	<el-button v-hasPermission="52" type="primary" size="small" icon="el-icon-circle-plus" @click="add">添加新纪录</el-button>
 		  </el-col>
 		  <el-col :span="12">
 		  	<page-num
@@ -63,8 +65,9 @@
 			  </el-form-item>
 			  <el-form-item label="菜单类型" prop="menuType">
 			    <el-select v-model="roleForm.menuType" placeholder="请选择菜单类型">
-			      <el-option label="导航菜单" value="1"></el-option>
-			      <el-option label="按钮权限" value="2"></el-option>
+			      <el-option label="导航菜单" :value="1"></el-option>
+			      <el-option label="按钮权限" :value="2"></el-option>
+			      <el-option label="列表权限" :value="3"></el-option>
 			    </el-select>
 			  </el-form-item>
 			  <el-form-item label="图标">
@@ -218,10 +221,10 @@
 		    },
 		    del(row) {
 				this.$confirm('此操作将删除该分类, 是否继续?', '提示', {
-		          confirmButtonText: '确定',
-		          cancelButtonText: '取消',
-		          type: 'warning',
-		          center: true
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		          	type: 'warning',
+		          	center: true
 		        }).then(() => {
 		        	this.$axios({
 				        method: 'post',

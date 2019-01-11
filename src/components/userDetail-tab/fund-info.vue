@@ -35,11 +35,11 @@
 		    <el-table-column prop="accountCode" label="账户卡号"></el-table-column>
 		    <el-table-column prop="accountUserName" label="户主名称"></el-table-column>
 		    <el-table-column label="操作">
-		    	<template slot-scope="scope">
-		    	<el-tooltip content="编辑" placement="top">
-				  <el-button @click="edit(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
-				</el-tooltip>
-			  </template>
+		    	<!-- <template slot-scope="scope">
+			    	<el-tooltip content="编辑" placement="top">
+					  <el-button @click="edit(scope.row)" type="text" icon="iconfont icon-edit"></el-button>
+					</el-tooltip>
+				</template> -->
 		    </el-table-column>
 		</el-table>
 

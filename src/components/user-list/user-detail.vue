@@ -1,5 +1,5 @@
 <template>
-	<div class="children-view user-detail">
+	<div class="children-view user-detail" v-loading="loading">
 		<el-row>
 		  	<el-col :span="24" class="title">用户详情</el-col>
 		</el-row>
@@ -11,13 +11,12 @@
 					  	<el-col :span="8">
 					  		<div class="user-head">
 					  			<img :src="baseInfo.userImage">
-					  			<el-upload
-					  				ref="upload"
+								<el-upload
 								  	class="avatar-uploader change-pic"
-								  	action="https://jsonplaceholder.typicode.com/posts/"
+								  	accept="image/jpeg, image/gif, image/png"
+								  	action=""
 								  	:show-file-list="false"
-								  	:before-upload="beforeAvatarUpload"
-								>
+								  	:http-request="headRequest">
 								  	<i class="el-icon-edit edit"></i>更改
 								</el-upload>
 					  		</div>
@@ -28,8 +27,8 @@
 					  			<span>{{baseInfo.userNickname}}</span>
 					  		</p>
 					  		<p>
-					  			<label>用户ID：</label>
-					  			<span>{{baseInfo.userId}}</span>
+					  			<label>用户号：</label>
+					  			<span>{{baseInfo.userCode}}</span>
 					  		</p>
 					  		<p>
 					  			<label>手机号：</label>
@@ -96,7 +95,7 @@
 					  			<label>接手客服：</label>
 					  			<span>小兔子</span>
 					  			<el-tooltip content="编辑" placement="top">
-					  				<i class="el-icon-edit edit" @click="kefuVisible = true"></i>
+					  				<!-- <i class="el-icon-edit edit" @click="kefuVisible = true"></i> -->
 					  			</el-tooltip>
 					  		</p>
 					  	</el-col>
@@ -116,8 +115,8 @@
 					  	</el-col>
 				  	</el-row>
 				  	<div class="btns">
-					    <el-button type="primary">禁言用户</el-button>
-						<el-button type="danger">禁用用户</el-button>
+					    <!-- <el-button type="primary">禁言用户</el-button> -->
+						<!-- <el-button type="danger">禁用用户</el-button> -->
 					</div>
 				</el-card>
 		  	</el-col>
@@ -131,12 +130,12 @@
 		  		<ditch-info></ditch-info>
 		  	</el-tab-pane>
 		  	<el-tab-pane label="互动信息" lazy>
-		  		<interact-info></interact-info>
+		  		<interact-info :userId="baseInfo.userId"></interact-info>
 		  	</el-tab-pane>
 		</el-tabs>
 
 		<!-- 图片裁剪 -->
-		<cut-out-pic :picDialogVisible.sync="picDialogVisible" :picOption="picOption" @upload="uploadImg"></cut-out-pic>
+		<cut-out-pic :picDialogVisible.sync="picDialogVisible" :picLoading="picLoading" :picOption="picOption" @upload="uploadImg"></cut-out-pic>
 
 		<!-- 分配客服 -->
 		<el-dialog title="提示" :visible.sync="kefuVisible" width="30%" :modal="false">
@@ -163,7 +162,9 @@
 		name: 'userDetail',
 		data() {
 			return {
+				loading: false,
 				picDialogVisible: false, //图片裁剪弹窗
+				picLoading: false,
 				picOption: {  //图片裁剪配置
 					img: '../../assets/a.jpg',
 					info: true,
@@ -179,7 +180,6 @@
         			centerBox: true
 				},
 				baseInfo: {}, //用户基本信息
-				imageUrl: 'http://i10.hoopchina.com.cn/hupuapp/bbs/966/16313966/thread_16313966_20180726164538_s_65949_o_w1024_h1024_62044.jpg?x-oss-process=image/resize,w_800/format,jpg',
 				kefu: '1', //分配的客服
 				kefuVisible: false
 			}
@@ -189,13 +189,15 @@
 		},
 		methods: {
 			getDetail() {
+				this.loading = true
 				this.$axios({
 					method: 'post',
 					url: '/system/user/findDetails',
 					data: this.$qs.stringify({
-						ID: this.$route.query.userId
+						userCode: this.$route.query.userCode
 					})
 				}).then(res => {
+					this.loading = false
 					let result = res.data
 					if (result.code == 200) {
 						this.baseInfo = result.data
@@ -204,20 +206,31 @@
 					}
 				})
 			},
-		    beforeAvatarUpload(file) {
-		        const isJPG = file.type === 'image/jpeg';
-		        const isLt2M = file.size / 1024 / 1024 < 2;
+		    // 头像上传
+		    headRequest(options) {
+		    	this.picDialogVisible = true
 
-		        if (!isJPG) {
-		          this.$message.error('上传头像图片只能是 JPG 格式!');
-		        }
-		        if (!isLt2M) {
-		          this.$message.error('上传头像图片大小不能超过 2MB!');
-		        }
-
-		        this.picDialogVisible = true
-		    	var reader = new FileReader();
-		        reader.onload = e => {
+		    	let file = options.file
+		    	//判断图片类型
+    			let isJPG
+			    if (file.type == 'image/jpeg' || file.type == 'image/png' || file.type == 'image/gif') {
+			     	isJPG =  true
+			    } else {
+			     	isJPG =  false
+			    }
+			    // 判断图片大小
+			    const isLt2M = file.size / 1024 / 1024 < 10
+			    if (!isJPG) {
+			      	this.$message.error('上传图片只能是 JPG/PNG/GIF 格式!')
+			      	return
+			    }
+			    if (!isLt2M) {
+			      	this.$message.error('上传图片大小不能超过 10MB!')
+			      	return
+			    }
+			    this.fileType = file.type.split('/')[1]
+			    var reader = new FileReader();
+		    	reader.onload = e => {
 			        let data;
 					
 			        if (typeof e.target.result === "object") {
@@ -229,12 +242,33 @@
 			        this.picOption.img = data
 			    };
 			    reader.readAsArrayBuffer(file);
-
-		        return isJPG && isLt2M;
 		    },
 		    uploadImg(data) {
-		        // this.$refs.upload.submit();
-		        this.picDialogVisible = false
+		        this.picLoading = true
+		    	this.$axios({
+		    		method: 'post',
+		    		url: '/system/user/editForUserImageAsync',
+		    		data: this.$qs.stringify({
+		    			base64Str: data.split(',')[1],
+		    			fileType: this.fileType,
+		    			userId: this.baseInfo.userId
+		    		})
+		    	}).then(res => {
+		    		this.picDialogVisible = false
+		    		this.picLoading = false
+		    		let result = res.data
+		    		if (result.code == 200) {
+		    			this.baseInfo.userImage = data
+		    			this.$message({
+				          	message: '头像上传成功！',
+				          	type: 'success'
+				        });
+		    		} else {
+		    			this.$message.error(result.msg);
+		    		}
+		    	}).catch(err => {
+		    		this.$message.error(err);
+		    	})
 		    },
 		    changeTaobaoId() {
 		    	this.$prompt('请输入淘宝账号', '提示', {
@@ -249,7 +283,7 @@
 		        		method: 'post',
 		        		url: '/system/user/editForUserPayAccount',
 		        		data: this.$qs.stringify({
-		        			userId: this.$route.query.userId,
+		        			userId: this.baseInfo.userId,
 		        			userPayAccount: value
 		        		})
 		        	}).then(res => {

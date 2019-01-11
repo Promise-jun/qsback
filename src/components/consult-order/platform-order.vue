@@ -1,6 +1,6 @@
 <template>
 	<div>
-    	<el-form :inline="true" :model="formObj" class="demo-form-inline">
+    	<el-form :inline="true" :model="formObj" class="demo-form-inline" size="small">
     	  <el-form-item label="咨询单号">
 		    <el-input v-model="formObj.courseId" placeholder="请输入咨询单号"></el-input>
 		  </el-form-item>
@@ -111,12 +111,12 @@
 		    <el-table-column prop="tutor" label="导师姓名"></el-table-column>
 		    <el-table-column label="创建时间">
 		    	<template slot-scope="scope">
-					{{scope.row.createTm | formatDate}}
+					{{scope.row.createTm | dateformat}}
 		    	</template>
 		    </el-table-column>
 		    <el-table-column label="支付时间">
 		    	<template slot-scope="scope">
-					{{scope.row.payTm | formatDate}}
+					{{scope.row.payTm | dateformat}}
 		    	</template>
 		    </el-table-column>
 		    <el-table-column prop="totalLen" label="总时长(分钟)"></el-table-column>
@@ -126,7 +126,7 @@
 		    <el-table-column prop="kefu" label="客服"></el-table-column>
 		    <el-table-column label="完成时间">
 		    	<template slot-scope="scope">
-					{{scope.row.achieveTm | formatDate}}
+					{{scope.row.achieveTm | dateformat}}
 		    	</template>
 		    </el-table-column>
 		    <el-table-column label="操作" width="100">
@@ -155,7 +155,6 @@
 
 <script type="text/javascript">
 	import PageNum from 'base/page-num/page-num'
-	import { formatDate } from 'common/js/format'
 	
 	export default {
 		name: 'platformOrder',
@@ -184,12 +183,6 @@
 			    }]
 			}
 		},
-		filters: {
-		    formatDate(time) {
-		    	var date = new Date(time);
-		    	return formatDate(date, 'yyyy-MM-dd hh:mm:ss');
-		   	}
-		},
 		created() {
 			this.getList()
 		},
@@ -199,6 +192,16 @@
 			},
 			onSubmit() {
 	        	this.getList();
+	      	},
+	      	// 处理
+	      	handle(row) {
+	      		let {href} = this.$router.resolve({
+		    		path: '/applicationConsultation/orderDetail',
+		    		query: {
+		    			orderId: row.orderId
+		    		}
+		    	});
+				window.open(href, '_blank');
 	      	}
 		},
 		components: {

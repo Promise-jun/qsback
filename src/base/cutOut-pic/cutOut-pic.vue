@@ -7,7 +7,7 @@
 	  	:before-close="hidePanel"
 	  	width="50%"
 	>	
-		<div class="pic-box">
+		<div class="pic-box" v-loading="picLoading">
 			<vueCropper
 			  	ref="cropper"
 			  	:img="picOption.img"
@@ -26,7 +26,7 @@
 		</div>
 	  	<span slot="footer" class="dialog-footer">
 	    	<el-button @click="hidePanel">取 消</el-button>
-	    	<el-button type="primary" @click="confirm">确 定</el-button>
+	    	<el-button type="primary" @click="confirm" :loading="picLoading">确 定</el-button>
 	  	</span>
 	</el-dialog>
 </template>
@@ -44,6 +44,10 @@
 			picOption: {
 				type: Object,
 				default: {}
+			},
+			picLoading: {
+				type: Boolean,
+				default: false
 			}
 		},
 		methods: {

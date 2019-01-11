@@ -54,7 +54,13 @@
 					  	</el-col>
 					  	<el-col :span="8">
 					  		<p>联系方式</p>
-					  		<el-input v-model.number="anchorForm.anchorPhone" placeholder="请输入联系方式" @change="provingPhone"></el-input>
+					  		<!-- <el-input v-model.number="anchorForm.anchorPhone" placeholder="请输入联系方式" @change="provingPhone"></el-input> -->
+					  		<phone 
+					  			:code="anchorForm.phoneCode" 
+					  			:phone="anchorForm.anchorPhone" 
+					  			@changeCode="changeCode" 
+					  			@changeNum="changeNum">
+					  		</phone>
 					  	</el-col>
 					  	<el-col :span="8">
 					  		<p>主播所在地</p>
@@ -103,24 +109,24 @@
 					  	<el-col :span="24">
 					  		<p>身份证照片</p>
 					  		<div class="add-pic-box">
-					  			<el-upload
+								<el-upload
 								  	class="avatar-uploader"
-								  	action="https://jsonplaceholder.typicode.com/posts/"
+								  	accept="image/jpeg, image/gif, image/png"
+								  	action=""
 								  	:show-file-list="false"
-								  	:on-success="frontSuccess"	
-								  	:before-upload="frontUpload">
+								  	:http-request="frontRequest">
 								  	<img v-if="anchorForm.frontPic" :src="anchorForm.frontPic" class="avatar">
 								  	<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 								</el-upload>
 								<p>正面</p>
 					  		</div>
 					  		<div class="add-pic-box">
-					  			<el-upload
+								<el-upload
 								  	class="avatar-uploader"
-								  	action="https://jsonplaceholder.typicode.com/posts/"
+								  	accept="image/jpeg, image/gif, image/png"
+								  	action=""
 								  	:show-file-list="false"
-								  	:on-success="conSuccess"
-								  	:before-upload="conUpload">
+								  	:http-request="backRequest">
 								  	<img v-if="anchorForm.conPic" :src="anchorForm.conPic" class="avatar">
 								  	<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 								</el-upload>
@@ -144,6 +150,7 @@
 
 <script type="text/javascript">
 	import ChooseUser from 'components/choose-user/choose-user'
+	import Phone from 'base/form-box/phone'
 	
 	export default {
 		name: 'addAnchor',
@@ -171,7 +178,8 @@
         		},
         		anchorForm: {
         			nickName: '',
-        			anchorPhone: '',
+        			phoneCode: '86',
+        			anchorPhone: '', //手机号
         			anchorAddress: '', //地址
         			anchorOccupation: '',  //职业
         			anchorHobby: '', //兴趣
@@ -205,7 +213,8 @@
 						let data = result.data
 						this.anchorForm = {
 		        			nickName: data.sysUserVo.userNickname,
-		        			anchorPhone: data.SysAnchorVo.anchorPhone,
+		        			phoneCode: data.SysAnchorVo.anchorPhone && data.SysAnchorVo.anchorPhone.indexOf('+') != -1 ? data.SysAnchorVo.anchorPhone.split('+')[0] : '86',
+		        			anchorPhone: data.SysAnchorVo.anchorPhone && data.SysAnchorVo.anchorPhone.indexOf('+') != -1 ? data.SysAnchorVo.anchorPhone.split('+')[1] : data.SysAnchorVo.anchorPhone,
 		        			anchorAddress: data.SysAnchorVo.anchorAddress, //地址
 		        			anchorOccupation: data.SysAnchorVo.anchorOccupation,  //职业
 		        			anchorHobby: data.SysAnchorVo.anchorHobby, //兴趣
@@ -220,7 +229,7 @@
 					}
 				}).catch(err => {
 			    	this.loading = false
-			        console.log(err)
+			        this.$message.error(err);
 			    })
 			} else { //新增
 				this.isAdd = true
@@ -259,36 +268,70 @@
 		        // this.anchorForm.anchorAddress = val
 		    },
 		    // 身份证正面
-		    frontSuccess(res, file) {
-		        this.anchorForm.frontPic = URL.createObjectURL(file.raw);
-		    },
-		    frontUpload(file) {
-		        const isJPG = file.type === 'image/jpeg';
-		        const isLt2M = file.size / 1024 / 1024 < 2;
-
-		        if (!isJPG) {
-		          this.$message.error('上传头像图片只能是 JPG 格式!');
-		        }
-		        if (!isLt2M) {
-		          this.$message.error('上传头像图片大小不能超过 2MB!');
-		        }
-		        return isJPG && isLt2M;
+		    frontRequest(file) {
+				this.uploadImg(file, 2)
 		    },
 		    // 身份证反面
-		    conSuccess(res, file) {
-		        this.anchorForm.conPic = URL.createObjectURL(file.raw);
+		    backRequest(file) {
+				this.uploadImg(file, 3)
 		    },
-		    conUpload(file) {
-		        const isJPG = file.type === 'image/jpeg';
-		        const isLt2M = file.size / 1024 / 1024 < 2;
-
-		        if (!isJPG) {
-		          this.$message.error('上传头像图片只能是 JPG 格式!');
-		        }
-		        if (!isLt2M) {
-		          this.$message.error('上传头像图片大小不能超过 2MB!');
-		        }
-		        return isJPG && isLt2M;
+		    uploadImg(options, type) {
+		    	// 获取文件对象
+    			let file = options.file
+    			//判断图片类型
+    			let isJPG
+			    if (file.type == 'image/jpeg' || file.type == 'image/png' || file.type == 'image/gif') {
+			     	isJPG =  true
+			    } else {
+			     	isJPG =  false
+			    }
+			    // 判断图片大小
+			    const isLt2M = file.size / 1024 / 1024 < 10
+			    if (!isJPG) {
+			      	this.$message.error('上传图片只能是 JPG/PNG/JPEG 格式!')
+			      	return
+			    }
+			    if (!isLt2M) {
+			      	this.$message.error('上传图片大小不能超过 10MB!')
+			      	return
+			    }
+			    // 创建一个HTML5的FileReader对象
+    			var reader = new FileReader();
+    			if (file) {
+				    reader.readAsDataURL(file)
+				    reader.onload = (e) => {
+				    	let base64Str = e.target.result.split(',')[1]
+				    	this.$axios({
+				    		method: 'post',
+				    		url: '/system/consultant/apply/savePicture',
+				    		data: this.$qs.stringify({
+				    			image: base64Str,
+				    			fileType: file.type.split('/')[1]
+				    		})
+				    	}).then(res => {
+				    		let result = res.data
+				    		if (result.code == 200) {
+				    			if (type == 2) { //证件正面
+				    				this.anchorForm.frontPic = result.msg
+				    			} else if (type == 3) { //证件反面
+				    				this.anchorForm.conPic = result.msg
+				    			} 
+				    		} else {
+				    			this.$message.error(result.msg);
+				    		}
+				    	}).catch(err => {
+				    		this.$message.error(err);
+				    	})
+				    }
+				}
+		    },
+		    // 改变code
+		    changeCode(val) {
+		      this.anchorForm.phoneCode = val
+		    },
+		    // 改变num
+		    changeNum(val) {
+		      this.anchorForm.anchorPhone = val
 		    },
 		    // 验证手机号
 		    provingPhone(val) {
@@ -305,6 +348,19 @@
 		    		this.$message.error('真是姓名或证件号码不能为空!');
 		    		return
 		    	}
+		    	let uploadInfo = {
+		    		userId: this.anchorForm.userId,
+		    		nickName: this.anchorForm.nickName,
+		    		anchorPhone: this.anchorForm.phoneCode + '+' + this.anchorForm.anchorPhone,
+		    		anchorAddress: this.anchorForm.anchorAddress,
+		    		anchorHobby: this.anchorForm.anchorHobby,
+		    		anchorOccupation: this.anchorForm.anchorOccupation,
+		    		realName: this.anchorForm.realName,
+		    		type: this.anchorForm.type,
+		    		identityNo: this.anchorForm.identityNo,
+		    		conPic: this.anchorForm.conPic,
+		    		frontPic: this.anchorForm.frontPic
+		    	}
 		    	this.$confirm('确定要提交审核吗?', '提示', {
 		          	confirmButtonText: '确定',
 		          	cancelButtonText: '取消',
@@ -314,11 +370,10 @@
 			    	this.$axios({
 						method: 'post',
 						url: this.uploadUrl,
-						data: this.$qs.stringify(this.anchorForm)
+						data: this.$qs.stringify(uploadInfo)
 					}).then(res => {
 						this.loading = false
 						let result = res.data
-						console.log(result)
 						if (result.code == 200) {
 							this.$message({
 					         	message: '操作成功！',
@@ -332,7 +387,7 @@
 						}
 					}).catch(err => {
 				    	this.loading = false
-				        console.log(err)
+				        this.$message.error(err);
 				    })
 		        }).catch(() => {
 		             
@@ -342,6 +397,7 @@
 		    resetting() {
 		    	this.anchorForm = {
         			nickName: '',
+        			phoneCode: '86',
         			anchorPhone: '',
         			anchorAddress: '', //地址
         			anchorOccupation: '',  //职业
@@ -355,7 +411,8 @@
 		    }
 		},
 		components: {
-			ChooseUser
+			ChooseUser,
+			Phone
 		}
 	}
 </script>
